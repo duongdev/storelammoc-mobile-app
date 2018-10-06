@@ -1,0 +1,25 @@
+{
+  "extends": ["tslint-react", "tslint-config-prettier"],
+  "linterOptions": {
+    "exclude": [
+      "config/**/*.js",
+      "node_modules/**/*.ts",
+      "coverage/lcov-report/*.js"
+    ]
+  },
+  "rules": {
+    "curly": false,
+    "jsx-boolean-value": false,
+    "no-console": false,
+    "jsx-no-lambda": false,
+
+    "ordered-imports": {
+      "severity": "warn",
+      "options": {
+        "import-sources-order": "case-insensitive",
+        "named-imports-order": "case-insensitive"
+      }
+    }
+  },
+  "jsRules": {}
+}
