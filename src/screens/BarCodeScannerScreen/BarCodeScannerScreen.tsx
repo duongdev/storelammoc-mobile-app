@@ -43,7 +43,6 @@ export default class BarcodeScannerScreen extends React.Component<
         <BarCodeScanner
           onBarCodeRead={this.handleBarCodeRead}
           style={[StyleSheet.absoluteFill]}
-          // {...rest}
         >
           {/* {this.renderScannerOverlay()}
           {this.renderTopMenu()} */}

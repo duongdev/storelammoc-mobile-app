@@ -1,5 +1,5 @@
 {
-  "name": "react-native-boilerplate",
+  "name": "store-app-rn",
   "author": "Dương Đỗ <duong@targeek.io>",
   "main": "node_modules/expo/AppEntry.js",
   "private": true,
