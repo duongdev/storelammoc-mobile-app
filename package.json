@@ -1,5 +1,6 @@
 {
-  "name": "empty-project-template",
+  "name": "react-native-boilerplate",
+  "author": "Dương Đỗ <duong@targeek.io>",
   "main": "node_modules/expo/AppEntry.js",
   "private": true,
   "scripts": {
@@ -12,12 +13,14 @@
     "expo": "^30.0.1",
     "react": "16.3.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-30.0.0.tar.gz",
+    "react-navigation": "^2.17.0",
     "tslib": "1.9.3"
   },
   "devDependencies": {
     "@types/expo": "^27.0.12",
     "@types/react": "^16.4.15",
     "@types/react-native": "^0.57.2",
+    "@types/react-navigation": "^2.0.24",
     "babel-plugin-module-resolver": "^3.1.1",
     "husky": "^1.1.1",
     "lint-staged": "^7.3.0",

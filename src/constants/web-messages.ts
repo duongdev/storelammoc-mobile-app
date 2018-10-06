@@ -1,0 +1,9 @@
+export const RECEIVED_MESSAGES = {
+  WEB_APP_LOADED: 'WEB_APP_LOADED',
+  OPEN_QR_SCANNER: 'OPEN_QR_SCANNER',
+}
+
+export const SEND_MESSAGES = {
+  PING_BACK: 'Hello from webview',
+  OPEN_QR_SCANNER: 'OPEN_QR_SCANNER',
+}

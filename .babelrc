@@ -15,6 +15,7 @@
           "screens": "./src/screens",
           "components": "./src/components",
           "env": "./src/env",
+          "constants": "./src/constants",
 
           "dotenv": "react-native-dotenv"
         }

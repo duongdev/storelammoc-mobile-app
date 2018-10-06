@@ -1,2 +1,2 @@
-import App from './src/App'
-export default App
+import StackNavigator from './src/StackNavigator'
+export default StackNavigator
