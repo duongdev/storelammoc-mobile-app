@@ -16,6 +16,9 @@
           "components": "./src/components",
           "env": "./src/env",
           "constants": "./src/constants",
+          "hocs": "./src/hocs",
+          "utils": "./src/utils",
+          "helpers": "./src/helpers",
 
           "dotenv": "react-native-dotenv"
         }

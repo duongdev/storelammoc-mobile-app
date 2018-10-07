@@ -55,7 +55,6 @@ export default class MainScreen extends React.Component<
   }
 
   public render() {
-    console.log(this.props.navigation)
     return (
       <View style={styles.container}>
         <StatusBar />
