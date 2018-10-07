@@ -3,6 +3,7 @@ import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import { BarCodeReadCallback, BarCodeScanner, Permissions } from 'expo'
+import keepAwake, { KeepAwakeProps } from 'hocs/keep-awake'
 import { NavigationComponent } from 'react-navigation'
 
 export interface BarCodeScannerProps {}
@@ -11,8 +12,8 @@ interface BarCodeScannerStates {
   hasCameraPermission: boolean
 }
 
-export default class BarcodeScannerScreen extends React.Component<
-  BarCodeScannerProps & NavigationComponent,
+class BarcodeScannerScreen extends React.Component<
+  BarCodeScannerProps & NavigationComponent & KeepAwakeProps,
   BarCodeScannerStates
 > {
   state = {
@@ -68,6 +69,7 @@ export default class BarcodeScannerScreen extends React.Component<
     )
   }
 }
+export default keepAwake(BarcodeScannerScreen)
 
 const styles = {
   barCodeScanner: {
