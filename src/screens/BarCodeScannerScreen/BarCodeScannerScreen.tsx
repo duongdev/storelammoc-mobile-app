@@ -1,10 +1,13 @@
 import StatusBar from 'components/StatusBar'
 import * as React from 'react'
-import { StyleSheet, View } from 'react-native'
+
+import keepAwake, { KeepAwakeProps } from 'hocs/keep-awake'
 
 import { BarCodeReadCallback, BarCodeScanner, Permissions } from 'expo'
-import keepAwake, { KeepAwakeProps } from 'hocs/keep-awake'
+import { StyleSheet, View } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
+
+import BarCodeScannerOverlay from './components/BarCodeScannerOverlay'
 
 export interface BarCodeScannerProps {}
 interface BarCodeScannerStates {
@@ -56,7 +59,7 @@ class BarcodeScannerScreen extends React.Component<
 
   public render() {
     return (
-      <View style={styles.barCodeScanner}>
+      <View style={styles.root}>
         <StatusBar hidden />
         <BarCodeScanner
           onBarCodeRead={this.handleBarCodeRead}
@@ -64,6 +67,7 @@ class BarcodeScannerScreen extends React.Component<
         >
           {/* {this.renderScannerOverlay()}
           {this.renderTopMenu()} */}
+          <BarCodeScannerOverlay />
         </BarCodeScanner>
       </View>
     )
@@ -72,7 +76,7 @@ class BarcodeScannerScreen extends React.Component<
 export default keepAwake(BarcodeScannerScreen)
 
 const styles = {
-  barCodeScanner: {
+  root: {
     flex: 1,
   },
 }
