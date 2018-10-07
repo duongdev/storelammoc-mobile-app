@@ -3,10 +3,13 @@ import * as React from 'react'
 
 import keepAwake, { KeepAwakeProps } from 'hocs/keep-awake'
 
+import { MaterialIcons } from '@expo/vector-icons'
 import { BarCodeReadCallback, BarCodeScanner, Permissions } from 'expo'
+import { Button } from 'native-base'
 import { StyleSheet, View } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
+import colors from 'constants/colors'
 import BarCodeScannerOverlay from './components/BarCodeScannerOverlay'
 
 export interface BarCodeScannerProps {}
@@ -53,9 +56,11 @@ class BarcodeScannerScreen extends React.Component<
     if (now - lastScanAt > 2000) {
       this.setState({ lastScanAt: Date.now() })
       onBarCodeRead(params)
-      this.props.navigation.pop()
+      this.handleGoBack()
     }
   }
+
+  handleGoBack = () => this.props.navigation.pop()
 
   public render() {
     return (
@@ -65,9 +70,12 @@ class BarcodeScannerScreen extends React.Component<
           onBarCodeRead={this.handleBarCodeRead}
           style={[StyleSheet.absoluteFill]}
         >
-          {/* {this.renderScannerOverlay()}
-          {this.renderTopMenu()} */}
           <BarCodeScannerOverlay />
+          <View style={styles.goBackButton}>
+            <Button transparent onPress={this.handleGoBack}>
+              <MaterialIcons name="arrow-back" size={32} color={colors.white} />
+            </Button>
+          </View>
         </BarCodeScanner>
       </View>
     )
@@ -75,8 +83,13 @@ class BarcodeScannerScreen extends React.Component<
 }
 export default keepAwake(BarcodeScannerScreen)
 
-const styles = {
+const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-}
+  goBackButton: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+  },
+})
