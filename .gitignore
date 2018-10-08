@@ -5,3 +5,5 @@ npm-debug.*
 */\.DS_Store
 
 \.DS_Store
+
+yarn-error\.log

@@ -5,7 +5,7 @@ import keepAwake, { KeepAwakeProps } from 'hocs/keep-awake'
 import { MaterialIcons } from '@expo/vector-icons'
 import { BarCodeReadCallback, BarCodeScanner, Permissions } from 'expo'
 import { Button } from 'native-base'
-import { StyleSheet, View } from 'react-native'
+import { Platform, StyleSheet, View } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
 import StatusBar from 'components/StatusBar'
@@ -18,19 +18,37 @@ export interface BarCodeScannerProps {}
 interface BarCodeScannerStates {
   lastScanAt: number
   hasCameraPermission: boolean
+  isReady: boolean
 }
 
 class BarcodeScannerScreen extends React.Component<
   BarCodeScannerProps & NavigationComponent & KeepAwakeProps,
   BarCodeScannerStates
 > {
+  didFocusSubscription: any
+  isAndroid = Platform.OS === 'android'
+
   state = {
+    isReady: !this.isAndroid,
     lastScanAt: 0,
     hasCameraPermission: false,
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     this.grantCameraPermission()
+    this.didFocusSubscription =
+      this.isAndroid &&
+      this.props.navigation.addListener('didFocus', () => {
+        this.setState({
+          isReady: true,
+        })
+      })
+  }
+
+  componentWillUnmount() {
+    if (this.didFocusSubscription) {
+      this.didFocusSubscription.remove()
+    }
   }
 
   grantCameraPermission = async () => {
@@ -63,7 +81,6 @@ class BarcodeScannerScreen extends React.Component<
   }
 
   handleGoBack = () => {
-    console.log(this.props.navigation)
     this.props.navigation.pop()
   }
 
@@ -71,13 +88,16 @@ class BarcodeScannerScreen extends React.Component<
     return (
       <View style={styles.root}>
         <StatusBar hidden />
-
-        <BarCodeScanner
-          onBarCodeRead={this.handleBarCodeRead}
-          style={[StyleSheet.absoluteFill]}
-        >
+        {this.state.isReady ? (
+          <BarCodeScanner
+            onBarCodeRead={this.handleBarCodeRead}
+            style={[StyleSheet.absoluteFill]}
+          >
+            <BarCodeScannerOverlay />
+          </BarCodeScanner>
+        ) : (
           <BarCodeScannerOverlay />
-        </BarCodeScanner>
+        )}
 
         <Button
           onPress={this.handleGoBack}
@@ -85,7 +105,11 @@ class BarcodeScannerScreen extends React.Component<
           iconLeft
           transparent
         >
-          <MaterialIcons name="arrow-back" size={32} color={colors.white} />
+          <MaterialIcons
+            name={this.isAndroid ? 'close' : 'arrow-back'}
+            size={32}
+            color={colors.white}
+          />
         </Button>
       </View>
     )
@@ -96,6 +120,7 @@ export default keepAwake(BarcodeScannerScreen)
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    backgroundColor: colors.black,
   },
   goBackButton: {
     position: 'absolute',
