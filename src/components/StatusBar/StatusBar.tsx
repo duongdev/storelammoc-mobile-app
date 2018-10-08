@@ -17,18 +17,19 @@ export function StatusBar({ hidden, ...props }: StatusBarProps) {
     <View>
       <RNStatusBar
         showHideTransition="slide"
-        backgroundColor={colors.primary}
+        backgroundColor={colors.transparent}
+        translucent
         barStyle="light-content"
         hidden={hidden}
         {...props}
       />
-      <View style={styles.iosSpacing} />
+      {!hidden && <View style={styles.topSpacing} />}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  iosSpacing: {
+  topSpacing: {
     height: Constants.statusBarHeight,
     backgroundColor: colors.primary,
   },

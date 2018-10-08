@@ -20,6 +20,9 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "androidStatusBar": {
+      "backgroundColor": "#26323800"
+    },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.lammoc.store"
