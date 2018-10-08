@@ -1,4 +1,3 @@
-import StatusBar from 'components/StatusBar'
 import * as React from 'react'
 
 import keepAwake, { KeepAwakeProps } from 'hocs/keep-awake'
@@ -9,7 +8,10 @@ import { Button } from 'native-base'
 import { StyleSheet, View } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
+import StatusBar from 'components/StatusBar'
+
 import colors from 'constants/colors'
+
 import BarCodeScannerOverlay from './components/BarCodeScannerOverlay'
 
 export interface BarCodeScannerProps {}
@@ -60,23 +62,31 @@ class BarcodeScannerScreen extends React.Component<
     }
   }
 
-  handleGoBack = () => this.props.navigation.pop()
+  handleGoBack = () => {
+    console.log(this.props.navigation)
+    this.props.navigation.pop()
+  }
 
   public render() {
     return (
       <View style={styles.root}>
         <StatusBar hidden />
+
         <BarCodeScanner
           onBarCodeRead={this.handleBarCodeRead}
           style={[StyleSheet.absoluteFill]}
         >
           <BarCodeScannerOverlay />
-          <View style={styles.goBackButton}>
-            <Button transparent onPress={this.handleGoBack}>
-              <MaterialIcons name="arrow-back" size={32} color={colors.white} />
-            </Button>
-          </View>
         </BarCodeScanner>
+
+        <Button
+          onPress={this.handleGoBack}
+          style={styles.goBackButton}
+          iconLeft
+          transparent
+        >
+          <MaterialIcons name="arrow-back" size={32} color={colors.white} />
+        </Button>
       </View>
     )
   }
@@ -91,5 +101,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 8,
     left: 8,
+    paddingRight: 20,
   },
 })

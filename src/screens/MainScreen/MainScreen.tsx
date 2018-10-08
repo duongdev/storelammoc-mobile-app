@@ -1,7 +1,7 @@
 import * as React from 'react'
+
 import {
   BackHandler,
-  NativeEventSubscription,
   NativeSyntheticEvent,
   StyleSheet,
   View,
@@ -27,9 +27,14 @@ export default class MainScreen extends React.Component<
 
   componentDidMount = () => {
     this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (this.mainWebView && this.mainWebView.webView)
-        this.mainWebView.webView.goBack()
-      return true
+      const { navigation } = this.props
+      const isMainScreenFocused = navigation.isFocused()
+
+      if (isMainScreenFocused && this.mainWebView && this.mainWebView.webView) {
+        return this.mainWebView.webView.goBack()
+      }
+
+      return navigation.pop()
     })
   }
 
