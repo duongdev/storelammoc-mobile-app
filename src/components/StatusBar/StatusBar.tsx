@@ -1,6 +1,7 @@
 import * as React from 'react'
+
+import { Constants } from 'expo'
 import {
-  Platform,
   StatusBar as RNStatusBar,
   StatusBarProps as RNStatusBarProps,
   StyleSheet,
@@ -21,14 +22,14 @@ export function StatusBar({ hidden, ...props }: StatusBarProps) {
         hidden={hidden}
         {...props}
       />
-      {Platform.OS === 'ios' && !hidden && <View style={styles.iosSpacing} />}
+      <View style={styles.iosSpacing} />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   iosSpacing: {
-    height: 20,
+    height: Constants.statusBarHeight,
     backgroundColor: colors.primary,
   },
 })

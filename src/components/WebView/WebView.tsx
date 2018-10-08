@@ -33,8 +33,7 @@ export default class WebView extends React.Component<
 
   state: WebViewStates = {}
 
-  // FIXME: On iOS, WebView can't detect React web app navigation.
-  // Haven't tested on Android.
+  // FIXME: WebView can't detect React web app navigation.
   handleNavigationStateChange = (navState: NavState) => {
     this.setState({ navState })
   }
@@ -66,6 +65,10 @@ export default class WebView extends React.Component<
         {this.props.showDevTools && (
           <View style={styles.devTools}>
             <Text>{this.state.navState && this.state.navState.url}</Text>
+            <Button
+              title="Back"
+              onPress={() => this.webView && this.webView.goBack()}
+            />
             <Button
               title="reload"
               onPress={() => this.webView && this.webView.reload()}

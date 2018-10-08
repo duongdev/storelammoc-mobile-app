@@ -1,5 +1,7 @@
 import * as React from 'react'
 import {
+  BackHandler,
+  NativeEventSubscription,
   NativeSyntheticEvent,
   StyleSheet,
   View,
@@ -21,6 +23,19 @@ export default class MainScreen extends React.Component<
   any
 > {
   mainWebView: WebView | null = null
+  backHandler: any
+
+  componentDidMount = () => {
+    this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (this.mainWebView && this.mainWebView.webView)
+        this.mainWebView.webView.goBack()
+      return true
+    })
+  }
+
+  componentWillUnmount = () => {
+    this.backHandler.remove()
+  }
 
   postMessageToWeb = (message: string) => {
     if (!(this.mainWebView && this.mainWebView.webView)) return
@@ -63,7 +78,7 @@ export default class MainScreen extends React.Component<
           style={styles.mainWebView}
           ref={webView => (this.mainWebView = webView)}
           onMessage={this.handleWebViewMessage}
-          showDevTools={false}
+          // showDevTools={false}
         />
       </View>
     )
