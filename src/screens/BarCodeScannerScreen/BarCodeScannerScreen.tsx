@@ -1,14 +1,14 @@
 import * as React from 'react'
 
-import keepAwake, { KeepAwakeProps } from 'hocs/keep-awake'
+import withKeepAwake, { KeepAwakeProps } from 'hocs/keep-awake'
+import withStatusBar from 'hocs/status-bar'
 
 import { MaterialIcons } from '@expo/vector-icons'
 import { BarCodeReadCallback, BarCodeScanner, Permissions } from 'expo'
 import { Button } from 'native-base'
 import { Platform, StyleSheet, View } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
-
-import StatusBar from 'components/StatusBar'
+import { compose } from 'recompose'
 
 import colors from 'constants/colors'
 
@@ -43,6 +43,10 @@ class BarcodeScannerScreen extends React.Component<
           isReady: true,
         })
       })
+
+    if (typeof this.props.onSetHidden === 'function') {
+      this.props.onSetHidden(true)
+    }
   }
 
   componentWillUnmount() {
@@ -84,10 +88,9 @@ class BarcodeScannerScreen extends React.Component<
     this.props.navigation.pop()
   }
 
-  public render() {
+  render() {
     return (
       <View style={styles.root}>
-        <StatusBar hidden />
         {this.state.isReady ? (
           <BarCodeScanner
             onBarCodeRead={this.handleBarCodeRead}
@@ -115,7 +118,10 @@ class BarcodeScannerScreen extends React.Component<
     )
   }
 }
-export default keepAwake(BarcodeScannerScreen)
+export default compose(
+  withStatusBar,
+  withKeepAwake,
+)(BarcodeScannerScreen)
 
 const styles = StyleSheet.create({
   root: {

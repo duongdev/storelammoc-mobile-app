@@ -5,7 +5,6 @@ import { KeepAwake } from 'expo'
 export interface KeepAwakeProps {
   keepAwake: boolean
 }
-
 /**
  * Keeps `WrappedComponent` awakes while being mounted
  * @param WrappedComponent

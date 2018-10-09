@@ -21,6 +21,7 @@ export function StatusBar({ hidden, ...props }: StatusBarProps) {
         translucent
         barStyle="light-content"
         hidden={hidden}
+        animated
         {...props}
       />
       {!hidden && <View style={styles.topSpacing} />}
