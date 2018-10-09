@@ -1,14 +1,14 @@
 import * as React from 'react'
 
-import withKeepAwake, { KeepAwakeProps } from 'hocs/keep-awake'
+import keepAwake from 'hocs/keep-awake'
 import withStatusBar from 'hocs/status-bar'
+import { compose } from 'recompose'
 
 import { MaterialIcons } from '@expo/vector-icons'
 import { BarCodeReadCallback, BarCodeScanner, Permissions } from 'expo'
 import { Button } from 'native-base'
 import { Platform, StyleSheet, View } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
-import { compose } from 'recompose'
 
 import colors from 'constants/colors'
 
@@ -22,7 +22,7 @@ interface BarCodeScannerStates {
 }
 
 class BarcodeScannerScreen extends React.Component<
-  BarCodeScannerProps & NavigationComponent & KeepAwakeProps,
+  BarCodeScannerProps & NavigationComponent,
   BarCodeScannerStates
 > {
   didFocusSubscription: any
@@ -119,8 +119,10 @@ class BarcodeScannerScreen extends React.Component<
   }
 }
 export default compose(
-  withStatusBar,
-  withKeepAwake,
+  withStatusBar({
+    hidden: true,
+  }),
+  keepAwake,
 )(BarcodeScannerScreen)
 
 const styles = StyleSheet.create({

@@ -1,51 +1,21 @@
 import * as React from 'react'
 
-import { StatusBar } from 'react-native'
+import { StatusBar, StatusBarProps } from 'react-native'
 
-export interface StatusBarProps {
-  hidden: boolean
-}
+interface WrappedComponentProps {}
 
-interface WrappedComponentProps {
-  onSetHidden: (hidden: boolean) => void
-}
-
-/**
- * Set status bar when `WrappedComponent` being mounted
- * @param WrappedComponent
- * @example StatusBar(SomeComponent)
- */
-const withStatusBar = <P extends object>(
+const withStatusBar = (statusBarProps: Partial<StatusBarProps> = {}) => <
+  P extends object
+>(
   WrappedComponent: React.ComponentType<P & WrappedComponentProps>,
-) => {
-  return class extends React.Component {
-    state = {
-      hidden: false,
-    }
+) => (props: P) => {
+  return (
+    <React.Fragment>
+      <StatusBar animated showHideTransition="slide" {...statusBarProps} />
 
-    handleSetHidden = (hidden: boolean) => {
-      this.setState({
-        hidden,
-      })
-    }
-
-    render() {
-      return (
-        <React.Fragment>
-          <StatusBar
-            hidden={this.state.hidden}
-            animated
-            showHideTransition="slide"
-          />
-
-          <WrappedComponent
-            {...this.props}
-            onSetHidden={this.handleSetHidden}
-          />
-        </React.Fragment>
-      )
-    }
-  }
+      <WrappedComponent {...props} />
+    </React.Fragment>
+  )
 }
 
 export default withStatusBar
