@@ -19,6 +19,7 @@
           "hocs": "./src/hocs",
           "utils": "./src/utils",
           "helpers": "./src/helpers",
+          "navigations": "./src/navigations",
 
           "dotenv": "react-native-dotenv"
         }

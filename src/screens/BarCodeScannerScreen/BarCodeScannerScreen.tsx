@@ -118,6 +118,7 @@ class BarcodeScannerScreen extends React.Component<
     )
   }
 }
+
 export default compose(
   withStatusBar({
     hidden: true,
