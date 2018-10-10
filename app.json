@@ -11,7 +11,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/transparent.png",
       "resizeMode": "contain",
       "backgroundColor": "#263238"
     },
@@ -34,7 +34,8 @@
       "bundleIdentifier": "com.lammoc.store"
     },
     "android": {
-      "package": "com.lammoc.store"
+      "package": "com.lammoc.store",
+      "versionCode": 1
     },
     "packagerOpts": {
       "assetExts": [
@@ -47,6 +48,16 @@
         "tsx"
       ],
       "transformer": "node_modules/react-native-typescript-transformer/index.js"
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "./notify",
+          "config": {
+            "webhookUrl": "https://hooks.slack.com/put-your-stuff-here"
+          }
+        }
+      ]
     }
   }
 }
