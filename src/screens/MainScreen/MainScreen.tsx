@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import {
   BackHandler,
+  Image,
   NativeSyntheticEvent,
   StyleSheet,
   View,
@@ -9,12 +10,13 @@ import {
 } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
-import StatusBar from 'components/StatusBar'
 import WebView from 'components/WebView'
 
 import colors from 'constants/colors'
 import env from 'constants/env'
 import { RECEIVED_MESSAGES, SEND_MESSAGES } from 'constants/web-messages'
+
+import images from '../../../assets/images'
 
 export interface MainScreenProps {}
 
@@ -74,15 +76,30 @@ export default class MainScreen extends React.Component<
     })
   }
 
+  renderWebViewLoading = () => {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.primary }}>
+        <Image
+          source={images.splash}
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+          resizeMode="contain"
+        />
+      </View>
+    )
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <StatusBar />
         <WebView
           source={{ uri: env.STORE_WEB_URL }}
           style={styles.mainWebView}
           ref={webView => (this.mainWebView = webView)}
           onMessage={this.handleWebViewMessage}
+          renderLoading={this.renderWebViewLoading}
           // showDevTools={false}
         />
       </View>
