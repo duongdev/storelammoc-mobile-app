@@ -48,16 +48,6 @@
         "tsx"
       ],
       "transformer": "node_modules/react-native-typescript-transformer/index.js"
-    },
-    "hooks": {
-      "postPublish": [
-        {
-          "file": "./notify",
-          "config": {
-            "webhookUrl": "https://hooks.slack.com/put-your-stuff-here"
-          }
-        }
-      ]
     }
   }
 }
