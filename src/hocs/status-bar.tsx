@@ -1,6 +1,7 @@
 import * as React from 'react'
 
-import { StatusBar, StatusBarProps } from 'react-native'
+import StatusBar from 'components/StatusBar'
+import { StatusBarProps } from 'react-native'
 
 interface WrappedComponentProps {}
 
