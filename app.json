@@ -31,11 +31,16 @@
     "ios": {
       "buildNumber": "1",
       "supportsTablet": false,
-      "bundleIdentifier": "com.lammoc.store"
+      "bundleIdentifier": "com.lammoc.store",
+      "icon": "./assets/images/logo.ios.png"
     },
     "android": {
       "package": "com.lammoc.store",
-      "versionCode": 1
+      "versionCode": 1,
+      "icon": "./assets/images/logo.android.png",
+      "adaptiveIcon": {
+        "backgroundColor": "#263238"
+      }
     },
     "packagerOpts": {
       "assetExts": [
