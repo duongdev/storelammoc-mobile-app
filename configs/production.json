@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "Store Làm Mộc",
+    "description": "Hệ thống siêu thị chuyên bán máy móc và dụng cụ làm mộc.",
+    "slug": "store-lam-moc",
+    "ios": {
+      "bundleIdentifier": "com.lammoc.store"
+    },
+    "android": {
+      "package": "com.lammoc.store"
+    },
+    "extra": {
+      "STORE_WEB_URL": "https://storelammoc.vn"
+    }
+  }
+}

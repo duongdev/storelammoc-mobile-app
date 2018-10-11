@@ -1,5 +1,7 @@
-import { STORE_WEB_URL } from 'react-native-dotenv'
+import { Constants } from 'expo'
 
-export default {
-  STORE_WEB_URL,
+const env = Constants.manifest.extra || {
+  STORE_WEB_URL: 'https://store.mock.love',
 }
+
+export default env

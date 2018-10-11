@@ -1,14 +1,11 @@
 {
   "expo": {
-    "name": "Store Làm Mộc Staging",
+    "name": "Store Làm Mộc",
     "description": "Hệ thống siêu thị chuyên bán máy móc và dụng cụ làm mộc.",
-    "slug": "store-lam-moc-staging",
+    "slug": "store-lam-moc",
     "privacy": "unlisted",
     "sdkVersion": "30.0.0",
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "version": "0.1.0",
     "primaryColor": "#263238",
     "orientation": "portrait",
@@ -25,20 +22,18 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "androidStatusBar": {
       "backgroundColor": "#26323800"
     },
     "ios": {
       "buildNumber": "1",
       "supportsTablet": false,
-      "bundleIdentifier": "com.lammoc.store.staging",
+      "bundleIdentifier": "com.lammoc.store",
       "icon": "./assets/images/logo.ios.png"
     },
     "android": {
-      "package": "com.lammoc.store.staging",
+      "package": "com.lammoc.store",
       "versionCode": 1,
       "icon": "./assets/images/logo.android.png",
       "adaptiveIcon": {
@@ -46,35 +41,12 @@
       }
     },
     "packagerOpts": {
-      "assetExts": [
-        "ttf",
-        "mp4",
-        "png"
-      ],
-      "sourceExts": [
-        "ts",
-        "tsx"
-      ],
+      "assetExts": ["ttf", "mp4", "png"],
+      "sourceExts": ["ts", "tsx"],
       "transformer": "node_modules/react-native-typescript-transformer/index.js"
     },
     "extra": {
-      "STORE_WEB_URL": "https://store.mock.love"
-    },
-    "hooks": {
-      "postPublish": [
-        {
-          "file": "./hook",
-          "config": {
-            "webhookUrl": "https://hooks.slack.com/services/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"
-          }
-        },
-        {
-          "file": "./notify",
-          "config": {
-            "webhookUrl": "https://hooks.slack.com/services/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"
-          }
-        }
-      ]
+      "STORE_WEB_URL": "https://storelammoc.vn"
     }
   }
 }

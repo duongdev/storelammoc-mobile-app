@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "Store Làm Mộc Dev",
+    "description": "Hệ thống siêu thị chuyên bán máy móc và dụng cụ làm mộc.",
+    "slug": "store-lam-moc-dev",
+    "ios": {
+      "bundleIdentifier": "com.lammoc.store.dev"
+    },
+    "android": {
+      "package": "com.lammoc.store.dev"
+    },
+    "extra": {
+      "STORE_WEB_URL": "https://store.mock.love"
+    }
+  }
+}
