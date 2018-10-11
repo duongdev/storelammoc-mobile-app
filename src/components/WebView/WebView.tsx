@@ -53,12 +53,14 @@ export default class WebView extends React.Component<
             Platform.OS === 'ios' ? patchPostMessageJsCode : ''
           }
           /*** ios ***/
-          // useWebKit FIXME: Enable on React Native >= 0.57.0
+          // FIXME: Enable on React Native >= 0.57.0
+          useWebKit
           bounces={false}
           onShouldStartLoadWithRequest={() => true}
           /*** android ***/
           domStorageEnabled
           ref={ref => (this.webView = ref)}
+          dataDetectorTypes="none"
           {...this.props}
         />
 
