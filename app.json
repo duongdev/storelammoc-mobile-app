@@ -59,22 +59,6 @@
     },
     "extra": {
       "STORE_WEB_URL": "https://store.mock.love"
-    },
-    "hooks": {
-      "postPublish": [
-        {
-          "file": "./hook",
-          "config": {
-            "webhookUrl": "https://hooks.slack.com/services/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"
-          }
-        },
-        {
-          "file": "./notify",
-          "config": {
-            "webhookUrl": "https://hooks.slack.com/services/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"
-          }
-        }
-      ]
     }
   }
 }

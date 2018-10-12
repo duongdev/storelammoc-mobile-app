@@ -24,8 +24,8 @@ const passedEnv = cliOptions.env || 'development'
 buildConfig(passedEnv)
 
 function buildConfig(env) {
-  const defaultPath = '/config/default.json'
-  const fpath = `config/${env}.json`
+  const defaultPath = '/configs/default.json'
+  const fpath = `configs/${env}.json`
   const defaultConfig = JSON.parse(
     fs.readFileSync(path.join(process.cwd(), defaultPath), 'utf8'),
   )
