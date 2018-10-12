@@ -24,14 +24,6 @@ export function StatusBar({ hidden, ...props }: StatusBarProps) {
         animated
         {...props}
       />
-      {!hidden && <View style={styles.topSpacing} />}
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  topSpacing: {
-    height: Constants.statusBarHeight,
-    backgroundColor: colors.primary,
-  },
-})

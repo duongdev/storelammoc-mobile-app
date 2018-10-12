@@ -1,9 +1,8 @@
 import * as React from 'react'
 
 import { AppLoading, Asset, SplashScreen, Updates } from 'expo'
-import { Image, View } from 'react-native'
+import { Image, StatusBar, View } from 'react-native'
 
-import StatusBar from 'components/StatusBar'
 import colors from 'constants/colors'
 import StackNavigator from 'navigations/StackNavigator'
 import images from '../assets/images'
@@ -26,6 +25,7 @@ class AppContainer extends React.Component<Props> {
   }
 
   componentDidMount() {
+    StatusBar.setBarStyle('light-content')
     Updates.addListener(this.handleUpdateListener)
   }
 
@@ -60,7 +60,6 @@ class AppContainer extends React.Component<Props> {
           startAsync={this.cacheSplashResourceAsync}
           onFinish={this.handleAppLoadingFinish}
           onError={this.handleAppLoadingError}
-          autoHideSplash={false}
         />
       )
     }
@@ -83,7 +82,6 @@ class AppContainer extends React.Component<Props> {
 
     return (
       <React.Fragment>
-        <StatusBar />
         <StackNavigator />
       </React.Fragment>
     )

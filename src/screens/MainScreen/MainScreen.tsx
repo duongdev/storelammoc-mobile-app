@@ -1,5 +1,7 @@
 import * as React from 'react'
 
+import withStatusBar from 'hocs/status-bar'
+
 import {
   BackHandler,
   Image,
@@ -20,12 +22,15 @@ import images from '../../../assets/images'
 
 export interface MainScreenProps {}
 
-export default class MainScreen extends React.Component<
+class MainScreen extends React.Component<
   MainScreenProps & NavigationComponent,
   any
 > {
   mainWebView: WebView | null = null
   backHandler: any
+  state = {
+    isLoading: true,
+  }
 
   componentDidMount = () => {
     this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -57,6 +62,9 @@ export default class MainScreen extends React.Component<
     switch (message) {
       case RECEIVED_MESSAGES.WEB_APP_LOADED:
         this.postMessageToWeb(SEND_MESSAGES.PING_BACK)
+        this.setState({
+          isLoading: false,
+        })
         return
 
       case RECEIVED_MESSAGES.OPEN_QR_SCANNER:
@@ -78,7 +86,7 @@ export default class MainScreen extends React.Component<
 
   renderWebViewLoading = () => {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.primary }}>
+      <View style={styles.loadingContainer}>
         <Image
           source={images.splash}
           style={{
@@ -99,13 +107,14 @@ export default class MainScreen extends React.Component<
           style={styles.mainWebView}
           ref={webView => (this.mainWebView = webView)}
           onMessage={this.handleWebViewMessage}
-          renderLoading={this.renderWebViewLoading}
-          // showDevTools={false}
         />
+        {this.state.isLoading && this.renderWebViewLoading()}
       </View>
     )
   }
 }
+
+export default withStatusBar({ hidden: false })(MainScreen)
 
 const styles = StyleSheet.create({
   container: {
@@ -115,6 +124,14 @@ const styles = StyleSheet.create({
   },
   mainWebView: {
     flex: 1,
+    backgroundColor: colors.primary,
+  },
+  loadingContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: colors.primary,
   },
 })
