@@ -4,7 +4,6 @@ import withStatusBar from 'hocs/status-bar'
 
 import {
   BackHandler,
-  Image,
   NativeSyntheticEvent,
   StyleSheet,
   View,
@@ -12,13 +11,12 @@ import {
 } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
+import SplashScreen from 'components/SplashScreen'
 import WebView from 'components/WebView'
 
 import colors from 'constants/colors'
 import env from 'constants/env'
 import { RECEIVED_MESSAGES, SEND_MESSAGES } from 'constants/web-messages'
-
-import images from '../../../assets/images'
 
 export interface MainScreenProps {}
 
@@ -29,7 +27,7 @@ class MainScreen extends React.Component<
   mainWebView: WebView | null = null
   backHandler: any
   state = {
-    isLoading: true,
+    isReady: false,
   }
 
   componentDidMount = () => {
@@ -63,7 +61,7 @@ class MainScreen extends React.Component<
       case RECEIVED_MESSAGES.WEB_APP_LOADED:
         this.postMessageToWeb(SEND_MESSAGES.PING_BACK)
         this.setState({
-          isLoading: false,
+          isReady: true,
         })
         return
 
@@ -84,22 +82,9 @@ class MainScreen extends React.Component<
     })
   }
 
-  renderWebViewLoading = () => {
-    return (
-      <View style={styles.loadingContainer}>
-        <Image
-          source={images.splash}
-          style={{
-            width: '100%',
-            height: '100%',
-          }}
-          resizeMode="contain"
-        />
-      </View>
-    )
-  }
-
   render() {
+    if (!this.state.isReady) return <SplashScreen />
+
     return (
       <View style={styles.container}>
         <WebView
@@ -108,7 +93,6 @@ class MainScreen extends React.Component<
           ref={webView => (this.mainWebView = webView)}
           onMessage={this.handleWebViewMessage}
         />
-        {this.state.isLoading && this.renderWebViewLoading()}
       </View>
     )
   }
@@ -124,14 +108,6 @@ const styles = StyleSheet.create({
   },
   mainWebView: {
     flex: 1,
-    backgroundColor: colors.primary,
-  },
-  loadingContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
     backgroundColor: colors.primary,
   },
 })

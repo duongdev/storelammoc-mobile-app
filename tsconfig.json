@@ -19,7 +19,7 @@
     "strict": true,
     "target": "es2017",
     "paths": {
-      "assets/*": ["assets/*"]
+      "assets/*": ["../assets/*"]
     }
   },
   "exclude": [
