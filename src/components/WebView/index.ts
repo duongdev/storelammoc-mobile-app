@@ -1,3 +1,1 @@
-import WebView from './WebView'
-
-export default WebView
+export { default } from './WebView'

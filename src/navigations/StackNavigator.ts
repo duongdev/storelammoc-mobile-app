@@ -1,8 +1,9 @@
 import { createStackNavigator } from 'react-navigation'
 
-import { screenWidth } from 'constants/metrics'
 import BarCodeScannerScreen from 'screens/BarCodeScannerScreen'
 import MainScreen from 'screens/MainScreen'
+
+import { screenWidth } from 'constants/metrics'
 
 const StackNavigator = createStackNavigator(
   {
