@@ -1,1 +1,3 @@
-export { default } from './StatusBar'
+import { StatusBar } from './StatusBar'
+
+export default StatusBar

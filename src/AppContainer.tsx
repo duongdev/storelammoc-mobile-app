@@ -3,10 +3,10 @@ import * as React from 'react'
 import { AppLoading, Asset, SplashScreen, Updates } from 'expo'
 import { Image, StatusBar, View } from 'react-native'
 
+import colors from 'constants/colors'
 import StackNavigator from 'navigations/StackNavigator'
 
 import images from 'assets/images'
-import colors from 'constants/colors'
 
 interface Props {}
 

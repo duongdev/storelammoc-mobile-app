@@ -83,15 +83,15 @@ class MainScreen extends React.Component<
   }
 
   render() {
-    if (!this.state.isReady) return <SplashScreen />
-
     return (
       <View style={styles.container}>
+        {this.state.isReady && <SplashScreen />}
         <WebView
           source={{ uri: env.STORE_WEB_URL }}
           style={styles.mainWebView}
           ref={webView => (this.mainWebView = webView)}
           onMessage={this.handleWebViewMessage}
+          renderLoading={SplashScreen}
         />
       </View>
     )

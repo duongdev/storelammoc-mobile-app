@@ -1,1 +1,2 @@
-export { default } from './BarCodeScannerScreen'
+import BarCodeScannerScreen from './BarCodeScannerScreen'
+export default BarCodeScannerScreen
