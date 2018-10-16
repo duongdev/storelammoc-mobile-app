@@ -10,6 +10,7 @@ import {
   WebViewProps as RNWebViewProps,
 } from 'react-native'
 
+import SwipeBackGesture from 'components/SwipeBackGesture'
 import { patchPostMessageJsCode } from './utils'
 
 export interface WebViewProps extends RNWebViewProps {
@@ -41,9 +42,15 @@ export default class WebView extends React.Component<
     this.setState({ error })
   }
 
+  handleGestureRelease = () => {
+    if (this.webView) {
+      this.webView.goBack()
+    }
+  }
+
   public render() {
     return (
-      <React.Fragment>
+      <SwipeBackGesture onRelease={this.handleGestureRelease}>
         <RNWebView
           /*** common ***/
           startInLoadingState
@@ -77,7 +84,7 @@ export default class WebView extends React.Component<
             />
           </View>
         )}
-      </React.Fragment>
+      </SwipeBackGesture>
     )
   }
 }
