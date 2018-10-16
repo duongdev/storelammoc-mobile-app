@@ -30,16 +30,22 @@ class MainScreen extends React.Component<
     isReady: false,
   }
 
+  // FIXME: Press back on android will exit app
   componentDidMount = () => {
     this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
       const { navigation } = this.props
       const isMainScreenFocused = navigation.isFocused()
 
-      if (isMainScreenFocused && this.mainWebView && this.mainWebView.webView) {
-        return this.mainWebView.webView.goBack()
+      if (isMainScreenFocused) {
+        if (this.mainWebView && this.mainWebView.webView) {
+          this.mainWebView.webView.goBack()
+          return true
+        }
+        return false
       }
 
-      return navigation.pop()
+      navigation.pop()
+      return true
     })
   }
 
@@ -85,7 +91,7 @@ class MainScreen extends React.Component<
   render() {
     return (
       <View style={styles.container}>
-        {this.state.isReady && <SplashScreen />}
+        {!this.state.isReady && <SplashScreen />}
         <WebView
           source={{ uri: env.STORE_WEB_URL }}
           style={styles.mainWebView}
