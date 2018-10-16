@@ -14,15 +14,16 @@ interface Props {
 interface State {
   gantY: number
   top: number
-  width: number
-  height: number
+  pathWidth: number
+  pathHeight: number
+  pathOpacity: Animated.Value
   moveY: number
   distanceX: number
   velocityX: number
 }
 
-const MAXHEIGHT = 150
-const MAXWIDTH = 40
+const MAXHEIGHT = 130
+const MAXWIDTH = 30
 
 const INIT_TOP = -MAXHEIGHT - Constants.statusBarHeight
 
@@ -30,9 +31,9 @@ export default class SwipeBackGesture extends Component<Props, State> {
   state = {
     gantY: INIT_TOP,
     top: INIT_TOP,
-    width: 1,
-    pathWidth: new Animated.Value(0),
-    height: MAXHEIGHT,
+    pathWidth: 0,
+    pathHeight: MAXHEIGHT,
+    pathOpacity: new Animated.Value(0),
     moveY: 0,
     distanceX: 0,
     velocityX: 0,
@@ -52,11 +53,19 @@ export default class SwipeBackGesture extends Component<Props, State> {
     if (maxWidth) {
       this.maxWidth = maxWidth
     }
+
+    this.state.pathOpacity.addListener(opacityAnim => {
+      const opacity = opacityAnim.value
+
+      this.path.setNativeProps({
+        opacity,
+      })
+    })
   }
 
   panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: (evt, gestureState) => {
-      if (evt.nativeEvent.pageX < 200) {
+      if (evt.nativeEvent.pageX < 30 && evt.nativeEvent.pageY > 100) {
         return true
       }
 
@@ -104,16 +113,16 @@ export default class SwipeBackGesture extends Component<Props, State> {
         top = this.state.gantY - this.maxHeight / 2
       }
 
-      Animated.timing(this.state.pathWidth, {
-        toValue: width,
-        duration: 1000 * velocityX,
+      Animated.timing(this.state.pathOpacity, {
+        toValue: width / this.maxWidth,
+        duration: 300 * velocityX,
         easing: Easing.bezier(0.075, 0.82, 0.165, 1),
-      })
+      }).start()
 
       this.setState({
-        height,
+        pathHeight: height,
+        pathWidth: width,
         top,
-        width,
         moveY,
         distanceX,
         velocityX,
@@ -126,17 +135,17 @@ export default class SwipeBackGesture extends Component<Props, State> {
       const distanceX = gestureState.dx
       const velocityX = gestureState.vx
 
-      Animated.timing(this.state.pathWidth, {
+      Animated.timing(this.state.pathOpacity, {
         toValue: 0,
-        duration: 1000 * velocityX,
+        duration: 300 * velocityX,
         easing: Easing.bezier(0.075, 0.82, 0.165, 1),
-      })
+      }).start()
 
       this.setState(
         {
+          pathHeight: this.maxHeight,
+          pathWidth: 0,
           top: this.initTop,
-          height: this.maxHeight,
-          width: 1,
         },
         () => {
           if (typeof this.props.onRelease === 'function') {
@@ -152,32 +161,32 @@ export default class SwipeBackGesture extends Component<Props, State> {
     onPanResponderTerminate: (evt, gestureState) => {
       // Another component has become the responder, so this gesture
       // should be cancelled
-      console.log(gestureState)
+      return false
     },
-    onShouldBlockNativeResponder: () => false,
+    onShouldBlockNativeResponder: () => true,
     onPanResponderReject: e => {
-      console.log(e)
+      return true
     },
   })
 
   path: any
 
   render() {
-    const { top, width, height, pathWidth } = this.state
-    const haftHeight = Math.round(height / 2)
+    const { top, pathWidth, pathHeight } = this.state
+    const haftHeight = Math.round(pathHeight / 2)
 
     return (
       <View style={styles.container} {...this.panResponder.panHandlers}>
         {this.props.children}
         <View style={[styles.svgContainer, { top }]}>
-          <Svg width={this.maxWidth} height={height || this.maxHeight}>
+          <Svg width={this.maxWidth} height={this.maxHeight * 1.1}>
             <Svg.Path
               ref={inst => (this.path = inst)}
               d={`
-                  M0,0
-                  C${width},${haftHeight} ${width},${haftHeight} 0,${height}
-                  Z
-                `}
+                M0,0
+                C${pathWidth},${haftHeight} ${pathWidth},${haftHeight} 0,${pathHeight}
+                Z
+              `}
               fill={colors.black}
             />
           </Svg>
