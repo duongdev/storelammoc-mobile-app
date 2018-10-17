@@ -110,7 +110,7 @@ export default compose(
   withStatusBar({
     hidden: true,
   }),
-  keepAwake,
+  keepAwake(),
   withGrantCamera,
 )(BarcodeScannerScreen)
 

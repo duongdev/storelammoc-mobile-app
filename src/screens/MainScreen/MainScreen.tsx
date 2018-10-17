@@ -17,6 +17,8 @@ import WebView from 'components/WebView'
 import colors from 'constants/colors'
 import env from 'constants/env'
 import { RECEIVED_MESSAGES, SEND_MESSAGES } from 'constants/web-messages'
+import keepAwake from 'hocs/keep-awake'
+import { compose } from 'recompose'
 
 export interface MainScreenProps {}
 
@@ -104,7 +106,10 @@ class MainScreen extends React.Component<
   }
 }
 
-export default withStatusBar({ hidden: false })(MainScreen)
+export default compose(
+  withStatusBar({ hidden: false }),
+  keepAwake(false),
+)(MainScreen)
 
 const styles = StyleSheet.create({
   container: {
