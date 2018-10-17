@@ -63,6 +63,8 @@ class BarcodeScannerScreen extends React.Component<
     if (this.didFocusSubscription) {
       this.didFocusSubscription.remove()
     }
+
+    clearTimeout(this.timeout)
   }
 
   mapProductData = (sku: string, product: any) => {
@@ -108,16 +110,15 @@ class BarcodeScannerScreen extends React.Component<
     }
   }
 
+  timeout: number = 0
   requestSKU = async (sku: string) => {
     try {
-      let timeout = null
-
       this.setState(
         {
           isFetching: true,
         },
         () => {
-          timeout = setTimeout(() => {
+          this.timeout = setTimeout(() => {
             this.setState({
               isFetchTimeout: true,
             })
@@ -136,7 +137,7 @@ class BarcodeScannerScreen extends React.Component<
         return false
       }
 
-      timeout && clearTimeout(timeout)
+      clearTimeout(this.timeout)
 
       if (res.status === 404) {
         return false

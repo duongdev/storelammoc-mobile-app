@@ -99,7 +99,7 @@ class CameraPermission extends React.Component<Props & NavigationComponent> {
 const withGrantCamera = <P extends object>(
   WrappedComponent: React.ComponentType<P>,
 ): React.SFC<P> => (props: P) => (
-  <CameraPermission>
+  <CameraPermission {...props}>
     <WrappedComponent {...props} />
   </CameraPermission>
 )
