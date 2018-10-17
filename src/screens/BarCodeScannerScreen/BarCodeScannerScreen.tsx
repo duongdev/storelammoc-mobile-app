@@ -7,8 +7,11 @@ import { compose } from 'recompose'
 
 import { MaterialIcons } from '@expo/vector-icons'
 import { BarCodeReadCallback, BarCodeScanner } from 'expo'
+import find from 'lodash/find'
+import get from 'lodash/get'
+import isEmpty from 'lodash/isEmpty'
 import { Button } from 'native-base'
-import { Platform, StyleSheet, View } from 'react-native'
+import { AsyncStorage, Platform, StyleSheet, View } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
 import colors from 'constants/colors'
@@ -62,6 +65,49 @@ class BarcodeScannerScreen extends React.Component<
     }
   }
 
+  mapProductData = (sku: string, product: any) => {
+    const variants = get(product, 'variants', [])
+    const data: {
+      _id: string
+      slug: string
+      variantId?: string
+    } = {
+      _id: product._id,
+      slug: product.slug,
+    }
+
+    if (!isEmpty(variants)) {
+      const variant = find(variants, variant => {
+        return variant.sku === sku
+      })
+      data.variantId = variant._id
+    }
+
+    return data
+  }
+
+  storageProduct = async (sku: string, mapedProduct: any) => {
+    try {
+      await AsyncStorage.setItem(`@sku:${sku}`, JSON.stringify(mapedProduct))
+    } catch (err) {
+      console.warn(err)
+    }
+  }
+
+  getProductFromStorage = async (sku: string) => {
+    try {
+      const productString = await AsyncStorage.getItem(`@sku:${sku}`)
+      if (!productString) {
+        return null
+      }
+
+      const product = JSON.parse(productString)
+      return product
+    } catch (err) {
+      console.warn(err)
+    }
+  }
+
   requestSKU = async (sku: string) => {
     try {
       let timeout = null
@@ -78,6 +124,12 @@ class BarcodeScannerScreen extends React.Component<
           }, 3000)
         },
       )
+
+      let product = await this.getProductFromStorage(sku)
+      if (product) {
+        return product
+      }
+
       const url = `${env.API_URL}/v2/products/${sku}?sku=true`
       const res = await fetch(url)
       if (this.state.isFetchTimeout) {
@@ -94,7 +146,12 @@ class BarcodeScannerScreen extends React.Component<
         isFetching: false,
       })
 
-      return await res.json()
+      product = await res.json()
+      const mapedProduct = this.mapProductData(sku, product)
+
+      this.storageProduct(sku, mapedProduct)
+
+      return mapedProduct
     } catch (err) {
       console.warn(err)
       return false
@@ -103,7 +160,6 @@ class BarcodeScannerScreen extends React.Component<
 
   handleBarCodeRead: BarCodeReadCallback = async params => {
     const { isFetching } = this.state
-    const now = Date.now()
 
     const onBarCodeRead = this.props.navigation.getParam(
       'onBarCodeRead',
@@ -117,7 +173,7 @@ class BarcodeScannerScreen extends React.Component<
     const product = await this.requestSKU(params.data)
 
     if (product) {
-      onBarCodeRead(params)
+      onBarCodeRead(product)
       return this.handleGoBack()
     }
 
