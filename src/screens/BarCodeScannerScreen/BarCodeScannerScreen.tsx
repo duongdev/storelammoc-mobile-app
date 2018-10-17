@@ -12,13 +12,19 @@ import { Platform, StyleSheet, View } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
 import colors from 'constants/colors'
+import env from 'constants/env'
 
+import LoadingOpacity from 'components/LoadingOpacity'
+import NoProductError from 'screens/BarCodeScannerScreen/components/NoProductError'
 import BarCodeScannerOverlay from './components/BarCodeScannerOverlay'
 
 export interface BarCodeScannerProps {}
 interface BarCodeScannerStates {
   lastScanAt: number
   isReady: boolean
+  isFetching: boolean
+  isFetchTimeout: boolean
+  isShowNoProduct: boolean
 }
 
 class BarcodeScannerScreen extends React.Component<
@@ -31,6 +37,9 @@ class BarcodeScannerScreen extends React.Component<
   state = {
     isReady: !this.isAndroid,
     lastScanAt: 0,
+    isFetching: false,
+    isFetchTimeout: false,
+    isShowNoProduct: false,
   }
 
   componentDidMount() {
@@ -53,8 +62,47 @@ class BarcodeScannerScreen extends React.Component<
     }
   }
 
-  handleBarCodeRead: BarCodeReadCallback = params => {
-    const { lastScanAt } = this.state
+  requestSKU = async (sku: string) => {
+    try {
+      let timeout = null
+
+      this.setState(
+        {
+          isFetching: true,
+        },
+        () => {
+          timeout = setTimeout(() => {
+            this.setState({
+              isFetchTimeout: true,
+            })
+          }, 3000)
+        },
+      )
+      const url = `${env.API_URL}/v2/products/${sku}?sku=true`
+      const res = await fetch(url)
+      if (this.state.isFetchTimeout) {
+        return false
+      }
+
+      timeout && clearTimeout(timeout)
+
+      if (res.status === 404) {
+        return false
+      }
+
+      this.setState({
+        isFetching: false,
+      })
+
+      return await res.json()
+    } catch (err) {
+      console.warn(err)
+      return false
+    }
+  }
+
+  handleBarCodeRead: BarCodeReadCallback = async params => {
+    const { isFetching } = this.state
     const now = Date.now()
 
     const onBarCodeRead = this.props.navigation.getParam(
@@ -62,16 +110,32 @@ class BarcodeScannerScreen extends React.Component<
       () => {},
     )
 
-    // Wait 2s before next scan
-    if (now - lastScanAt > 2000) {
-      this.setState({ lastScanAt: Date.now() })
-      onBarCodeRead(params)
-      this.handleGoBack()
+    if (isFetching) {
+      return
     }
+
+    const product = await this.requestSKU(params.data)
+
+    if (product) {
+      onBarCodeRead(params)
+      return this.handleGoBack()
+    }
+
+    this.setState({
+      isShowNoProduct: !product,
+    })
   }
 
   handleGoBack = () => {
     this.props.navigation.pop()
+  }
+
+  onCancelScan = () => {
+    this.setState({
+      isFetching: false,
+      isFetchTimeout: false,
+      isShowNoProduct: false,
+    })
   }
 
   render() {
@@ -87,6 +151,21 @@ class BarcodeScannerScreen extends React.Component<
           </BarCodeScanner>
         ) : (
           <BarCodeScannerOverlay />
+        )}
+
+        {this.state.isFetching &&
+          !this.state.isShowNoProduct && (
+            <LoadingOpacity
+              isRetry={this.state.isFetchTimeout}
+              onRetry={this.onCancelScan}
+            />
+          )}
+
+        {this.state.isShowNoProduct && (
+          <NoProductError
+            onRetry={this.onCancelScan}
+            onGoBack={this.handleGoBack}
+          />
         )}
 
         <Button

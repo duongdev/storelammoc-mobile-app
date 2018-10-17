@@ -1,6 +1,8 @@
 import * as React from 'react'
 
+import keepAwake from 'hocs/keep-awake'
 import withStatusBar from 'hocs/status-bar'
+import { compose } from 'recompose'
 
 import {
   BackHandler,
@@ -17,8 +19,6 @@ import WebView from 'components/WebView'
 import colors from 'constants/colors'
 import env from 'constants/env'
 import { RECEIVED_MESSAGES, SEND_MESSAGES } from 'constants/web-messages'
-import keepAwake from 'hocs/keep-awake'
-import { compose } from 'recompose'
 
 export interface MainScreenProps {}
 
@@ -84,7 +84,7 @@ class MainScreen extends React.Component<
 
   handleOpenBarcodeScanner = () => {
     this.props.navigation.navigate('BarCodeScanner', {
-      onBarCodeRead: ({ data }: { data: string }) => {
+      onBarCodeRead: async ({ data }: { data: string }) => {
         this.postMessageToWeb(`scanner-${data}`)
       },
     })

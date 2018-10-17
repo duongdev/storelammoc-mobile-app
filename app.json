@@ -64,7 +64,8 @@
       "transformer": "node_modules/react-native-typescript-transformer/index.js"
     },
     "extra": {
-      "STORE_WEB_URL": "https://store.mock.love"
+      "STORE_WEB_URL": "https://store.mock.love",
+      "API_URL": "https://api.mock.love"
     }
   }
 }
