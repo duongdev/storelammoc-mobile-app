@@ -1,11 +1,12 @@
 import * as React from 'react'
 
+import withGrantCamera from 'hocs/grant-camera'
 import keepAwake from 'hocs/keep-awake'
 import withStatusBar from 'hocs/status-bar'
 import { compose } from 'recompose'
 
 import { MaterialIcons } from '@expo/vector-icons'
-import { BarCodeReadCallback, BarCodeScanner, Permissions } from 'expo'
+import { BarCodeReadCallback, BarCodeScanner } from 'expo'
 import { Button } from 'native-base'
 import { Platform, StyleSheet, View } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
@@ -19,6 +20,7 @@ interface BarCodeScannerStates {
   lastScanAt: number
   hasCameraPermission: boolean
   isReady: boolean
+  isRequestVisble: boolean
 }
 
 class BarcodeScannerScreen extends React.Component<
@@ -31,11 +33,9 @@ class BarcodeScannerScreen extends React.Component<
   state = {
     isReady: !this.isAndroid,
     lastScanAt: 0,
-    hasCameraPermission: false,
   }
 
-  async componentDidMount() {
-    this.grantCameraPermission()
+  componentDidMount() {
     this.didFocusSubscription =
       this.isAndroid &&
       this.props.navigation.addListener('didFocus', () => {
@@ -53,18 +53,6 @@ class BarcodeScannerScreen extends React.Component<
     if (this.didFocusSubscription) {
       this.didFocusSubscription.remove()
     }
-  }
-
-  grantCameraPermission = async () => {
-    const { status: currentStatus } = await Permissions.getAsync(
-      Permissions.CAMERA,
-    )
-
-    if (currentStatus === 'granted')
-      return this.setState({ hasCameraPermission: currentStatus === 'granted' })
-
-    const { status } = await Permissions.askAsync(Permissions.CAMERA)
-    this.setState({ hasCameraPermission: status === 'granted' })
   }
 
   handleBarCodeRead: BarCodeReadCallback = params => {
@@ -86,6 +74,15 @@ class BarcodeScannerScreen extends React.Component<
 
   handleGoBack = () => {
     this.props.navigation.pop()
+  }
+
+  requestCloseModal = () => {
+    this.setState(
+      {
+        isRequestVisble: false,
+      },
+      this.handleGoBack,
+    )
   }
 
   render() {
@@ -124,6 +121,7 @@ export default compose(
     hidden: true,
   }),
   keepAwake,
+  withGrantCamera,
 )(BarcodeScannerScreen)
 
 const styles = StyleSheet.create({
