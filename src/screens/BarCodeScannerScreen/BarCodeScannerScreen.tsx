@@ -18,9 +18,7 @@ import BarCodeScannerOverlay from './components/BarCodeScannerOverlay'
 export interface BarCodeScannerProps {}
 interface BarCodeScannerStates {
   lastScanAt: number
-  hasCameraPermission: boolean
   isReady: boolean
-  isRequestVisble: boolean
 }
 
 class BarcodeScannerScreen extends React.Component<
@@ -76,20 +74,12 @@ class BarcodeScannerScreen extends React.Component<
     this.props.navigation.pop()
   }
 
-  requestCloseModal = () => {
-    this.setState(
-      {
-        isRequestVisble: false,
-      },
-      this.handleGoBack,
-    )
-  }
-
   render() {
     return (
       <View style={styles.root}>
         {this.state.isReady ? (
           <BarCodeScanner
+            torchMode="on"
             onBarCodeRead={this.handleBarCodeRead}
             style={[StyleSheet.absoluteFill]}
           >
