@@ -8,6 +8,9 @@ interface Props {}
 
 class CameraPermission extends React.Component<Props & NavigationComponent> {
   isAndroid = Platform.OS === 'android'
+  state = {
+    granted: false,
+  }
 
   async componentDidMount() {
     await this.grantCameraPermission()
@@ -38,9 +41,10 @@ class CameraPermission extends React.Component<Props & NavigationComponent> {
       const { status: currentStatus } = await Permissions.getAsync(
         Permissions.CAMERA,
       )
-
       if (currentStatus === 'granted') {
-        return
+        return this.setState({
+          granted: true,
+        })
       }
 
       if (currentStatus === 'denied') {
@@ -74,12 +78,20 @@ class CameraPermission extends React.Component<Props & NavigationComponent> {
 
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
           this.handleGoBack()
+        } else {
+          this.setState({
+            granted: true,
+          })
         }
       } else {
         const { status } = await Permissions.askAsync(Permissions.CAMERA)
 
         if (status !== 'granted') {
           this.handleGoBack()
+        } else {
+          this.setState({
+            granted: true,
+          })
         }
       }
     } catch (err) {
@@ -92,7 +104,18 @@ class CameraPermission extends React.Component<Props & NavigationComponent> {
   }
 
   render() {
-    return <React.Fragment>{this.props.children}</React.Fragment>
+    if (!this.props.children) {
+      return null
+    }
+
+    const Component = React.cloneElement(
+      this.props.children as React.ReactElement<any>,
+      {
+        granted: this.state.granted,
+      },
+    )
+
+    return <React.Fragment>{Component}</React.Fragment>
   }
 }
 

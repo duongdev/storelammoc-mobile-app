@@ -21,17 +21,18 @@ import LoadingOpacity from 'components/LoadingOpacity'
 import NoProductError from 'screens/BarCodeScannerScreen/components/NoProductError'
 import BarCodeScannerOverlay from './components/BarCodeScannerOverlay'
 
-export interface BarCodeScannerProps {}
+export interface BarCodeScannerProps extends NavigationComponent {}
 interface BarCodeScannerStates {
   lastScanAt: number
   isReady: boolean
   isFetching: boolean
   isFetchTimeout: boolean
   isShowNoProduct: boolean
+  granted: boolean
 }
 
 class BarcodeScannerScreen extends React.Component<
-  BarCodeScannerProps & NavigationComponent,
+  BarCodeScannerProps,
   BarCodeScannerStates
 > {
   didFocusSubscription: any
@@ -46,14 +47,6 @@ class BarcodeScannerScreen extends React.Component<
   }
 
   componentDidMount() {
-    this.didFocusSubscription =
-      this.isAndroid &&
-      this.props.navigation.addListener('didFocus', () => {
-        this.setState({
-          isReady: true,
-        })
-      })
-
     if (typeof this.props.onSetHidden === 'function') {
       this.props.onSetHidden(true)
     }
@@ -198,17 +191,13 @@ class BarcodeScannerScreen extends React.Component<
   render() {
     return (
       <View style={styles.root}>
-        {this.state.isReady ? (
-          <BarCodeScanner
-            torchMode="on"
-            onBarCodeRead={this.handleBarCodeRead}
-            style={[StyleSheet.absoluteFill]}
-          >
-            <BarCodeScannerOverlay />
-          </BarCodeScanner>
-        ) : (
+        <BarCodeScanner
+          torchMode="on"
+          onBarCodeRead={this.handleBarCodeRead}
+          style={[StyleSheet.absoluteFill]}
+        >
           <BarCodeScannerOverlay />
-        )}
+        </BarCodeScanner>
 
         {this.state.isFetching &&
           !this.state.isShowNoProduct && (
