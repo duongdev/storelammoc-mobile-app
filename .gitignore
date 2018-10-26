@@ -9,3 +9,6 @@ npm-debug.*
 yarn-error\.log
 
 .env.development
+app\.json
+
+configs/*\.local\.json

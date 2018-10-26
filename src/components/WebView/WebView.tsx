@@ -11,10 +11,12 @@ import {
 } from 'react-native'
 
 import SwipeBackGesture from 'components/SwipeBackGesture'
+
 import { patchPostMessageJsCode } from './utils'
 
 export interface WebViewProps extends RNWebViewProps {
   showDevTools?: boolean
+  isMainScreen: boolean
 }
 
 interface WebViewStates {
@@ -50,11 +52,13 @@ export default class WebView extends React.Component<
 
   public render() {
     return (
-      <SwipeBackGesture onRelease={this.handleGestureRelease}>
+      <SwipeBackGesture
+        isMainScreen={this.props.isMainScreen}
+        onRelease={this.handleGestureRelease}
+      >
         <RNWebView
           /*** common ***/
           startInLoadingState
-          onNavigationStateChange={this.handleNavigationStateChange}
           onError={this.handleError}
           injectedJavaScript={
             Platform.OS === 'ios' ? patchPostMessageJsCode : ''
@@ -63,9 +67,9 @@ export default class WebView extends React.Component<
           // FIXME: Enable on React Native >= 0.57.0
           useWebKit
           bounces={false}
-          onShouldStartLoadWithRequest={() => true}
           /*** android ***/
           domStorageEnabled
+          javaScriptEnabled
           ref={ref => (this.webView = ref)}
           dataDetectorTypes="none"
           {...this.props}
@@ -73,7 +77,6 @@ export default class WebView extends React.Component<
 
         {this.props.showDevTools && (
           <View style={styles.devTools}>
-            <Text>{this.state.navState && this.state.navState.url}</Text>
             <Button
               title="Back"
               onPress={() => this.webView && this.webView.goBack()}

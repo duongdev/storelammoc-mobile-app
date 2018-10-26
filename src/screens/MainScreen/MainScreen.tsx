@@ -1,10 +1,12 @@
 import * as React from 'react'
 
-import keepAwake from 'hocs/keep-awake'
-import withStatusBar from 'hocs/status-bar'
 import { compose } from 'recompose'
 
+import keepAwake from 'hocs/keep-awake'
+import withStatusBar from 'hocs/status-bar'
+
 import {
+  Alert,
   BackHandler,
   NativeSyntheticEvent,
   StyleSheet,
@@ -30,6 +32,7 @@ class MainScreen extends React.Component<
   backHandler: any
   state = {
     isReady: false,
+    isMainScreen: true,
   }
 
   // FIXME: Press back on android will exit app
@@ -67,17 +70,26 @@ class MainScreen extends React.Component<
 
     switch (message) {
       case RECEIVED_MESSAGES.WEB_APP_LOADED:
-        this.postMessageToWeb(SEND_MESSAGES.PING_BACK)
         this.setState({
           isReady: true,
         })
+        this.postMessageToWeb(SEND_MESSAGES.PING_BACK)
         return
 
       case RECEIVED_MESSAGES.OPEN_QR_SCANNER:
         this.handleOpenBarcodeScanner()
         return
 
+      case RECEIVED_MESSAGES.ENTER_HOME_SCREEN:
+        this.setState({
+          isMainScreen: true,
+        })
+        return
+
       default:
+        this.setState({
+          isMainScreen: false,
+        })
         return
     }
   }
@@ -98,17 +110,24 @@ class MainScreen extends React.Component<
     })
   }
 
+  handleWebViewLoadEnd = () => {
+    this.setState({
+      isReady: true,
+    })
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        {!this.state.isReady && <SplashScreen />}
         <WebView
+          onLoadEnd={this.handleWebViewLoadEnd}
+          isMainScreen={this.state.isMainScreen}
           source={{ uri: env.STORE_WEB_URL }}
           style={styles.mainWebView}
           ref={webView => (this.mainWebView = webView)}
           onMessage={this.handleWebViewMessage}
-          renderLoading={SplashScreen}
         />
+        {!this.state.isReady && <SplashScreen />}
       </View>
     )
   }

@@ -27,7 +27,7 @@
       "backgroundColor": "#26323800"
     },
     "ios": {
-      "buildNumber": "2",
+      "buildNumber": "4",
       "supportsTablet": false,
       "bundleIdentifier": "com.lammoc.store",
       "icon": "./assets/images/logo.ios.png",
@@ -37,7 +37,7 @@
     },
     "android": {
       "package": "com.lammoc.store",
-      "versionCode": 2,
+      "versionCode": 4,
       "icon": "./assets/images/logo.android.png",
       "adaptiveIcon": {
         "backgroundColor": "#263238"

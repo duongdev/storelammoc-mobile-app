@@ -26,15 +26,21 @@ buildConfig(passedEnv)
 function buildConfig(env) {
   const defaultPath = '/configs/default.json'
   const fpath = `configs/${env}.json`
+  const fpathLocal = `configs/${env}.local.json`
   const defaultConfig = JSON.parse(
     fs.readFileSync(path.join(process.cwd(), defaultPath), 'utf8'),
   )
+  const hasLocalFile = fs.existsSync(fpathLocal)
+  const localConfig = hasLocalFile
+    ? JSON.parse(fs.readFileSync(path.join(process.cwd(), fpathLocal), 'utf8'))
+    : {}
+
   let mergedConfig = defaultConfig
 
   if (fs.existsSync(fpath)) {
     const config =
       JSON.parse(fs.readFileSync(path.join(process.cwd(), fpath)), 'utf8') || {}
-    mergedConfig = lodash.merge(defaultConfig, config)
+    mergedConfig = lodash.merge(defaultConfig, config, localConfig)
   }
 
   fs.writeFile(
