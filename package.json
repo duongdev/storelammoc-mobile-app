@@ -11,6 +11,8 @@
     "android": "expo start -c --android",
     "ios": "expo start -c --ios",
     "eject": "expo eject",
+    "publish:staging": "expo publish --release-channel staging",
+    "publish:production": "expo publish --release-channel production",
     "build:staging:ios": "npm run make:staging && expo build:ios --release-channel staging",
     "build:production:ios": "npm run make:production && expo build:ios --release-channel production",
     "build:staging:android": "npm run make:staging && expo build:android --release-channel staging",

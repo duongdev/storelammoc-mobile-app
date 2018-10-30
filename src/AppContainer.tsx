@@ -1,12 +1,13 @@
 import * as React from 'react'
 
 import { AppLoading, Asset, SplashScreen, Updates } from 'expo'
-import { Image, StatusBar, View } from 'react-native'
+import { Alert, Image, StatusBar, View } from 'react-native'
 
 import colors from 'constants/colors'
 import StackNavigator from 'navigations/StackNavigator'
 
 import images from 'assets/images'
+import { TopToast } from 'components/TopToast'
 
 interface Props {}
 
@@ -15,6 +16,7 @@ class AppContainer extends React.Component<Props> {
     isReady: false,
     isSplashReady: false,
     isSplashError: false,
+    isNewUpdate: false,
   }
 
   handleUpdateListener = (event: Updates.UpdateEvent) => {
@@ -25,8 +27,25 @@ class AppContainer extends React.Component<Props> {
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     StatusBar.setBarStyle('light-content')
+
+    try {
+      const update = await Updates.checkForUpdateAsync()
+
+      setTimeout(() => {
+        this.setState({
+          isNewUpdate: update.isAvailable,
+        })
+      }, 100)
+
+      if (update.isAvailable) {
+        await Updates.fetchUpdateAsync()
+      }
+    } catch (e) {
+      // ignore
+    }
+
     Updates.addListener(this.handleUpdateListener)
   }
 
@@ -76,6 +95,10 @@ class AppContainer extends React.Component<Props> {
             }}
             resizeMode="contain"
             onLoad={this.cacheAppResourceAsync}
+          />
+          <TopToast
+            isVisible={this.state.isNewUpdate}
+            message="Có bản cập nhật mới, ứng dụng sẽ được mở lại"
           />
         </View>
       )

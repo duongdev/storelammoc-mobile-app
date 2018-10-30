@@ -7,4 +7,6 @@ export default {
   white: 'white',
   blackOpacity: 'rgba(0.2, 0.2, 0.2, 0.6)',
   black: 'black',
+  red: 'red',
+  green: 'green',
 }
