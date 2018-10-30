@@ -10,7 +10,7 @@
       "package": "com.lammoc.store.staging"
     },
     "extra": {
-      "STORE_WEB_URL": "https://store.mock.love",
+      "STORE_WEB_URL": "https://store.mock.love?rn-webview=true",
       "API_URL": "https://api.mock.love"
     }
   }

@@ -10,7 +10,7 @@
       "package": "com.lammoc.store.dev"
     },
     "extra": {
-      "STORE_WEB_URL": "http://192.168.0.105:3000"
+      "STORE_WEB_URL": "http://192.168.0.105:3000?rn-webview=true"
     }
   }
 }

@@ -50,7 +50,7 @@
       "transformer": "node_modules/react-native-typescript-transformer/index.js"
     },
     "extra": {
-      "STORE_WEB_URL": "https://storelammoc.vn",
+      "STORE_WEB_URL": "https://storelammoc.vn?rn-webview=true",
       "API_URL": "https://api.storelammoc.vn"
     }
   }
