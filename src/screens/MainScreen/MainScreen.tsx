@@ -16,6 +16,7 @@ import {
 import { NavigationComponent } from 'react-navigation'
 
 import SplashScreen from 'components/SplashScreen'
+import { OfflineNotice } from 'components/TopToast'
 import WebView from 'components/WebView'
 
 import colors from 'constants/colors'
@@ -128,6 +129,7 @@ class MainScreen extends React.Component<
           onMessage={this.handleWebViewMessage}
         />
         {!this.state.isReady && <SplashScreen />}
+        <OfflineNotice />
       </View>
     )
   }

@@ -9,4 +9,6 @@ export default {
   black: 'black',
   red: 'red',
   green: 'green',
+  yellow: 'yellow',
+  organce: 'organce',
 }
