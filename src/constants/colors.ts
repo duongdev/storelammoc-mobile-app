@@ -5,6 +5,7 @@ export default {
 
   transparent: 'transparent',
   white: 'white',
+  whiteOpacity: 'rgba(255, 255, 255, 0.4)',
   blackOpacity: 'rgba(0.2, 0.2, 0.2, 0.6)',
   black: 'black',
   red: 'red',

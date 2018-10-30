@@ -18,6 +18,7 @@
           "constants": "./src/constants",
           "hocs": "./src/hocs",
           "utils": "./src/utils",
+          "services": "./src/services",
           "helpers": "./src/helpers",
           "navigations": "./src/navigations"
         }

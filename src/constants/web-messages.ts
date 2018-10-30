@@ -5,6 +5,10 @@ export const RECEIVED_MESSAGES = {
   OPEN_QR_SCANNER: 'OPEN_QR_SCANNER',
   /** Event message when webapp post enter to home screen message - webapp was stay at home screen */
   ENTER_HOME_SCREEN: 'ENTER_HOME_SCREEN',
+  /** Event message when webapp post leave out home screen message - webapp was stay at home screen */
+  LEAVE_HOME_SCREEN: 'LEAVE_HOME_SCREEN',
+  /** Event message when webapp post a message to open search box */
+  OPEN_SEARCH_BOX: 'OPEN_SEARCH_BOX',
 }
 
 export const SEND_MESSAGES = {

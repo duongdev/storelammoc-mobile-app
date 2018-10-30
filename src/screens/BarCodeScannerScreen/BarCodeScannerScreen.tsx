@@ -1,3 +1,7 @@
+import find from 'lodash/find'
+import get from 'lodash/get'
+import isEmpty from 'lodash/isEmpty'
+
 import * as React from 'react'
 
 import withGrantCamera from 'hocs/grant-camera'
@@ -7,9 +11,6 @@ import { compose } from 'recompose'
 
 import { MaterialIcons } from '@expo/vector-icons'
 import { BarCodeReadCallback, BarCodeScanner } from 'expo'
-import find from 'lodash/find'
-import get from 'lodash/get'
-import isEmpty from 'lodash/isEmpty'
 import { Button } from 'native-base'
 import { AsyncStorage, Platform, StyleSheet, View } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
@@ -19,6 +20,7 @@ import env from 'constants/env'
 
 import LoadingOpacity from 'components/LoadingOpacity'
 import NoProductError from 'screens/BarCodeScannerScreen/components/NoProductError'
+
 import BarCodeScannerOverlay from './components/BarCodeScannerOverlay'
 
 export interface BarCodeScannerProps extends NavigationComponent {}
@@ -28,7 +30,6 @@ interface BarCodeScannerStates {
   isFetching: boolean
   isFetchTimeout: boolean
   isShowNoProduct: boolean
-  granted: boolean
 }
 
 class BarcodeScannerScreen extends React.Component<
@@ -168,7 +169,7 @@ class BarcodeScannerScreen extends React.Component<
 
     if (product) {
       onBarCodeRead(product)
-      return this.handleGoBack()
+      return this.handleGoTop()
     }
 
     this.setState({
@@ -178,6 +179,10 @@ class BarcodeScannerScreen extends React.Component<
 
   handleGoBack = () => {
     this.props.navigation.pop()
+  }
+
+  handleGoTop = () => {
+    this.props.navigation.popToTop()
   }
 
   onCancelScan = () => {
@@ -216,15 +221,11 @@ class BarcodeScannerScreen extends React.Component<
 
         <Button
           onPress={this.handleGoBack}
-          style={styles.goBackButton}
+          style={{ ...StyleSheet.flatten(styles.goBackButton) }}
           iconLeft
           transparent
         >
-          <MaterialIcons
-            name={this.isAndroid ? 'close' : 'arrow-back'}
-            size={32}
-            color={colors.white}
-          />
+          <MaterialIcons name="arrow-back" size={25} color={colors.white} />
         </Button>
       </View>
     )

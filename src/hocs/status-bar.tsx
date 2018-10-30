@@ -16,7 +16,16 @@ const withStatusBar = (statusBarProps: Partial<StatusBarProps> = {}) => <
   return (
     <React.Fragment>
       <StatusBar animated showHideTransition="slide" {...statusBarProps} />
-      {!statusBarProps.hidden && <View style={styles.topSpacing} />}
+      {!statusBarProps.hidden && (
+        <View
+          style={[
+            styles.topSpacing,
+            {
+              backgroundColor: statusBarProps.backgroundColor || colors.primary,
+            },
+          ]}
+        />
+      )}
       <WrappedComponent {...props} />
     </React.Fragment>
   )

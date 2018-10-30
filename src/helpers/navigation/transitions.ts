@@ -7,9 +7,8 @@ const fadeInLeft = (transitionProps: NavigationTransitionProps) => {
 
   const translateX = position.interpolate({
     inputRange: [index - 1, index, index + 1],
-    outputRange: [initWidth, 0, 0],
+    outputRange: [initWidth, 0, initWidth * -0.3],
   })
-
   const opacity = position.interpolate({
     inputRange: [index - 1, index - 0.99, index],
     outputRange: [0, 1, 1],

@@ -6,7 +6,6 @@ import keepAwake from 'hocs/keep-awake'
 import withStatusBar from 'hocs/status-bar'
 
 import {
-  Alert,
   BackHandler,
   NativeSyntheticEvent,
   StyleSheet,
@@ -36,7 +35,6 @@ class MainScreen extends React.Component<
     isMainScreen: true,
   }
 
-  // FIXME: Press back on android will exit app
   componentDidMount = () => {
     this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
       const { navigation } = this.props
@@ -69,6 +67,18 @@ class MainScreen extends React.Component<
   ) => {
     const message = event.nativeEvent.data
 
+    if (message.match(new RegExp(`${RECEIVED_MESSAGES.OPEN_SEARCH_BOX}.*?$`))) {
+      const searchText = message.replace(
+        `${RECEIVED_MESSAGES.OPEN_SEARCH_BOX}:`,
+        '',
+      )
+      this.props.navigation.navigate('SearchBox', {
+        barStyle: 'light-content',
+        searchText,
+        postMessageToWeb: this.postMessageToWeb,
+      })
+    }
+
     switch (message) {
       case RECEIVED_MESSAGES.WEB_APP_LOADED:
         this.setState({
@@ -87,10 +97,13 @@ class MainScreen extends React.Component<
         })
         return
 
-      default:
+      case RECEIVED_MESSAGES.LEAVE_HOME_SCREEN:
         this.setState({
           isMainScreen: false,
         })
+        return
+
+      default:
         return
     }
   }
@@ -115,6 +128,8 @@ class MainScreen extends React.Component<
     this.setState({
       isReady: true,
     })
+
+    this.postMessageToWeb(SEND_MESSAGES.PING_BACK)
   }
 
   render() {

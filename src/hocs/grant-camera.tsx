@@ -64,6 +64,9 @@ class CameraPermission extends React.Component<Props & NavigationComponent> {
               onPress: this.openAppSetting,
             },
           ],
+          {
+            cancelable: false,
+          },
         )
       }
 
