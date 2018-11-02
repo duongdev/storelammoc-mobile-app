@@ -61,16 +61,16 @@ interface IProduct {
 interface SearchBoxState {
   error: any
   products: Array<IProduct>
-  isLoading: boolean
-  value: string
+  loading: boolean
+  searchText: string
 }
 
 class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
   state = {
     error: null,
     products: [],
-    isLoading: false,
-    value: '',
+    loading: false,
+    searchText: '',
   }
 
   isAndroid = Platform.OS === 'android'
@@ -83,10 +83,10 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     StatusBar.setBarStyle('dark-content')
     this.setState(
       {
-        value: this.searchText,
+        searchText: this.searchText,
       },
       () => {
-        this.search(this.state.value)
+        this.search(this.state.searchText)
       },
     )
   }
@@ -96,7 +96,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     const barStyle = get(navigation, 'state.params.barStyle') || 'light-content'
     StatusBar.setBarStyle(barStyle)
 
-    this.postMessageToWeb(`product-search:${this.state.value}`)
+    this.postMessageToWeb(`product-search:${this.state.searchText}`)
   }
 
   handleGoBack = () => {
@@ -111,15 +111,18 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     this.props.navigation.navigate('BarCodeScanner')
   }
 
-  async _search(text: string) {
+  _search = async (text: string) => {
     if (isEmpty(text)) {
       return
     }
 
-    this.setState({ isLoading: true })
+    this.setState({ loading: true })
 
     try {
-      const { products } = await quickSearch(text)
+      const { products, text: prevText } = await quickSearch(text)
+
+      if (prevText !== this.state.searchText) return
+
       this.setState({
         products,
       })
@@ -127,17 +130,16 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
       console.error(error)
     }
 
-    this.setState({ isLoading: false })
+    this.setState({ loading: false })
   }
-  search = debounce(this._search, 1000)
+  search = debounce(this._search, 500)
 
-  handleChangeText = async (value: string) => {
+  handleChangeText = async (searchText: string) => {
     this.setState({
-      value,
-      isLoading: !isEmpty(value),
+      searchText,
     })
 
-    await this.search(value)
+    await this.search(searchText)
   }
 
   handleProductPress = (product: IProduct) => {
@@ -152,7 +154,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
       ? { uri: `${env.API_URL}/files/${get(item, 'images[0]')}?size=thumb` }
       : images.logo
     const price = Number(get(item, 'variants[0].price', 0))
-    const variants = item.variants
+    const variants = item.variants || []
 
     return (
       <ListItem
@@ -167,7 +169,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
           <Text>{item.name}</Text>
           <Text note>{`${map(variants.slice(0, 3), variant => {
             return variant.name
-          })}...`}</Text>
+          }).join('; ')}${variants.length > 3 ? '...' : ''}`}</Text>
         </Body>
         <Right>
           <Text>{`${numeral(price).format('0,0')}₫`}</Text>
@@ -177,7 +179,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
   }
 
   renderEmpty = () => {
-    if (isEmpty(this.state.value)) {
+    if (isEmpty(this.state.searchText)) {
       return null
     }
 
@@ -189,6 +191,8 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
   }
 
   render() {
+    const { loading } = this.state
+
     return (
       <Container>
         <Header
@@ -207,7 +211,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
                 placeholder="Tìm kiếm..."
                 style={styles.textInput}
                 onChangeText={this.handleChangeText}
-                value={this.state.value}
+                value={this.state.searchText}
                 autoFocus
                 selectTextOnFocus
               />
@@ -227,10 +231,10 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
           <FlatList
             data={this.state.products}
             renderItem={this.renderItem}
-            ListEmptyComponent={this.renderEmpty}
+            ListEmptyComponent={!loading ? this.renderEmpty : null}
             keyExtractor={this.keyExtractor}
           />
-          {this.state.isLoading && (
+          {loading && (
             <View style={styles.loadingContainer}>
               <ActivityIndicator />
             </View>
@@ -250,11 +254,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    right: 0,
+    width: '100%',
+    height: '100%',
     flex: 1,
     padding: 20,
     backgroundColor: colors.whiteOpacity,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
   emptyContainer: {
@@ -264,10 +269,13 @@ const styles = StyleSheet.create({
   },
   leftHeader: {
     flex: 0,
-    paddingRight: 10,
+    paddingRight: 8,
+    paddingLeft: 8,
   },
   rightHeader: {
     flex: 0,
+    paddingRight: 8,
+    paddingLeft: 8,
   },
   textInputContainer: {
     flex: 1,
