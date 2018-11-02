@@ -1,6 +1,6 @@
 import env from 'constants/env'
 
-const instanceSearch = async (
+const quickSearch = async (
   text: string,
   __mask = 'products(id,name,slug,images,variants(name,sku,price))',
 ) => {
@@ -17,4 +17,4 @@ const instanceSearch = async (
   }
 }
 
-export default instanceSearch
+export default quickSearch

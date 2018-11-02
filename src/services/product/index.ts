@@ -1,3 +1,3 @@
-import instanceSearch from './instanceSearch'
+import quickSearch from './quickSearch'
 
-export { instanceSearch }
+export { quickSearch }

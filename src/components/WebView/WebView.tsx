@@ -4,7 +4,6 @@ import {
   NavState,
   Platform,
   StyleSheet,
-  Text,
   View,
   WebView as RNWebView,
   WebViewProps as RNWebViewProps,

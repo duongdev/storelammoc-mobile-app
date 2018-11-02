@@ -5,9 +5,16 @@ import map from 'lodash/map'
 import numeral from 'numeral'
 
 import React, { Component } from 'react'
+import {
+  ActivityIndicator,
+  FlatList,
+  Platform,
+  StatusBar,
+  StyleSheet,
+} from 'react-native'
 
 import withStatusBar from 'hocs/status-bar'
-import { compose, mapProps } from 'recompose'
+import { compose } from 'recompose'
 
 import { NavigationComponent } from 'react-navigation'
 
@@ -27,19 +34,13 @@ import {
   Thumbnail,
   View,
 } from 'native-base'
-import {
-  ActivityIndicator,
-  FlatList,
-  Platform,
-  StatusBar,
-  StyleSheet,
-} from 'react-native'
 
 import colors from 'constants/colors'
+import env from 'constants/env'
+
+import { quickSearch } from 'services/product'
 
 import images from 'assets/images'
-import env from 'constants/env'
-import { instanceSearch } from 'services/product'
 
 interface SearchBoxProps extends NavigationComponent {}
 
@@ -118,7 +119,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     this.setState({ isLoading: true })
 
     try {
-      const { products } = await instanceSearch(text)
+      const { products } = await quickSearch(text)
       this.setState({
         products,
       })

@@ -47,7 +47,7 @@ class CameraPermission extends React.Component<Props & NavigationComponent> {
         })
       }
 
-      if (currentStatus === 'denied') {
+      if (currentStatus === 'denied' && !__DEV__) {
         return Alert.alert(
           'Cho phép sử dụng camera',
           this.isAndroid

@@ -28,7 +28,7 @@ const StackNavigator = createStackNavigator(
     transitionConfig: () => {
       return {
         transitionSpec: {
-          duration: 750,
+          duration: 300,
           easing: Easing.out(Easing.cubic),
           timing: Animated.timing,
           useNativeDriver: true,
