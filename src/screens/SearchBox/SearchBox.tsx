@@ -62,7 +62,7 @@ interface SearchBoxState {
   error: any
   products: Array<IProduct>
   loading: boolean
-  value: string
+  searchText: string
 }
 
 class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
@@ -70,7 +70,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     error: null,
     products: [],
     loading: false,
-    value: '',
+    searchText: '',
   }
 
   isAndroid = Platform.OS === 'android'
@@ -83,10 +83,10 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     StatusBar.setBarStyle('dark-content')
     this.setState(
       {
-        value: this.searchText,
+        searchText: this.searchText,
       },
       () => {
-        this.search(this.state.value)
+        this.search(this.state.searchText)
       },
     )
   }
@@ -96,7 +96,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     const barStyle = get(navigation, 'state.params.barStyle') || 'light-content'
     StatusBar.setBarStyle(barStyle)
 
-    this.postMessageToWeb(`product-search:${this.state.value}`)
+    this.postMessageToWeb(`product-search:${this.state.searchText}`)
   }
 
   handleGoBack = () => {
@@ -119,7 +119,9 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     this.setState({ loading: true })
 
     try {
-      const { products } = await quickSearch(text)
+      const { products, text: prevText } = await quickSearch(text)
+
+      if (prevText !== this.state.searchText) return
 
       this.setState({
         products,
@@ -132,12 +134,12 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
   }
   search = debounce(this._search, 500)
 
-  handleChangeText = async (value: string) => {
+  handleChangeText = async (searchText: string) => {
     this.setState({
-      value,
+      searchText,
     })
 
-    await this.search(value)
+    await this.search(searchText)
   }
 
   handleProductPress = (product: IProduct) => {
@@ -177,7 +179,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
   }
 
   renderEmpty = () => {
-    if (isEmpty(this.state.value)) {
+    if (isEmpty(this.state.searchText)) {
       return null
     }
 
@@ -209,7 +211,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
                 placeholder="Tìm kiếm..."
                 style={styles.textInput}
                 onChangeText={this.handleChangeText}
-                value={this.state.value}
+                value={this.state.searchText}
                 autoFocus
                 selectTextOnFocus
               />
@@ -252,11 +254,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    right: 0,
+    width: '100%',
+    height: '100%',
     flex: 1,
     padding: 20,
     backgroundColor: colors.whiteOpacity,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
   emptyContainer: {

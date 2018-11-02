@@ -10,7 +10,12 @@ const quickSearch = async (
         env.API_URL
       }/v2/products/search?q=${text}&perPage=${10}&__mask=${__mask}`,
     )
-    return await response.json()
+    const { products } = await response.json()
+
+    return {
+      text,
+      products,
+    }
   } catch (error) {
     console.warn(error)
     throw error
