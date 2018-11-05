@@ -1,13 +1,16 @@
 import * as React from 'react'
+import { Image, StatusBar, View } from 'react-native'
 
-import { AppLoading, Asset, SplashScreen, Updates } from 'expo'
-import { Alert, Image, StatusBar, View } from 'react-native'
+import * as Expo from 'expo'
+import { AppLoading, Asset, Updates } from 'expo'
 
-import colors from 'constants/colors'
 import StackNavigator from 'navigations/StackNavigator'
 
-import images from 'assets/images'
 import { TopToast } from 'components/TopToast'
+
+import colors from 'constants/colors'
+
+import images from 'assets/images'
 
 interface Props {}
 
@@ -16,7 +19,7 @@ class AppContainer extends React.Component<Props> {
     isReady: false,
     isSplashReady: false,
     isSplashError: false,
-    isNewUpdate: false,
+    hasNewUpdate: false,
   }
 
   handleUpdateListener = (event: Updates.UpdateEvent) => {
@@ -35,7 +38,7 @@ class AppContainer extends React.Component<Props> {
 
       setTimeout(() => {
         this.setState({
-          isNewUpdate: update.isAvailable,
+          hasNewUpdate: update.isAvailable,
         })
       }, 100)
 
@@ -67,7 +70,9 @@ class AppContainer extends React.Component<Props> {
   }
 
   cacheAppResourceAsync = () => {
-    SplashScreen.hide()
+    // FIXME: Update this when @types/expo exports SplashScreen
+    ;(Expo as any).SplashScreen.hide()
+
     this.setState({
       isReady: true,
     })
@@ -97,7 +102,7 @@ class AppContainer extends React.Component<Props> {
             onLoad={this.cacheAppResourceAsync}
           />
           <TopToast
-            isVisible={this.state.isNewUpdate}
+            isVisible={this.state.hasNewUpdate}
             message="Có bản cập nhật mới, ứng dụng sẽ được mở lại"
           />
         </View>

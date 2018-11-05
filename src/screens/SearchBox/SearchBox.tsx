@@ -108,7 +108,9 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
   }
 
   openBarCodeScanner = () => {
-    this.props.navigation.navigate('BarCodeScanner')
+    this.props.navigation.navigate('BarCodeScanner', {
+      postMessageToWeb: this.postMessageToWeb,
+    })
   }
 
   _search = async (text: string) => {
@@ -227,7 +229,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
             </Button>
           </Right>
         </Header>
-        <Content padder>
+        <View style={styles.contentContainer}>
           <FlatList
             data={this.state.products}
             renderItem={this.renderItem}
@@ -239,7 +241,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
               <ActivityIndicator />
             </View>
           )}
-        </Content>
+        </View>
       </Container>
     )
   }
@@ -250,14 +252,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     paddingTop: 0,
   },
+  contentContainer: {
+    flex: 1,
+  },
   loadingContainer: {
     position: 'absolute',
     top: 0,
     left: 0,
-    width: '100%',
-    height: '100%',
+    right: 0,
+    bottom: 0,
     flex: 1,
-    padding: 20,
+    paddingTop: 20,
     backgroundColor: colors.whiteOpacity,
     justifyContent: 'flex-start',
     alignItems: 'center',

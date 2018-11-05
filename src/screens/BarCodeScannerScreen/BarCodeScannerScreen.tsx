@@ -152,14 +152,22 @@ class BarcodeScannerScreen extends React.Component<
       return false
     }
   }
+  postMessageToWeb = get(this.props.navigation, 'state.params.postMessageToWeb')
+
+  onBarCodeRead = ({
+    _id,
+    slug,
+    variantId,
+  }: {
+    _id: string
+    slug: string
+    variantId?: string
+  }) => {
+    this.postMessageToWeb(`product-view-nav:${_id}:${slug}:${variantId}`)
+  }
 
   handleBarCodeRead: BarCodeReadCallback = async params => {
     const { isFetching } = this.state
-
-    const onBarCodeRead = this.props.navigation.getParam(
-      'onBarCodeRead',
-      () => {},
-    )
 
     if (isFetching) {
       return
@@ -168,7 +176,7 @@ class BarcodeScannerScreen extends React.Component<
     const product = await this.requestSKU(params.data)
 
     if (product) {
-      onBarCodeRead(product)
+      this.onBarCodeRead(product)
       return this.handleGoTop()
     }
 

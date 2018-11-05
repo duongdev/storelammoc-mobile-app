@@ -10,7 +10,7 @@ interface Props {
   isVisible: boolean
   message: string
   top: number
-  icon: { name: string; size?: number; color: string }
+  icon?: { name: string; size?: number; color: string }
   backgroundColor: string
   toastTextColor: string
 }
@@ -66,7 +66,7 @@ class TopToast extends PureComponent<Props> {
   render() {
     const { icon } = this.props
 
-    const isIcon = icon && icon.name ? true : false
+    const hasIcon = icon && icon.name ? true : false
 
     return (
       <React.Fragment>
@@ -89,11 +89,16 @@ class TopToast extends PureComponent<Props> {
             },
           ]}
         >
-          {isIcon && (
-            <View style={styles.iconContainer}>
-              <Ionicons name={icon.name} size={icon.size} color={icon.color} />
-            </View>
-          )}
+          {hasIcon &&
+            icon && (
+              <View style={styles.iconContainer}>
+                <Ionicons
+                  name={icon.name}
+                  size={icon.size}
+                  color={icon.color}
+                />
+              </View>
+            )}
           <Text
             style={[styles.toastText, { color: this.props.toastTextColor }]}
           >

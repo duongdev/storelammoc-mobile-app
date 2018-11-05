@@ -110,17 +110,7 @@ class MainScreen extends React.Component<
 
   handleOpenBarcodeScanner = () => {
     this.props.navigation.navigate('BarCodeScanner', {
-      onBarCodeRead: ({
-        _id,
-        slug,
-        variantId,
-      }: {
-        _id: string
-        slug: string
-        variantId?: string
-      }) => {
-        this.postMessageToWeb(`product-view-nav:${_id}:${slug}:${variantId}`)
-      },
+      postMessageToWeb: this.postMessageToWeb,
     })
   }
 
