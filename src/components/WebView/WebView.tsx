@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {
   Button,
+  Linking,
   NavState,
   Platform,
   StyleSheet,
@@ -10,6 +11,7 @@ import {
 } from 'react-native'
 
 import SwipeBackGesture from 'components/SwipeBackGesture'
+import env from 'constants/env'
 
 import { patchPostMessageJsCode } from './utils'
 
@@ -35,10 +37,6 @@ export default class WebView extends React.Component<
 
   state: WebViewStates = {}
 
-  // FIXME: WebView can't detect React web app navigation.
-  handleNavigationStateChange = (navState: NavState) => {
-    this.setState({ navState })
-  }
   handleError = (error: NavState) => {
     this.setState({ error })
   }
@@ -46,6 +44,42 @@ export default class WebView extends React.Component<
   handleGestureRelease = () => {
     if (this.webView) {
       this.webView.goBack()
+    }
+  }
+
+  handleNavigationStateChange = (event: NavState) => {
+    const isContinue = this.handleExternalLink(event.url)
+    if (!isContinue && this.webView) {
+      this.webView.stopLoading()
+    }
+  }
+
+  handleExternalLink = (url?: string) => {
+    try {
+      if (!url) {
+        return
+      }
+      const isHttpLink = /^http.*/.test(url)
+
+      const storeLink = env.STORE_WEB_URL.replace('?rn-webview=true', '')
+      const accountKitLink = 'accountkit'
+      const accountKitFAQ = 'accountkit.com/faq'
+
+      const isStoreLink = url.search(storeLink) !== -1
+      const isAccountKitLink = url.search(accountKitLink) !== -1
+      const isAccountKitFAQ = url.search(accountKitFAQ) !== -1
+
+      if (
+        isAccountKitFAQ ||
+        (!isStoreLink && !isAccountKitLink && isHttpLink)
+      ) {
+        Linking.openURL(url)
+        return false
+      }
+
+      return true
+    } catch (err) {
+      return false
     }
   }
 
@@ -71,6 +105,7 @@ export default class WebView extends React.Component<
           javaScriptEnabled
           ref={ref => (this.webView = ref)}
           dataDetectorTypes="none"
+          onNavigationStateChange={this.handleNavigationStateChange}
           {...this.props}
         />
 
