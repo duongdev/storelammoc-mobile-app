@@ -30,6 +30,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
     "react-navigation": "^2.18.2",
     "recompose": "^0.30.0",
+    "sentry-expo": "^1.10.0",
     "slack-notify": "^0.1.6",
     "tslib": "1.9.3"
   },
