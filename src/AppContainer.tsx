@@ -81,11 +81,18 @@ class AppContainer extends React.Component<Props> {
   render() {
     if (!this.state.isSplashReady) {
       return (
-        <AppLoading
-          startAsync={this.cacheSplashResourceAsync}
-          onFinish={this.handleAppLoadingFinish}
-          onError={this.handleAppLoadingError}
-        />
+        <React.Fragment>
+          <AppLoading
+            startAsync={this.cacheSplashResourceAsync}
+            onFinish={this.handleAppLoadingFinish}
+            onError={this.handleAppLoadingError}
+          />
+
+          <TopToast
+            isVisible={this.state.hasNewUpdate}
+            message="Có bản cập nhật mới, ứng dụng sẽ được mở lại"
+          />
+        </React.Fragment>
       )
     }
 

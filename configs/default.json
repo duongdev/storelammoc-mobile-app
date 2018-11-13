@@ -27,7 +27,7 @@
       "backgroundColor": "#26323800"
     },
     "ios": {
-      "buildNumber": "4",
+      "buildNumber": "6",
       "supportsTablet": false,
       "bundleIdentifier": "com.lammoc.store",
       "icon": "./assets/images/logo.ios.png",
@@ -37,7 +37,7 @@
     },
     "android": {
       "package": "com.lammoc.store",
-      "versionCode": 4,
+      "versionCode": 6,
       "icon": "./assets/images/logo.android.png",
       "adaptiveIcon": {
         "backgroundColor": "#263238"
@@ -52,6 +52,18 @@
     "extra": {
       "STORE_WEB_URL": "https://storelammoc.vn?rn-webview=true",
       "API_URL": "https://api.storelammoc.vn"
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "thich-lam-moc",
+            "project": "store-rn-app",
+            "authToken": "880b9e0edf324d3a9f743796f597596a144e66fb64a84e6c926000a0f8473cb3"
+          }
+        }
+      ]
     }
   }
 }
