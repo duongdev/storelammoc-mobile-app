@@ -1,0 +1,37 @@
+# ... preceding step code
+
+# 1 Install dependencies
+yarn
+
+# 2 Make production environment
+yarn run make:production
+
+# 3 Publish `production` release
+yarn run publish:production
+
+# 4 Start building standalone ios build using `production` release channel
+yarn run build:production:ios
+
+# 5 Download the artifact to current directory as `app.ipa`
+curl -o app.ipa "$(expo url:ipa --non-interactive)"
+
+# 6 [Optional] See comment above this code snippet to decide
+# if you would like to follow this route.
+# export $DELIVER_USERNAME=<your-itunes-connect-username>
+# export $DELIVER_PASSWORD=<your-itunes-connect-password>
+
+# 7 Use fastlane to upload your current standalone iOS build to test flight on iTunes Connect.
+fastlane deliver --verbose --ipa "app.ipa" --skip_screenshots --skip_metadata
+
+### 8. Building Android Standalone App ####
+# Start building standalone android build using `production` release channel
+yarn run build:production:android
+
+# Download the artifact to current directory as `app.apk`
+curl -o app.apk "$(expo url:apk --non-interactive)"
+
+#### 9. Submit and publish standalone Android app to the Google Play Store ####
+# Use fastlane to upload your current standalone android build
+# Customize this to fit your needs. Take note of env variables. 
+# Check out https://docs.fastlane.tools for more info.
+fastlane supply --track 'production' --json_key '<path/to/json_key.json>' --package_name "<your-package-name>" --apk "app.apk" --skip_upload_metadata --skip_upload_images --skip_upload_screenshots
