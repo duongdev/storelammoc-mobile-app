@@ -14,7 +14,6 @@ import {
 } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
-import SplashScreen from 'components/SplashScreen'
 import { OfflineNotice } from 'components/TopToast'
 import WebView from 'components/WebView'
 
@@ -134,7 +133,7 @@ class MainScreen extends React.Component<
           onMessage={this.handleWebViewMessage}
           showDevTools={false}
         />
-        {!this.state.isReady && <SplashScreen />}
+
         <OfflineNotice />
       </View>
     )
