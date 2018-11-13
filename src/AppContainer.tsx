@@ -52,9 +52,11 @@ class AppContainer extends React.Component<Props> {
     Updates.addListener(this.handleUpdateListener)
   }
 
-  cacheSplashResourceAsync = () => {
-    const gif = images.splash
-    return Asset.fromModule(gif).downloadAsync()
+  cacheResourceAsync = () => {
+    const resources = Object.keys(images).map((key: string) => images[key])
+    return Promise.all(
+      resources.map(res => Asset.fromModule(res).downloadAsync()),
+    )
   }
 
   handleAppLoadingFinish = () => {
