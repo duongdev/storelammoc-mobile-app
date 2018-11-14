@@ -1,0 +1,40 @@
+# Environment configurations
+language: node_js
+node_js: '8'
+os: osx
+
+# Build condition
+if: tag IS present
+
+cache:
+  directories:
+    - $HOME/Library/Caches/Homebrew
+    - node_modules
+
+before_install:
+  - source ./build-scripts/env.sh
+  - echo "$BUILD_NUMBER $BUILD_ENV $BUILD_NATIVE"
+
+install:
+  - yarn install
+  - sudo gem install fastlane
+
+jobs:
+  include:
+    - stage: make app.json
+      if: tag =~ /staging/
+      script: yarn make:staging
+    - if: tag =~ /prod/
+      script: yarn make:production
+    - script: cat app.json
+
+    - stage: publish release
+      script: yarn publish:$BUILD_ENV
+
+    - stage: build
+      if: env(BUILD_NATIVE) = true
+      name: build:ios
+      script: yarn build:$BUILD_ENV:ios
+    - if: env(BUILD_NATIVE) = true
+      name: build:android
+      script: yarn build:$BUILD_ENV:android
