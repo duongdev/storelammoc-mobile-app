@@ -2,6 +2,7 @@
   "name": "store-app-rn",
   "author": "Dương Đỗ <duong@targeek.io>",
   "main": "node_modules/expo/AppEntry.js",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "make:development": "node configs --env=development",
@@ -16,7 +17,8 @@
     "build:staging:ios": "npm run make:staging && expo build:ios --release-channel staging",
     "build:production:ios": "npm run make:production && expo build:ios --release-channel production",
     "build:staging:android": "npm run make:staging && expo build:android --release-channel staging",
-    "build:production:android": "npm run make:production && expo build:android --release-channel production"
+    "build:production:android": "npm run make:production && expo build:android --release-channel production",
+    "release": "standard-version"
   },
   "dependencies": {
     "@expo/vector-icons": "^8.0.0",
@@ -50,6 +52,7 @@
     "lint-staged": "^8.0.4",
     "prettier": "^1.14.3",
     "react-native-typescript-transformer": "^1.2.10",
+    "standard-version": "^4.4.0",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.15.0",
     "tslint-react": "^3.6.0",
