@@ -1,0 +1,15 @@
+# Environment configurations
+language: node_js
+node_js: '8'
+os: osx
+
+# Build condition
+if: tag IS present
+
+before_install:
+  - source ./build-scripts/env.sh
+
+install:
+  - yarn install & sudo gem install fastlane
+
+script: sh build-scripts/build.sh
