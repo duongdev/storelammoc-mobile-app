@@ -1,0 +1,16 @@
+# Environment configurations
+language: node_js
+node_js: '8'
+os: osx
+
+# Build condition
+if: tag IS present
+
+cache:
+  directories:
+    - $HOME/Library/Caches/Homebrew
+    - node_modules
+
+install:
+  - yarn install
+  - sudo gem install fastlane
