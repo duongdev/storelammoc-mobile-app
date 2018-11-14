@@ -24,6 +24,9 @@ const passedEnv = cliOptions.env || 'development'
 buildConfig(passedEnv)
 
 function buildConfig(env) {
+  const version = JSON.parse(
+    fs.readFileSync(path.resolve(__dirname, '../package.json')),
+  ).version
   const defaultPath = '/configs/default.json'
   const fpath = `configs/${env}.json`
   const fpathLocal = `configs/${env}.local.json`
@@ -41,6 +44,14 @@ function buildConfig(env) {
     const config =
       JSON.parse(fs.readFileSync(path.join(process.cwd(), fpath)), 'utf8') || {}
     mergedConfig = lodash.merge(defaultConfig, config, localConfig)
+  }
+
+  mergedConfig.expo.version = version
+
+  if (process.env.BUILD_NUMBER) {
+    const buildNumber = process.env.BUILD_NUMBER
+    mergedConfig.expo.android.versionCode = +buildNumber
+    mergedConfig.expo.ios.buildNumber = buildNumber
   }
 
   fs.writeFile(
