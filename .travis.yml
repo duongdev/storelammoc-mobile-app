@@ -1,0 +1,25 @@
+# Environment configurations
+language: node_js
+node_js: '8'
+os: osx
+
+# Build condition
+if: tag IS present
+
+cache:
+  directories:
+    - node_modules
+
+env:
+  global:
+    # include $HOME/.local/bin for `aws`
+    - PATH=$HOME/.local/bin:$HOME/Library/Python/2.7/bin:$PATH
+
+before_install:
+  - source ./build-scripts/env.sh
+
+install:
+  - yarn install
+  # - sudo gem install fastlane
+
+script: sh build-scripts/build.sh
