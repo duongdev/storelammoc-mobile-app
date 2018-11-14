@@ -1,0 +1,51 @@
+# Environment configurations
+language: node_js
+node_js: '8'
+os: osx
+
+# Build condition
+if: tag IS present
+
+cache:
+  directories:
+    - node_modules
+
+env:
+  global:
+    # include $HOME/.local/bin for `aws`
+    - PATH=$HOME/.local/bin:$HOME/Library/Python/2.7/bin:$PATH
+
+before_install:
+  - source ./build-scripts/env.sh
+
+install:
+  - yarn install
+  # - sudo gem install fastlane
+
+script: sh build-scripts/build.sh
+
+jobs:
+  include:
+    - stage: make app.json
+      name: make app.json
+      script: yarn make:$BUILD_ENV
+
+    - stage: post make app.json
+      script:
+        - ls -al
+        - cat app.json
+
+    - stage: publish release
+      name: publish release
+      script: yarn publish:$BUILD_ENV
+
+    - stage: build native
+      if: env(BUILD_NATIVE) = true
+      name: build:ios
+      script: yarn build:$BUILD_ENV:ios
+    - if: env(BUILD_NATIVE) = true
+      name: build:android
+      script: yarn build:$BUILD_ENV:android
+
+after_success:
+  - aws s3 rm --recursive s3://travis-build-stages-shared-storage-test/$TRAVIS_BUILD_NUMBER
