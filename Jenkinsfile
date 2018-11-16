@@ -8,7 +8,7 @@ properties([
     ),
     booleanParam(
       name: 'BUILD_NATIVE',
-      defaultVaue: false,
+      defaultVaue: true,
       description: 'Build native code or just OTA?'
     )
   ])
@@ -32,7 +32,7 @@ node {
       }
       def GIT_REV = ${sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()}
       def TAG_NAME = "${GIT_REV}-${params.BUILD_ENV == 'Staging' ? 'staging' : 'production'}-${params.BUILD_NATIVE ? 'native' : 'ota'}"
-      
+
       sh"""
         git tag ${TAG_NAME}
         git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/duongdev/storelammoc-mobile-app.git ${TAG_NAME}
