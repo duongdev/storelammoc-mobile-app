@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.2"></a>
+## [1.0.2](https://bitbucket.org/targeek/mobile-store/compare/v1.0.1...v1.0.2) (2018-11-16)
+
+
+### Bug Fixes
+
+* **app-loading:** fix bug causes app crashes on start-up ([bbc99c6](https://bitbucket.org/targeek/mobile-store/commits/bbc99c6))
+
+
+### Features
+
+* **fastlane:** add screenshots & upload screenshots on deliver ([ec64300](https://bitbucket.org/targeek/mobile-store/commits/ec64300))
+
+
+
 <a name="1.0.1"></a>
 ## [1.0.1](https://bitbucket.org/targeek/mobile-store/compare/v1.0.0...v1.0.1) (2018-11-16)
 
