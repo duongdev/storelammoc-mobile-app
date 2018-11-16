@@ -17,7 +17,8 @@
     "build:staging:ios": "yarn make:staging && expo build:ios --release-channel staging --non-interactive --no-publish",
     "build:production:ios": "yarn make:production && expo build:ios --release-channel production --non-interactive --no-publish",
     "build:staging:android": "yarn make:staging && expo build:android --release-channel staging --non-interactive --no-publish",
-    "build:production:android": "yarn make:production && expo build:android --release-channel production --non-interactive --no-publish"
+    "build:production:android": "yarn make:production && expo build:android --release-channel production --non-interactive --no-publish",
+    "release": "standard-version"
   },
   "dependencies": {
     "@expo/vector-icons": "^8.0.0",
