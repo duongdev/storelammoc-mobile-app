@@ -15,5 +15,5 @@ if [ $BUILD_NATIVE ]; then
   curl -o app.ipa "$(expo url:ipa --non-interactive)"
   
   sudo gem install fastlane
-  fastlane deliver --verbose --ipa "app.ipa" --skip_screenshots --skip_metadata
+  fastlane deliver --verbose --ipa "app.ipa" --skip_metadata
 fi
