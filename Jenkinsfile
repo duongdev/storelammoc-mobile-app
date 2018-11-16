@@ -3,12 +3,12 @@ properties([
     choice(
       name: 'BUILD_ENV',
       choices: ['Staging', 'Production'],
-      defaultVaue: 'Staging',
+      defaultValue: 'Staging',
       description: 'Select build environment'
     ),
     booleanParam(
       name: 'BUILD_NATIVE',
-      defaultVaue: true,
+      defaultValue: true,
       description: 'Build native code or just OTA?'
     )
   ])
