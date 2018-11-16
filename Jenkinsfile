@@ -17,7 +17,6 @@ properties([
 node {
   checkout scm
   stage('Prepare') {
-    echo "ID ${env.BUILD_ID} ID ${(env.BUILD_ID as int) + 1} NUM ${env.BUILD_NUMBER}"
     echo "${params}"
 
     sh"""
@@ -31,7 +30,9 @@ node {
       if (params.BUILD_ENV == 'Production') {
         sh("git checkout master")
       }
-      def TAG_NAME = "${env.BUILD_ID}-${params.BUILD_ENV == 'Staging' ? 'staging' : 'production'}-${params.BUILD_NATIVE ? 'native' : 'ota'}"
+      def GIT_REV = ${sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()}
+      def TAG_NAME = "${GIT_REV}-${params.BUILD_ENV == 'Staging' ? 'staging' : 'production'}-${params.BUILD_NATIVE ? 'native' : 'ota'}"
+      
       sh"""
         git tag ${TAG_NAME}
         git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/duongdev/storelammoc-mobile-app.git ${TAG_NAME}
