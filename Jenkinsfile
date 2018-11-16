@@ -30,7 +30,7 @@ node {
       if (params.BUILD_ENV == 'Production') {
         sh("git checkout master")
       }
-      def GIT_REV = ${sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()}
+      def GIT_REV = "${sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()}"
       def TAG_NAME = "${GIT_REV}-${params.BUILD_ENV == 'Staging' ? 'staging' : 'production'}-${params.BUILD_NATIVE ? 'native' : 'ota'}"
 
       sh"""
