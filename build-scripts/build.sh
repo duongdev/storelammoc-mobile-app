@@ -9,7 +9,7 @@ npx expo login -u $EXPO_USER -p $EXPO_PASS --non-interactive
 yarn publish:$BUILD_ENV
 
 # Build native code
-if [ $BUILD_NATIVE ]; then
+if [ $BUILD_NATIVE = true ]; then
   yarn build:$BUILD_ENV:ios
 
   curl -o app.ipa "$(expo url:ipa --non-interactive)"
