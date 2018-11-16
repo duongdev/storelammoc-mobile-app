@@ -1,0 +1,27 @@
+# Environment configurations
+os: osx
+osx_image: xcode10.1
+
+language: node_js
+node_js: '8'
+cache: yarn
+
+notifications:
+  slack:
+    rooms:
+      - thichlammoc:KDr6DywMVHkRt21ZFIgy9Iom
+    on_start: change # default: never
+    on_success: change # default: always
+    on_failure: always # default: always
+
+# Build condition
+if: tag IS present
+
+before_install:
+  - source ./build-scripts/env.sh
+
+install:
+  - yarn install
+
+script:
+  - sh build-scripts/build.sh
