@@ -3,7 +3,13 @@ import { get } from 'lodash'
 import * as React from 'react'
 
 import { Constants, IntentLauncherAndroid, Linking, Permissions } from 'expo'
-import { Alert, PermissionsAndroid, Platform } from 'react-native'
+import {
+  Alert,
+  AppState,
+  AppStateStatus,
+  PermissionsAndroid,
+  Platform,
+} from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
 interface Props {}
@@ -12,16 +18,32 @@ class CameraPermission extends React.Component<Props & NavigationComponent> {
   isAndroid = Platform.OS === 'android'
   state = {
     granted: false,
+    appState: AppState.currentState,
+  }
+
+  _handleAppStateChange = async (nextAppState: AppStateStatus) => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      this.forceUpdate()
+      await this.grantCameraPermission()
+    }
+    this.setState({ appState: nextAppState })
   }
 
   async componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange)
     await this.grantCameraPermission()
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange)
   }
 
   openAppSetting = async () => {
     try {
       if (this.isAndroid) {
-        console.log(get(Constants, 'manifest.android.package', ''))
         await IntentLauncherAndroid.startActivityAsync(
           IntentLauncherAndroid.ACTION_APPLICATION_DETAILS_SETTINGS,
           {
@@ -82,9 +104,12 @@ class CameraPermission extends React.Component<Props & NavigationComponent> {
         if (status !== 'granted') {
           this.handleGoBack()
         } else {
-          this.setState({
-            granted: true,
-          })
+          this.setState(
+            {
+              granted: true,
+            },
+            this.forceUpdate,
+          )
         }
       }
 

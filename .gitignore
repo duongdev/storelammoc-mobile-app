@@ -14,5 +14,4 @@ configs/*\.local\.json
 
 app.ipa
 app.apk
-
-.expo
+\.expo/
