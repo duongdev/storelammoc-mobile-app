@@ -52,11 +52,12 @@ class AppContainer extends React.Component<Props> {
     Updates.addListener(this.handleUpdateListener)
   }
 
-  cacheResourceAsync = () => {
-    const resources = Object.keys(images).map((key: string) => images[key])
-    return Promise.all(
+  cacheResourceAsync = async () => {
+    const resources = Object.values(images)
+    await Promise.all(
       resources.map(res => Asset.fromModule(res).downloadAsync()),
     )
+    return
   }
 
   handleAppLoadingFinish = () => {
@@ -85,7 +86,7 @@ class AppContainer extends React.Component<Props> {
       return (
         <React.Fragment>
           <AppLoading
-            startAsync={this.cacheSplashResourceAsync}
+            startAsync={this.cacheResourceAsync}
             onFinish={this.handleAppLoadingFinish}
             onError={this.handleAppLoadingError}
           />
