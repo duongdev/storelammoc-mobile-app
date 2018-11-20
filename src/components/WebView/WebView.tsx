@@ -11,6 +11,7 @@ import {
   StyleSheet,
   Text,
   View,
+  ViewProps,
   WebView as RNWebView,
   WebViewProps as RNWebViewProps,
 } from 'react-native'
@@ -140,7 +141,7 @@ export default class WebView extends React.Component<
     return this.webView && this.webView.reload()
   }
 
-  renderError = (): React.ReactElement<any> => {
+  renderError = (): React.ReactElement<ViewProps> => {
     if (!this.state.isTimeout && !this.state.isError) {
       return <View />
     }

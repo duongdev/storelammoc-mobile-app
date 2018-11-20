@@ -9,6 +9,7 @@
     "make:staging": "node configs --env=staging",
     "make:production": "node configs --env=production",
     "start": "expo start -c",
+    "dev": "yarn make:development && yarn start",
     "android": "expo start -c --android",
     "ios": "expo start -c --ios",
     "eject": "expo eject",
