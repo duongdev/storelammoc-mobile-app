@@ -8,7 +8,7 @@ properties([
     ),
     booleanParam(
       name: 'BUILD_NATIVE',
-      defaultValue: true,
+      defaultValue: false,
       description: 'Build native code or just OTA?'
     )
   ])
@@ -23,6 +23,14 @@ node {
       git config --global user.email "dustin.do95@gmail.com"
       git config --global user.name "Dương Đỗ"
     """
+  }
+
+  stage('Condition checks') {
+    if (params.BUILD_ENV == 'Production') {
+      if (env.BRANCH_NAME != 'master') {
+        throw 'Only master is allowed for production'
+      }
+    }
   }
 
   stage('Mirror') {
