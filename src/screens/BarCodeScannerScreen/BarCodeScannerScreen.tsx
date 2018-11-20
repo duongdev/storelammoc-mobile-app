@@ -12,7 +12,7 @@ import { compose } from 'recompose'
 import { MaterialIcons } from '@expo/vector-icons'
 import { BarCodeReadCallback, BarCodeScanner } from 'expo'
 import { Button } from 'native-base'
-import { AsyncStorage, Platform, StyleSheet, View } from 'react-native'
+import { Alert, AsyncStorage, Platform, StyleSheet, View } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
 import colors from 'constants/colors'
@@ -23,7 +23,9 @@ import NoProductError from 'screens/BarCodeScannerScreen/components/NoProductErr
 
 import BarCodeScannerOverlay from './components/BarCodeScannerOverlay'
 
-export interface BarCodeScannerProps extends NavigationComponent {}
+export interface BarCodeScannerProps extends NavigationComponent {
+  granted?: boolean
+}
 interface BarCodeScannerStates {
   lastScanAt: number
   isReady: boolean
@@ -50,6 +52,12 @@ class BarcodeScannerScreen extends React.Component<
   componentDidMount() {
     if (typeof this.props.onSetHidden === 'function') {
       this.props.onSetHidden(true)
+    }
+  }
+
+  componentWillReceiveProps(nextProps: BarCodeScannerProps) {
+    if (this.props.granted !== nextProps.granted) {
+      this.forceUpdate()
     }
   }
 
@@ -104,7 +112,7 @@ class BarcodeScannerScreen extends React.Component<
     }
   }
 
-  timeout: number = 0
+  timeout = 0
   requestSKU = async (sku: string) => {
     try {
       this.setState(
@@ -116,7 +124,7 @@ class BarcodeScannerScreen extends React.Component<
             this.setState({
               isFetchTimeout: true,
             })
-          }, 3000)
+          }, 3000) as any
         },
       )
 
@@ -204,13 +212,16 @@ class BarcodeScannerScreen extends React.Component<
   render() {
     return (
       <View style={styles.root}>
-        <BarCodeScanner
-          torchMode="on"
-          onBarCodeRead={this.handleBarCodeRead}
-          style={[StyleSheet.absoluteFill]}
-        >
+        {this.props.granted ? (
+          <BarCodeScanner
+            onBarCodeRead={this.handleBarCodeRead}
+            style={{ flex: 1 }}
+          >
+            <BarCodeScannerOverlay />
+          </BarCodeScanner>
+        ) : (
           <BarCodeScannerOverlay />
-        </BarCodeScanner>
+        )}
 
         {this.state.isFetching &&
           !this.state.isShowNoProduct && (
