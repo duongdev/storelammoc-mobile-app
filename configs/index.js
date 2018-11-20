@@ -52,7 +52,20 @@ function buildConfig(env) {
     mergedConfig.expo.ios.buildNumber = buildNumber
   }
 
-  fs.writeFile(
+  // Setup sentry config
+  let sentryConfig = lodash.get(
+    mergedConfig,
+    'expo.hooks.postPublish[0].config',
+  )
+  try {
+    if (sentryConfig && process.env.SENTRY_TOKEN) {
+      sentryConfig.authToken = process.env.SENTRY_TOKEN
+    }
+  } catch (error) {
+    sentryConfig = {}
+  }
+
+  fs.writeFileSync(
     path.join(process.cwd(), 'app.json'),
     JSON.stringify(mergedConfig, null, 2),
     'utf8',
@@ -60,8 +73,7 @@ function buildConfig(env) {
       if (err) {
         console.error(err)
       }
-
-      console.info('Create app.json file success')
     },
   )
+  console.info('Created app.json file successfully')
 }
