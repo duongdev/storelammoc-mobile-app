@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react'
 
-import { Constants } from 'expo'
 import { NetInfo } from 'react-native'
 
 import colors from 'constants/colors'
@@ -37,7 +36,6 @@ class OfflineNotice extends PureComponent {
   render() {
     return (
       <TopToast
-        top={-Constants.statusBarHeight}
         isVisible={!this.state.isConnected}
         message={
           this.state.isConnected

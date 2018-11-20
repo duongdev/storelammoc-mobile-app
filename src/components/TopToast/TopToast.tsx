@@ -16,7 +16,7 @@ interface Props {
 }
 
 const DEFAULT_HEIGHT = 30
-const DEFAULT_TOP = -DEFAULT_HEIGHT
+const DEFAULT_TOP = -Constants.statusBarHeight - 10
 
 class TopToast extends PureComponent<Props> {
   static defaultProps = {

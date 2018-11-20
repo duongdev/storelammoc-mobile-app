@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Image, StatusBar, View } from 'react-native'
+import { StatusBar } from 'react-native'
 
 import * as Expo from 'expo'
 import { AppLoading, Asset, Updates } from 'expo'
@@ -8,11 +8,11 @@ import StackNavigator from 'navigations/StackNavigator'
 
 import { TopToast } from 'components/TopToast'
 
-import colors from 'constants/colors'
-
 import images from 'assets/images'
 
 interface Props {}
+
+const NEW_UPDATE_TEXT = 'Có bản cập nhật mới, ứng dụng sẽ được mở lại'
 
 class AppContainer extends React.Component<Props> {
   state = {
@@ -32,31 +32,28 @@ class AppContainer extends React.Component<Props> {
 
   async componentDidMount() {
     StatusBar.setBarStyle('light-content')
+    Updates.addListener(this.handleUpdateListener)
 
     try {
       const update = await Updates.checkForUpdateAsync()
 
-      setTimeout(() => {
-        this.setState({
-          hasNewUpdate: update.isAvailable,
-        })
-      }, 100)
-
       if (update.isAvailable) {
+        this.setState({
+          hasNewUpdate: true,
+        })
+
         await Updates.fetchUpdateAsync()
       }
     } catch (e) {
       // ignore
+      throw e
     }
-
-    Updates.addListener(this.handleUpdateListener)
   }
 
-  cacheResourceAsync = () => {
-    const resources = Object.keys(images).map((key: string) => images[key])
-    return Promise.all(
-      resources.map(res => Asset.fromModule(res).downloadAsync()),
-    )
+  cacheResourceAsync = async () => {
+    const resources = Object.values(images)
+    Promise.all(resources.map(res => Asset.fromModule(res).downloadAsync()))
+    return
   }
 
   handleAppLoadingFinish = () => {
@@ -67,8 +64,11 @@ class AppContainer extends React.Component<Props> {
 
   handleAppLoadingError = () => {
     this.setState({
+      isSplashReady: true,
       isSplashError: true,
     })
+
+    throw new Error('App loading failure')
   }
 
   cacheAppResourceAsync = () => {
@@ -85,42 +85,26 @@ class AppContainer extends React.Component<Props> {
       return (
         <React.Fragment>
           <AppLoading
-            startAsync={this.cacheSplashResourceAsync}
+            startAsync={this.cacheResourceAsync}
             onFinish={this.handleAppLoadingFinish}
             onError={this.handleAppLoadingError}
           />
 
           <TopToast
             isVisible={this.state.hasNewUpdate}
-            message="Có bản cập nhật mới, ứng dụng sẽ được mở lại"
+            message={NEW_UPDATE_TEXT}
           />
         </React.Fragment>
-      )
-    }
-
-    if (!this.state.isReady) {
-      return (
-        <View style={{ flex: 1, backgroundColor: colors.primary }}>
-          <Image
-            source={images.splash}
-            style={{
-              width: '100%',
-              height: '100%',
-            }}
-            resizeMode="contain"
-            onLoad={this.cacheAppResourceAsync}
-          />
-          <TopToast
-            isVisible={this.state.hasNewUpdate}
-            message="Có bản cập nhật mới, ứng dụng sẽ được mở lại"
-          />
-        </View>
       )
     }
 
     return (
       <React.Fragment>
         <StackNavigator />
+        <TopToast
+          isVisible={this.state.hasNewUpdate}
+          message={NEW_UPDATE_TEXT}
+        />
       </React.Fragment>
     )
   }
