@@ -6,7 +6,6 @@
     "privacy": "unlisted",
     "sdkVersion": "31.0.0",
     "platforms": ["ios", "android"],
-    "version": "0.1.0",
     "primaryColor": "#263238",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
@@ -27,8 +26,7 @@
       "backgroundColor": "#26323800"
     },
     "ios": {
-      "buildNumber": "97",
-      "supportsTablet": false,
+      "supportsTablet": true,
       "bundleIdentifier": "com.lammoc.store",
       "icon": "./assets/images/logo.ios.png",
       "infoPlist": {
@@ -37,7 +35,6 @@
     },
     "android": {
       "package": "com.lammoc.store",
-      "versionCode": 97,
       "icon": "./assets/images/logo.android.png",
       "adaptiveIcon": {
         "backgroundColor": "#263238"
