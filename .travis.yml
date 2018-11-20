@@ -10,7 +10,7 @@ notifications:
   slack:
     rooms:
       - thichlammoc:KDr6DywMVHkRt21ZFIgy9Iom
-    on_start: change # default: never
+    on_start: always # default: never
     on_success: change # default: always
     on_failure: always # default: always
 
