@@ -25,7 +25,7 @@ node {
     """
   }
 
-  stage('Condition checks') {
+  stage('Condition check') {
     if (params.BUILD_ENV == 'Production') {
       if (env.BRANCH_NAME != 'master') {
         throw 'Only master is allowed for production'
