@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.7"></a>
+## [1.0.7](https://bitbucket.org/targeek/mobile-store/compare/v1.0.6...v1.0.7) (2018-11-20)
+
+
+### Features
+
+* **config:** un-support iPad since the web UI is not ready ([4a57f8a](https://bitbucket.org/targeek/mobile-store/commits/4a57f8a))
+
+
+
 <a name="1.0.6"></a>
 ## [1.0.6](https://bitbucket.org/targeek/mobile-store/compare/v1.0.5...v1.0.6) (2018-11-20)
 
