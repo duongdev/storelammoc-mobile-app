@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.6"></a>
+## [1.0.6](https://bitbucket.org/targeek/mobile-store/compare/v1.0.5...v1.0.6) (2018-11-20)
+
+
+### Features
+
+* **config:** remove sentry token from config, use env instead ([40e5fe0](https://bitbucket.org/targeek/mobile-store/commits/40e5fe0))
+
+
+
 <a name="1.0.5"></a>
 ## [1.0.5](https://bitbucket.org/targeek/mobile-store/compare/v1.0.4...v1.0.5) (2018-11-20)
 
