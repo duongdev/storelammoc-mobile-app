@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.3"></a>
+## [1.0.3](https://bitbucket.org/targeek/mobile-store/compare/v1.0.2...v1.0.3) (2018-11-20)
+
+
+### Bug Fixes
+
+* **ci:** fix $BUILD_NATIVE conditional script ([2d80b9d](https://bitbucket.org/targeek/mobile-store/commits/2d80b9d))
+* **grant-camera:** BarCodeScanner don't reload when granted ([3234f12](https://bitbucket.org/targeek/mobile-store/commits/3234f12))
+* **ota:** fix bug when ota update won't reload the app ([22e1db1](https://bitbucket.org/targeek/mobile-store/commits/22e1db1)), closes [#16](https://bitbucket.org/targeek/mobile-store/issue/16)
+
+
+### Features
+
+* **jenkins:** production build should accept master branch only ([21a1e8b](https://bitbucket.org/targeek/mobile-store/commits/21a1e8b))
+
+
+
 <a name="1.0.2"></a>
 ## [1.0.2](https://bitbucket.org/targeek/mobile-store/compare/v1.0.1...v1.0.2) (2018-11-16)
 
