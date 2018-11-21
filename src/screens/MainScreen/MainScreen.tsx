@@ -19,6 +19,7 @@ import WebView from 'components/WebView'
 
 import colors from 'constants/colors'
 import env from 'constants/env'
+import { screenHeight } from 'constants/metrics'
 import { RECEIVED_MESSAGES, SEND_MESSAGES } from 'constants/web-messages'
 
 export interface MainScreenProps {}
@@ -31,7 +32,8 @@ class MainScreen extends React.Component<
   backHandler: any
   state = {
     isReady: false,
-    isMainScreen: true,
+    gestureLeft: 0,
+    gestureTop: 0,
   }
 
   componentDidMount = () => {
@@ -92,16 +94,24 @@ class MainScreen extends React.Component<
 
       case RECEIVED_MESSAGES.ENTER_HOME_SCREEN:
         this.setState({
-          isMainScreen: true,
+          gestureLeft: 0,
+          gestureTop: screenHeight,
         })
         return
 
       case RECEIVED_MESSAGES.LEAVE_HOME_SCREEN:
         this.setState({
-          isMainScreen: false,
+          gestureLeft: 20,
+          gestureTop: screenHeight / 3,
         })
         return
 
+      case RECEIVED_MESSAGES.ENTER_PRODUCT_SCREEN: {
+        this.setState({
+          gestureLeft: 20,
+          gestureTop: 0,
+        })
+      }
       default:
         return
     }
@@ -126,7 +136,8 @@ class MainScreen extends React.Component<
       <View style={styles.container}>
         <WebView
           onLoadEnd={this.handleWebViewLoadEnd}
-          isMainScreen={this.state.isMainScreen}
+          gestureLeft={this.state.gestureLeft}
+          gestureTop={this.state.gestureTop}
           source={{ uri: env.STORE_WEB_URL }}
           style={styles.mainWebView}
           ref={webView => (this.mainWebView = webView)}

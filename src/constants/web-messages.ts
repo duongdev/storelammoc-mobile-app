@@ -7,6 +7,8 @@ export const RECEIVED_MESSAGES = {
   ENTER_HOME_SCREEN: 'ENTER_HOME_SCREEN',
   /** Event message when webapp post leave out home screen message - webapp was stay at home screen */
   LEAVE_HOME_SCREEN: 'LEAVE_HOME_SCREEN',
+  /** Event message when webapp post enter to product screen message - webapp was stay at product screen */
+  ENTER_PRODUCT_SCREEN: 'ENTER_PRODUCT_SCREEN',
   /** Event message when webapp post a message to open search box */
   OPEN_SEARCH_BOX: 'OPEN_SEARCH_BOX',
 }
