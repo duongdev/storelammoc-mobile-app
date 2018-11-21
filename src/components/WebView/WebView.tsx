@@ -27,6 +27,8 @@ import { patchPostMessageJsCode } from './utils'
 const TIME_OUT = 15000 // set timeout to 15s
 
 export interface WebViewProps extends RNWebViewProps {
+  gestureLeft?: number
+  gestureTop?: number
   showDevTools?: boolean
   isMainScreen: boolean
 }
@@ -175,12 +177,14 @@ export default class WebView extends React.Component<
   render() {
     return (
       <SwipeBackGesture
-        isMainScreen={this.props.isMainScreen}
+        left={this.props.gestureLeft}
+        top={this.props.gestureTop}
         onRelease={this.handleGestureRelease}
       >
         <RNWebView
           /*** common ***/
           startInLoadingState
+          allowsInlineMediaPlayback
           onLoad={this.handleLoadEnd}
           onError={this.handleError}
           renderError={this.renderError}
