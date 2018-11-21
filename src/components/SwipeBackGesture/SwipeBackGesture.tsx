@@ -7,10 +7,11 @@ import colors from 'constants/colors'
 import { screenHeight } from 'constants/metrics'
 
 interface Props {
+  left?: number
+  top?: number
   maxWidth?: number
   maxHeight?: number
   onRelease: Function
-  isMainScreen: boolean
 }
 
 interface State {
@@ -28,7 +29,7 @@ const MAXHEIGHT = 130
 const MAXWIDTH = 30
 
 const INIT_TOP = -MAXHEIGHT - Constants.statusBarHeight
-const SWIPE_BACK_HEIGHT = screenHeight / 3
+const SWIPE_BACK_TOP = screenHeight / 3
 const SWIPE_BACK_WIDTH = 30
 const DRAWER_WIDTH = 20
 
@@ -70,13 +71,9 @@ export default class SwipeBackGesture extends Component<Props, State> {
 
   panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: (evt, gestureState) => {
-      if (this.props.isMainScreen) {
-        return false
-      }
-
       if (
         evt.nativeEvent.pageX < SWIPE_BACK_WIDTH &&
-        evt.nativeEvent.pageY > SWIPE_BACK_HEIGHT
+        evt.nativeEvent.pageY > (this.props.top || 0)
       ) {
         return true
       }
@@ -208,7 +205,8 @@ export default class SwipeBackGesture extends Component<Props, State> {
           style={[
             styles.drawerNav,
             {
-              width: this.props.isMainScreen ? 0 : DRAWER_WIDTH,
+              width: this.props.left || DRAWER_WIDTH,
+              top: this.props.top || SWIPE_BACK_TOP,
             },
           ]}
         />
@@ -230,7 +228,7 @@ const styles = StyleSheet.create({
   },
   drawerNav: {
     position: 'absolute',
-    top: SWIPE_BACK_HEIGHT,
+    top: SWIPE_BACK_TOP,
     left: 0,
     bottom: 0,
   },
