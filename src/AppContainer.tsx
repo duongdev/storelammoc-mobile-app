@@ -6,13 +6,9 @@ import { AppLoading, Asset, Updates } from 'expo'
 
 import StackNavigator from 'navigations/StackNavigator'
 
-import { TopToast } from 'components/TopToast'
-
 import images from 'assets/images'
 
 interface Props {}
-
-const NEW_UPDATE_TEXT = 'Có bản cập nhật mới, ứng dụng sẽ được mở lại'
 
 class AppContainer extends React.Component<Props> {
   state = {

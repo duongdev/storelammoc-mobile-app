@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react'
 
-import { Constants } from 'expo'
 import { Animated, StyleSheet, Text, View } from 'react-native'
 
 import { Ionicons } from '@expo/vector-icons'
@@ -16,7 +15,7 @@ interface Props {
 }
 
 const DEFAULT_HEIGHT = 30
-const DEFAULT_TOP = -Constants.statusBarHeight - 10
+const DEFAULT_TOP = -DEFAULT_HEIGHT
 
 class TopToast extends PureComponent<Props> {
   static defaultProps = {
@@ -45,7 +44,7 @@ class TopToast extends PureComponent<Props> {
         toValue: 1,
       }),
       Animated.timing(this.state.translateYValue, {
-        toValue: Constants.statusBarHeight,
+        toValue: DEFAULT_HEIGHT,
       }),
     ]).start()
   }
@@ -124,10 +123,10 @@ const styles = StyleSheet.create({
   },
   statusBar: {
     position: 'absolute',
-    top: -Constants.statusBarHeight,
+    top: -DEFAULT_HEIGHT,
     left: 0,
     right: 0,
-    height: Constants.statusBarHeight,
+    height: DEFAULT_HEIGHT,
     elevation: 101,
     zIndex: 101,
   },

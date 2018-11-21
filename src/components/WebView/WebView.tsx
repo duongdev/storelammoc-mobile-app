@@ -62,7 +62,9 @@ export default class WebView extends React.Component<
 
   setTimeoutWebView = () => {
     setTimeout(() => {
-      this.setState({ isTimeout: !this.state.isReady })
+      if (!this.state.isError) {
+        this.setState({ isTimeout: !this.state.isReady })
+      }
     }, TIME_OUT)
   }
 
