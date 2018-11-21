@@ -79,7 +79,7 @@ class MainScreen extends React.Component<
         postMessageToWeb: this.postMessageToWeb,
       })
     }
-
+    console.log(message)
     switch (message) {
       case RECEIVED_MESSAGES.WEB_APP_LOADED:
         this.setState({
