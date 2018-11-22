@@ -22,32 +22,29 @@ if [ $BUILD_NATIVE = true ]; then
   curl -o app-$BUILD_ENV-$BUILD_NUMBER.ipa "$IPA_URL" &\
   curl -o app-$BUILD_ENV-$BUILD_NUMBER.apk "$APK_URL"
   
-  # sudo gem install fastlane
+  sudo gem install fastlane
 
-  if [ $BUILD_ENV = "production" ]; then
-    # Upload apk to Play Store
-    npx expo upload:android \
-      --path "app-$BUILD_ENV-$BUILD_NUMBER.apk" \
-      --track "$BUILD_ENV" \
-      --key "api-android-playstore.json" \
+  deployAndroid() {
+    if [ $BUILD_ENV = "production" ]; then
+      # Upload apk to Play Store
 
-    # fastlane supply \
-    #   --track "$BUILD_ENV" \
-    #   --json_key api-android-playstore.json \
-    #   --package_name "com.lammoc.store" \
-    #   --apk "app-$BUILD_ENV-$BUILD_NUMBER.apk" \
-    #   --skip_upload_metadata --skip_upload_images --skip_upload_screenshots
-  fi
+      fastlane supply \
+        --track "$BUILD_ENV" \
+        --json_key api-android-playstore.json \
+        --package_name "com.lammoc.store" \
+        --apk "app-$BUILD_ENV-$BUILD_NUMBER.apk" \
+        --skip_upload_metadata --skip_upload_images --skip_upload_screenshots
+    fi
+  }
 
-  # Upload app ipa to App Store Connect
-  npx expo upload:ios \
-    --path "app-$BUILD_ENV-$BUILD_NUMBER.ipa" \
-    --apple-id "$FASTLANE_USER" \
-    --apple-id-password "$FASTLANE_PASSWORD" \
-    --language "Vietnamese"
-  # fastlane deliver \
-  #   --verbose \
-  #   --ipa "app-$BUILD_ENV-$BUILD_NUMBER.ipa" \
-  #   --skip_metadata --skip_screenshots \
-  #   --force
+  deployIOS() {
+    # Upload app ipa to App Store Connect
+    fastlane deliver \
+      --verbose \
+      --ipa "app-$BUILD_ENV-$BUILD_NUMBER.ipa" \
+      --skip_metadata --skip_screenshots \
+      --force
+  }
+
+  deployAndroid & deployIOS
 fi
