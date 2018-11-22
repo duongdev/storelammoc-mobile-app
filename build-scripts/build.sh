@@ -13,8 +13,14 @@ if [ $BUILD_NATIVE = true ]; then
   yarn build:$BUILD_ENV:ios & \
   yarn build:$BUILD_ENV:\android
 
-  curl -o app-$BUILD_ENV-$BUILD_NUMBER.ipa "$(npx expo url:ipa --non-interactive)" &\
-  curl -o app-$BUILD_ENV-$BUILD_NUMBER.apk "$(npx expo url:apk --non-interactive)"
+  export IPA_URL=$(npx expo url:ipa --non-interactive)
+  export APK_URL=$(npx expo url:apk --non-interactive)
+
+  # Send download URLs to Slack
+  sh ./build-scripts/slack.sh
+
+  curl -o app-$BUILD_ENV-$BUILD_NUMBER.ipa "$IPA_URL" &\
+  curl -o app-$BUILD_ENV-$BUILD_NUMBER.apk "$APK_URL"
   
   # sudo gem install fastlane
 

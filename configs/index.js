@@ -25,6 +25,9 @@ function buildConfig(env) {
   const version = JSON.parse(
     fs.readFileSync(path.resolve(__dirname, '../package.json')),
   ).version
+
+  fs.writeFileSync(path.join(process.cwd(), 'version.txt'), version)
+
   const defaultPath = '/configs/default.json'
   const fpath = `configs/${env}.json`
   const fpathLocal = `configs/${env}.local.json`
