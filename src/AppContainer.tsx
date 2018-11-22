@@ -1,8 +1,7 @@
 import * as React from 'react'
 import { StatusBar } from 'react-native'
 
-import * as Expo from 'expo'
-import { AppLoading, Asset, Updates } from 'expo'
+import { Asset, Updates } from 'expo'
 
 import StackNavigator from 'navigations/StackNavigator'
 
@@ -12,9 +11,6 @@ interface Props {}
 
 class AppContainer extends React.Component<Props> {
   state = {
-    isReady: false,
-    isSplashReady: false,
-    isSplashError: false,
     hasNewUpdate: false,
   }
 
@@ -57,15 +53,7 @@ class AppContainer extends React.Component<Props> {
   }
 
   render() {
-    return (
-      <React.Fragment>
-        <StackNavigator />
-        <TopToast
-          isVisible={this.state.hasNewUpdate}
-          message={NEW_UPDATE_TEXT}
-        />
-      </React.Fragment>
-    )
+    return <StackNavigator />
   }
 }
 
