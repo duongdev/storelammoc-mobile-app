@@ -17,3 +17,5 @@ app.apk
 \.expo/
 
 api-android-playstore\.json
+
+version\.txt
