@@ -6,13 +6,9 @@ import { AppLoading, Asset, Updates } from 'expo'
 
 import StackNavigator from 'navigations/StackNavigator'
 
-import { TopToast } from 'components/TopToast'
-
 import images from 'assets/images'
 
 interface Props {}
-
-const NEW_UPDATE_TEXT = 'Có bản cập nhật mới, ứng dụng sẽ được mở lại'
 
 class AppContainer extends React.Component<Props> {
   state = {
@@ -32,21 +28,23 @@ class AppContainer extends React.Component<Props> {
 
   async componentDidMount() {
     StatusBar.setBarStyle('light-content')
-    Updates.addListener(this.handleUpdateListener)
+    if (!__DEV__) {
+      Updates.addListener(this.handleUpdateListener)
 
-    try {
-      const update = await Updates.checkForUpdateAsync()
+      try {
+        const update = await Updates.checkForUpdateAsync()
 
-      if (update.isAvailable) {
-        this.setState({
-          hasNewUpdate: true,
-        })
+        if (update.isAvailable) {
+          this.setState({
+            hasNewUpdate: true,
+          })
 
-        await Updates.fetchUpdateAsync()
+          await Updates.fetchUpdateAsync()
+        }
+      } catch (e) {
+        // ignore
+        throw e
       }
-    } catch (e) {
-      // ignore
-      throw e
     }
   }
 
@@ -83,30 +81,15 @@ class AppContainer extends React.Component<Props> {
   render() {
     if (!this.state.isSplashReady) {
       return (
-        <React.Fragment>
-          <AppLoading
-            startAsync={this.cacheResourceAsync}
-            onFinish={this.handleAppLoadingFinish}
-            onError={this.handleAppLoadingError}
-          />
-
-          <TopToast
-            isVisible={this.state.hasNewUpdate}
-            message={NEW_UPDATE_TEXT}
-          />
-        </React.Fragment>
+        <AppLoading
+          startAsync={this.cacheResourceAsync}
+          onFinish={this.handleAppLoadingFinish}
+          onError={this.handleAppLoadingError}
+        />
       )
     }
 
-    return (
-      <React.Fragment>
-        <StackNavigator />
-        <TopToast
-          isVisible={this.state.hasNewUpdate}
-          message={NEW_UPDATE_TEXT}
-        />
-      </React.Fragment>
-    )
+    return <StackNavigator />
   }
 }
 
