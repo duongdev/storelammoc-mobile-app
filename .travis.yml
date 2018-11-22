@@ -11,13 +11,16 @@ notifications:
     rooms:
       - thichlammoc:KDr6DywMVHkRt21ZFIgy9Iom
     on_start: always # default: never
-    on_success: change # default: always
+    on_success: always # default: always
     on_failure: always # default: always
+    template:
+      - '*[%{result}]* Build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository_name}@*%{branch}* by %{author} %{result} in *%{duration}*'
 
 # Build condition
 if: tag IS present
 
 before_install:
+  - openssl aes-256-cbc -K $encrypted_d35e2d5c767f_key -iv $encrypted_d35e2d5c767f_iv -in api-android-playstore.json.enc -out api-android-playstore.json -d
   - source ./build-scripts/env.sh
 
 install:
