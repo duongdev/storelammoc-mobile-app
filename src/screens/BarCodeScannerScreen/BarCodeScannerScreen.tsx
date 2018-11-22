@@ -7,12 +7,13 @@ import * as React from 'react'
 import withGrantCamera from 'hocs/grant-camera'
 import keepAwake from 'hocs/keep-awake'
 import withStatusBar from 'hocs/status-bar'
+import transitionTimeout from 'hocs/transition-timeout'
 import { compose } from 'recompose'
 
 import { MaterialIcons } from '@expo/vector-icons'
 import { BarCodeReadCallback, BarCodeScanner } from 'expo'
 import { Button } from 'native-base'
-import { Alert, AsyncStorage, Platform, StyleSheet, View } from 'react-native'
+import { AsyncStorage, Platform, StyleSheet, View } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
 import colors from 'constants/colors'
@@ -25,10 +26,10 @@ import BarCodeScannerOverlay from './components/BarCodeScannerOverlay'
 
 export interface BarCodeScannerProps extends NavigationComponent {
   granted?: boolean
+  isReady?: boolean
 }
 interface BarCodeScannerStates {
   lastScanAt: number
-  isReady: boolean
   isFetching: boolean
   isFetchTimeout: boolean
   isShowNoProduct: boolean
@@ -42,7 +43,6 @@ class BarcodeScannerScreen extends React.Component<
   isAndroid = Platform.OS === 'android'
 
   state = {
-    isReady: !this.isAndroid,
     lastScanAt: 0,
     isFetching: false,
     isFetchTimeout: false,
@@ -212,7 +212,7 @@ class BarcodeScannerScreen extends React.Component<
   render() {
     return (
       <View style={styles.root}>
-        {this.props.granted ? (
+        {this.props.granted && this.props.isReady ? (
           <BarCodeScanner
             onBarCodeRead={this.handleBarCodeRead}
             style={{ flex: 1 }}
@@ -257,6 +257,7 @@ export default compose(
   }),
   keepAwake(),
   withGrantCamera,
+  transitionTimeout,
 )(BarcodeScannerScreen)
 
 const styles = StyleSheet.create({

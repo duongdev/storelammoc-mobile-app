@@ -11,6 +11,7 @@ import {
   Platform,
   StatusBar,
   StyleSheet,
+  TextInput,
 } from 'react-native'
 
 import withStatusBar from 'hocs/status-bar'
@@ -23,9 +24,7 @@ import {
   Body,
   Button,
   Container,
-  Content,
   Header,
-  Input,
   Item,
   Left,
   ListItem,
@@ -41,8 +40,11 @@ import env from 'constants/env'
 import { quickSearch } from 'services/product'
 
 import images from 'assets/images'
+import transitionTimeout from 'hocs/transition-timeout'
 
-interface SearchBoxProps extends NavigationComponent {}
+interface SearchBoxProps extends NavigationComponent {
+  isReady?: boolean
+}
 
 interface IProduct {
   [key: string]: unknown
@@ -97,6 +99,13 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     StatusBar.setBarStyle(barStyle)
 
     this.postMessageToWeb(`product-search:${this.state.searchText}`)
+  }
+
+  componentDidUpdate(prevProps: SearchBoxProps) {
+    console.log(this.props.isReady, prevProps.isReady)
+    if (this.props.isReady && !prevProps.isReady) {
+      this.searchBox && this.searchBox.focus()
+    }
   }
 
   handleGoBack = () => {
@@ -192,6 +201,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     )
   }
 
+  searchBox: TextInput | null = null
   render() {
     const { loading } = this.state
 
@@ -209,12 +219,12 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
           <View style={styles.textInputContainer}>
             <Item>
               <MaterialIcons name="search" size={20} color={colors.black} />
-              <Input
+              <TextInput
+                ref={(inst: any) => (this.searchBox = inst)}
                 placeholder="Tìm kiếm..."
                 style={styles.textInput}
                 onChangeText={this.handleChangeText}
                 value={this.state.searchText}
-                autoFocus
                 selectTextOnFocus
               />
             </Item>
@@ -289,6 +299,10 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
+    top: 1.5,
+    fontSize: 17,
+    paddingHorizontal: 5,
+    height: 50,
   },
 })
 
@@ -298,4 +312,5 @@ export default compose(
     backgroundColor: colors.white,
     barStyle: 'dark-content',
   }),
+  transitionTimeout,
 )(SearchBox)

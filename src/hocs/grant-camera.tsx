@@ -76,29 +76,31 @@ class CameraPermission extends React.Component<Props & NavigationComponent> {
       const { status: currentStatus } = await Permissions.getAsync(
         Permissions.CAMERA,
       )
+
       if (currentStatus === 'granted') {
         return this.setState({
           granted: true,
         })
       }
 
-      if (this.isAndroid && currentStatus !== 'denied') {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'Cho phép Store Làm Mộc sử dụng camera',
-            message: 'Store Làm Mộc sử dụng camera để quét mã QR',
-          },
-        )
+      // if (this.isAndroid && currentStatus !== 'denied') {
+      //   const granted = await PermissionsAndroid.request(
+      //     PermissionsAndroid.PERMISSIONS.CAMERA,
+      //     {
+      //       title: 'Cho phép Store Làm Mộc sử dụng camera',
+      //       message: 'Store Làm Mộc sử dụng camera để quét mã QR',
+      //     },
+      //   )
 
-        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          this.handleGoBack()
-        } else {
-          this.setState({
-            granted: true,
-          })
-        }
-      } else if (currentStatus !== 'denied') {
+      //   if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+      //     this.handleGoBack()
+      //   } else {
+      //     this.setState({
+      //       granted: true,
+      //     })
+      //   }
+      // } else
+      if (currentStatus !== 'denied') {
         const { status } = await Permissions.askAsync(Permissions.CAMERA)
 
         if (status !== 'granted') {
@@ -134,6 +136,10 @@ class CameraPermission extends React.Component<Props & NavigationComponent> {
             cancelable: false,
           },
         )
+      } else if (__DEV__) {
+        this.setState({
+          granted: true,
+        })
       }
     } catch (err) {
       console.warn(err)

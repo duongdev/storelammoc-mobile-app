@@ -32,72 +32,35 @@ class AppContainer extends React.Component<Props> {
 
   async componentDidMount() {
     StatusBar.setBarStyle('light-content')
-    Updates.addListener(this.handleUpdateListener)
+    this.cacheResourceAsync()
+    if (!__DEV__) {
+      Updates.addListener(this.handleUpdateListener)
 
-    try {
-      const update = await Updates.checkForUpdateAsync()
+      try {
+        const update = await Updates.checkForUpdateAsync()
 
-      if (update.isAvailable) {
-        this.setState({
-          hasNewUpdate: true,
-        })
+        if (update.isAvailable) {
+          this.setState({
+            hasNewUpdate: true,
+          })
 
-        await Updates.fetchUpdateAsync()
+          await Updates.fetchUpdateAsync()
+        }
+      } catch (e) {
+        // ignore
+        throw e
       }
-    } catch (e) {
-      // ignore
-      throw e
     }
   }
 
-  cacheResourceAsync = async () => {
+  cacheResourceAsync = () => {
     const resources = Object.values(images)
-    Promise.all(resources.map(res => Asset.fromModule(res).downloadAsync()))
-    return
-  }
-
-  handleAppLoadingFinish = () => {
-    this.setState({
-      isSplashReady: true,
-    })
-  }
-
-  handleAppLoadingError = () => {
-    this.setState({
-      isSplashReady: true,
-      isSplashError: true,
-    })
-
-    throw new Error('App loading failure')
-  }
-
-  cacheAppResourceAsync = () => {
-    // FIXME: Update this when @types/expo exports SplashScreen
-    ;(Expo as any).SplashScreen.hide()
-
-    this.setState({
-      isReady: true,
-    })
+    return Promise.all(
+      resources.map(res => Asset.fromModule(res).downloadAsync()),
+    )
   }
 
   render() {
-    if (!this.state.isSplashReady) {
-      return (
-        <React.Fragment>
-          <AppLoading
-            startAsync={this.cacheResourceAsync}
-            onFinish={this.handleAppLoadingFinish}
-            onError={this.handleAppLoadingError}
-          />
-
-          <TopToast
-            isVisible={this.state.hasNewUpdate}
-            message={NEW_UPDATE_TEXT}
-          />
-        </React.Fragment>
-      )
-    }
-
     return (
       <React.Fragment>
         <StackNavigator />
