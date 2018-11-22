@@ -12,7 +12,7 @@ yarn publish:$BUILD_ENV
 if [ $BUILD_NATIVE = true ]; then
   yarn build:$BUILD_ENV:ios
 
-  curl -o app.ipa "$(expo url:ipa --non-interactive)"
+  curl -o app.ipa "$(npx expo url:ipa --non-interactive)"
   
   sudo gem install fastlane
   fastlane deliver --verbose --ipa "app.ipa" --skip_metadata --skip_screenshots --force
