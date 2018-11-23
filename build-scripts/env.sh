@@ -1,8 +1,8 @@
 #!/bin/bash
 
-export TAG=$(git describe --tags)
+# export TAG=$(git describe --tags)
 
-export BUILD_REV="$(cut -d'-' -f1 <<<"$TAG")"
+export BUILD_REV=$TRAVIS_TAG
 export BUILD_NUMBER=$TRAVIS_BUILD_NUMBER
 export BUILD_ENV="$(cut -d'-' -f2 <<<"$TAG")"
 
@@ -13,4 +13,4 @@ else
 fi
 
 
-echo "$BUILD_NUMBER $BUILD_ENV $BUILD_NATIVE"
+echo "$TAG $BUILD_ENV $BUILD_NATIVE"
