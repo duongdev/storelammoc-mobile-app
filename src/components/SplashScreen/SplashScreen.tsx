@@ -18,9 +18,10 @@ import images from 'assets/images'
 
 const APP_VERSION = Constants.manifest.version
 const BUILD_ID =
-  Platform.OS === 'ios'
+  process.env.BUILD_NUMBER ||
+  (Platform.OS === 'ios'
     ? get(Constants.platform.ios, 'buildNumber')
-    : get(Constants.platform.android, 'versionCode')
+    : get(Constants.platform.android, 'versionCode'))
 
 export default () => {
   const BUILD_ID_STR = BUILD_ID ? `(${BUILD_ID})` : ''
