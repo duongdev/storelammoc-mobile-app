@@ -164,7 +164,9 @@ export default class WebView extends React.Component<
                 ? `Chờ lâu quá!\nBạn có muốn tải lại không?`
                 : `Có lỗi xảy ra!\nVui lòng thử lại!`}
             </Text>
-            <Button title="Thử lại" onPress={this.handleReload} />
+            <View style={{ marginTop: 10 }}>
+              <Button title="Thử lại" onPress={this.handleReload} />
+            </View>
           </View>
         </View>
       </Container>
@@ -200,6 +202,7 @@ export default class WebView extends React.Component<
           onNavigationStateChange={this.handleNavigationStateChange}
           {...this.props}
         />
+
         {!this.state.isReady && <SplashScreen />}
         {this.renderError()}
       </SwipeBackGesture>

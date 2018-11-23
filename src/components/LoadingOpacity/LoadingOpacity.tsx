@@ -3,7 +3,6 @@ import React, { Component } from 'react'
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 
 import colors from 'constants/colors'
-import { AuthSession } from 'expo'
 import { Button } from 'native-base'
 
 interface Props {
@@ -35,7 +34,7 @@ export default class LoadingOpacity extends Component<Props> {
             light
             small
             onPress={this.props.onRetry}
-            style={styles.button}
+            style={styles.button as any}
           >
             <Text style={styles.text}>Thử lại</Text>
           </Button>
