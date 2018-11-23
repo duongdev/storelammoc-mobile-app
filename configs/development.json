@@ -10,7 +10,7 @@
       "package": "com.lammoc.store.dev"
     },
     "extra": {
-      "STORE_WEB_URL": "http://localhost:3000?rn-webview=true"
+      "STORE_WEB_URL": "http://localhost:3000"
     }
   }
 }

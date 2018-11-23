@@ -138,11 +138,10 @@ class MainScreen extends React.Component<
           onLoadEnd={this.handleWebViewLoadEnd}
           gestureLeft={this.state.gestureLeft}
           gestureTop={this.state.gestureTop}
-          source={{ uri: env.STORE_WEB_URL }}
+          source={{ uri: `${env.STORE_WEB_URL}?rn-webview=true` }}
           style={styles.mainWebView}
           ref={webView => (this.mainWebView = webView)}
           onMessage={this.handleWebViewMessage}
-          showDevTools={false}
         />
 
         <OfflineNotice />

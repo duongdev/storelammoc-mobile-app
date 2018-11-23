@@ -29,7 +29,6 @@ const TIME_OUT = 15000 // set timeout to 15s
 export interface WebViewProps extends RNWebViewProps {
   gestureLeft?: number
   gestureTop?: number
-  showDevTools?: boolean
   isMainScreen: boolean
 }
 
@@ -45,9 +44,7 @@ export default class WebView extends React.Component<
   WebViewProps,
   WebViewStates
 > {
-  static defaultProps: Partial<WebViewProps> = {
-    showDevTools: __DEV__,
-  }
+  static defaultProps: Partial<WebViewProps> = {}
 
   webView: RNWebView | null = null
 
@@ -100,7 +97,7 @@ export default class WebView extends React.Component<
       }
       const isHttpLink = /^http.*/.test(url)
 
-      const storeLink = env.STORE_WEB_URL.replace('?rn-webview=true', '')
+      const storeLink = env.STORE_WEB_URL
       const accountKitLink = 'accountkit'
       const accountKitFAQ = 'accountkit.com/faq'
 
@@ -167,7 +164,9 @@ export default class WebView extends React.Component<
                 ? `Chờ lâu quá!\nBạn có muốn tải lại không?`
                 : `Có lỗi xảy ra!\nVui lòng thử lại!`}
             </Text>
-            <Button title="Thử lại" onPress={this.handleReload} />
+            <View style={{ marginTop: 10 }}>
+              <Button title="Thử lại" onPress={this.handleReload} />
+            </View>
           </View>
         </View>
       </Container>
@@ -184,7 +183,6 @@ export default class WebView extends React.Component<
         <RNWebView
           /*** common ***/
           startInLoadingState
-          allowsInlineMediaPlayback
           onLoad={this.handleLoadEnd}
           onError={this.handleError}
           renderError={this.renderError}
@@ -193,7 +191,9 @@ export default class WebView extends React.Component<
           }
           /*** ios ***/
           useWebKit
+          allowsInlineMediaPlayback
           bounces={false}
+          decelerationRate={4}
           /*** android ***/
           domStorageEnabled
           javaScriptEnabled
@@ -202,6 +202,7 @@ export default class WebView extends React.Component<
           onNavigationStateChange={this.handleNavigationStateChange}
           {...this.props}
         />
+
         {!this.state.isReady && <SplashScreen />}
         {this.renderError()}
       </SwipeBackGesture>
@@ -210,11 +211,6 @@ export default class WebView extends React.Component<
 }
 
 const styles = StyleSheet.create({
-  devTools: {
-    borderTopWidth: 1,
-    borderTopColor: '#CCC',
-    padding: 3,
-  },
   contentWrapper: {
     flex: 1,
     justifyContent: 'center',

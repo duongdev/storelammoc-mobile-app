@@ -10,7 +10,7 @@
       "package": "com.lammoc.store"
     },
     "extra": {
-      "STORE_WEB_URL": "https://storelammoc.vn?rn-webview=true",
+      "STORE_WEB_URL": "https://storelammoc.vn",
       "API_URL": "https://api.storelammoc.vn"
     },
     "hooks": {
