@@ -2,7 +2,7 @@
   "name": "store-app-rn",
   "author": "Dương Đỗ <duong@targeek.io>",
   "main": "node_modules/expo/AppEntry.js",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "private": true,
   "engines": {
     "node": ">=8.0.0"
