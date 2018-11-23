@@ -142,7 +142,6 @@ class MainScreen extends React.Component<
           style={styles.mainWebView}
           ref={webView => (this.mainWebView = webView)}
           onMessage={this.handleWebViewMessage}
-          showDevTools={false}
         />
 
         <OfflineNotice />

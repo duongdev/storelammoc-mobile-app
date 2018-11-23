@@ -29,7 +29,6 @@ const TIME_OUT = 15000 // set timeout to 15s
 export interface WebViewProps extends RNWebViewProps {
   gestureLeft?: number
   gestureTop?: number
-  showDevTools?: boolean
   isMainScreen: boolean
 }
 
@@ -45,9 +44,7 @@ export default class WebView extends React.Component<
   WebViewProps,
   WebViewStates
 > {
-  static defaultProps: Partial<WebViewProps> = {
-    showDevTools: __DEV__,
-  }
+  static defaultProps: Partial<WebViewProps> = {}
 
   webView: RNWebView | null = null
 
@@ -210,11 +207,6 @@ export default class WebView extends React.Component<
 }
 
 const styles = StyleSheet.create({
-  devTools: {
-    borderTopWidth: 1,
-    borderTopColor: '#CCC',
-    padding: 3,
-  },
   contentWrapper: {
     flex: 1,
     justifyContent: 'center',
