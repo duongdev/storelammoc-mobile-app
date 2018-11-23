@@ -100,7 +100,7 @@ export default class WebView extends React.Component<
       }
       const isHttpLink = /^http.*/.test(url)
 
-      const storeLink = env.STORE_WEB_URL.replace('?rn-webview=true', '')
+      const storeLink = env.STORE_WEB_URL
       const accountKitLink = 'accountkit'
       const accountKitFAQ = 'accountkit.com/faq'
 
