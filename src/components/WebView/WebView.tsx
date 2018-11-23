@@ -181,7 +181,6 @@ export default class WebView extends React.Component<
         <RNWebView
           /*** common ***/
           startInLoadingState
-          allowsInlineMediaPlayback
           onLoad={this.handleLoadEnd}
           onError={this.handleError}
           renderError={this.renderError}
@@ -190,7 +189,9 @@ export default class WebView extends React.Component<
           }
           /*** ios ***/
           useWebKit
+          allowsInlineMediaPlayback
           bounces={false}
+          decelerationRate={4}
           /*** android ***/
           domStorageEnabled
           javaScriptEnabled
