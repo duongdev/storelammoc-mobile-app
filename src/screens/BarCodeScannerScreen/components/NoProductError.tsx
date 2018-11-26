@@ -24,7 +24,7 @@ export default class NoProductError extends Component<Props> {
             light
             small
             onPress={this.props.onRetry}
-            style={styles.button}
+            style={styles.button as any}
           >
             <Text style={styles.text}>{'Thử lại'}</Text>
           </Button>
@@ -33,7 +33,7 @@ export default class NoProductError extends Component<Props> {
             light
             small
             onPress={this.props.onGoBack}
-            style={[styles.button, { marginLeft: 10 }]}
+            style={[styles.button, { marginLeft: 10 }] as any}
           >
             <Text style={styles.text}>{'Thoát'}</Text>
           </Button>

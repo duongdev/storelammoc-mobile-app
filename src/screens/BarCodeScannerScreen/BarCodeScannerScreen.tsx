@@ -1,6 +1,4 @@
-import find from 'lodash/find'
 import get from 'lodash/get'
-import isEmpty from 'lodash/isEmpty'
 
 import * as React from 'react'
 
@@ -13,16 +11,18 @@ import { compose } from 'recompose'
 import { MaterialIcons } from '@expo/vector-icons'
 import { BarCodeReadCallback, BarCodeScanner } from 'expo'
 import { Button } from 'native-base'
-import { AsyncStorage, Platform, StyleSheet, View } from 'react-native'
+import { Platform, StyleSheet, View } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
 import LoadingOpacity from 'components/LoadingOpacity'
-import NoProductError from 'screens/BarCodeScannerScreen/components/NoProductError'
 
 import colors from 'constants/colors'
-import env from 'constants/env'
+
+import { getProductBySKU, getProductNavData } from 'services/product-services'
+import { Variant } from 'types/products'
 
 import BarCodeScannerOverlay from './components/BarCodeScannerOverlay'
+import NoProductError from './components/NoProductError'
 
 export interface BarCodeScannerProps extends NavigationComponent {
   granted?: boolean
@@ -30,7 +30,7 @@ export interface BarCodeScannerProps extends NavigationComponent {
 }
 interface BarCodeScannerStates {
   lastScanAt: number
-  isFetching: boolean
+  loading: boolean
   isFetchTimeout: boolean
   isShowNoProduct: boolean
 }
@@ -40,11 +40,12 @@ class BarcodeScannerScreen extends React.Component<
   BarCodeScannerStates
 > {
   didFocusSubscription: any
+  timeout: any
   isAndroid = Platform.OS === 'android'
 
   state = {
     lastScanAt: 0,
-    isFetching: false,
+    loading: false,
     isFetchTimeout: false,
     isShowNoProduct: false,
   }
@@ -68,93 +69,36 @@ class BarcodeScannerScreen extends React.Component<
 
     clearTimeout(this.timeout)
   }
-
-  mapProductData = (sku: string, product: any) => {
-    const variants = get(product, 'variants', [])
-    const data: {
-      id: string
-      slug: string
-      variantId?: string
-    } = {
-      id: product.id,
-      slug: product.slug,
-    }
-
-    if (!isEmpty(variants)) {
-      const variant = find(variants, variant => {
-        return variant.sku === sku
+  getProductNavData = async (sku: Variant['sku']) => {
+    this.timeout = setTimeout(() => {
+      this.setState({
+        isFetchTimeout: true,
       })
-      data.variantId = variant.id
-    }
+    }, 3000)
 
-    return data
-  }
+    this.setState({
+      loading: true,
+    })
 
-  storageProduct = async (sku: string, mapedProduct: any) => {
     try {
-      await AsyncStorage.setItem(`@sku:${sku}`, JSON.stringify(mapedProduct))
-    } catch (err) {
-      console.warn(err)
-    }
-  }
-
-  getProductFromStorage = async (sku: string) => {
-    try {
-      const productString = await AsyncStorage.getItem(`@sku:${sku}`)
-      if (!productString) {
-        return null
-      }
-
-      const product = JSON.parse(productString)
-      return product
-    } catch (err) {
-      console.warn(err)
-    }
-  }
-
-  timeout: any
-  requestSKU = async (sku: string) => {
-    try {
-      this.setState(
-        {
-          isFetching: true,
-        },
-        () => {
-          this.timeout = setTimeout(() => {
-            this.setState({
-              isFetchTimeout: true,
-            })
-          }, 3000)
-        },
-      )
-
-      let product = await this.getProductFromStorage(sku)
-      if (product) {
-        return product
-      }
-
-      const url = `${env.API_URL}/v2/products/${sku}?sku=true`
-      const res = await fetch(url)
-      if (this.state.isFetchTimeout) {
-        return false
-      }
+      const product = await getProductBySKU(sku)
 
       clearTimeout(this.timeout)
 
-      if (res.status === 404) {
+      this.setState({
+        loading: false,
+      })
+
+      if (this.state.isFetchTimeout || !product) {
+        this.setState({
+          isShowNoProduct: true,
+        })
         return false
       }
 
-      this.setState({
-        isFetching: false,
-      })
+      const productNavData = getProductNavData(product, sku)
 
-      product = await res.json()
-      const mapedProduct = this.mapProductData(sku, product)
-
-      this.storageProduct(sku, mapedProduct)
-
-      return mapedProduct
+      return productNavData
     } catch (err) {
       console.warn(err)
       return false
@@ -162,34 +106,24 @@ class BarcodeScannerScreen extends React.Component<
   }
   postMessageToWeb = get(this.props.navigation, 'state.params.postMessageToWeb')
 
-  onBarCodeRead = ({
-    id,
-    slug,
-    variantId,
-  }: {
-    id: string
-    slug: string
-    variantId?: string
-  }) => {
-    this.postMessageToWeb(`product-view-nav:${id}:${slug}:${variantId}`)
-  }
-
   handleBarCodeRead: BarCodeReadCallback = async params => {
-    const { isFetching } = this.state
+    const { loading } = this.state
 
-    if (isFetching) {
+    if (loading) {
       return
     }
 
-    const product = await this.requestSKU(params.data)
+    const productNavData = await this.getProductNavData(params.data)
 
-    if (product) {
-      this.onBarCodeRead(product)
+    if (productNavData) {
+      const { id, slug, variantId } = productNavData
+
+      this.postMessageToWeb(`product-view-nav:${id}:${slug}:${variantId}`)
       return this.handleGoTop()
     }
 
     this.setState({
-      isShowNoProduct: !product,
+      isShowNoProduct: !productNavData,
     })
   }
 
@@ -201,9 +135,9 @@ class BarcodeScannerScreen extends React.Component<
     this.props.navigation.popToTop()
   }
 
-  onCancelScan = () => {
+  handleRetry = () => {
     this.setState({
-      isFetching: false,
+      loading: false,
       isFetchTimeout: false,
       isShowNoProduct: false,
     })
@@ -223,16 +157,16 @@ class BarcodeScannerScreen extends React.Component<
           <BarCodeScannerOverlay />
         )}
 
-        {this.state.isFetching && !this.state.isShowNoProduct && (
+        {this.state.loading && !this.state.isShowNoProduct && (
           <LoadingOpacity
-            isRetry={this.state.isFetchTimeout}
-            onRetry={this.onCancelScan}
+            showRetry={this.state.isFetchTimeout}
+            onRetry={this.handleRetry}
           />
         )}
 
         {this.state.isShowNoProduct && (
           <NoProductError
-            onRetry={this.onCancelScan}
+            onRetry={this.handleRetry}
             onGoBack={this.handleGoBack}
           />
         )}

@@ -3,13 +3,7 @@ import { get } from 'lodash'
 import * as React from 'react'
 
 import { Constants, IntentLauncherAndroid, Linking, Permissions } from 'expo'
-import {
-  Alert,
-  AppState,
-  AppStateStatus,
-  PermissionsAndroid,
-  Platform,
-} from 'react-native'
+import { Alert, AppState, AppStateStatus, Platform } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
 interface Props {}
