@@ -4,7 +4,7 @@ import * as React from 'react'
 
 import keepAwake from 'hocs/keep-awake'
 import withStatusBar from 'hocs/status-bar'
-import transitionTimeout from 'hocs/transition-timeout'
+import withNavigatorFocused from 'hocs/with-navigator-focused'
 import withPermission from 'hocs/with-permission'
 import { compose } from 'recompose'
 
@@ -137,7 +137,6 @@ class BarcodeScannerScreen extends React.Component<
   }
 
   handleLaunchImageLibrary = async () => {
-    console.log('handleLaunchImageLibrary')
     if (this.props.cameraRollGranted)
       ImagePicker.launchImageLibraryAsync({
         mediaTypes: 'Images',
@@ -147,10 +146,9 @@ class BarcodeScannerScreen extends React.Component<
   }
 
   render() {
-    console.log(this.props)
     return (
       <View style={styles.root}>
-        {this.props.cameraGranted && this.props.isReady ? (
+        {this.props.cameraGranted && this.props.navigatorFocused ? (
           <BarCodeScanner
             onBarCodeRead={this.handleBarCodeRead}
             style={{ flex: 1 }}
@@ -227,7 +225,7 @@ export default compose(
           : 'Để sử dụng tính năng quét mã QR, hãy vào Cài đặt -> Quyền riêng tư và chọn kích hoạt cho phép sử dụng camera.',
     },
   }),
-  transitionTimeout,
+  withNavigatorFocused,
 )(BarcodeScannerScreen)
 
 const styles = StyleSheet.create({
