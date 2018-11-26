@@ -189,6 +189,9 @@ export default class WebView extends React.Component<
           injectedJavaScript={
             Platform.OS === 'ios' ? patchPostMessageJsCode : ''
           }
+          onNavigationStateChange={this.handleNavigationStateChange}
+          dataDetectorTypes="none"
+          ref={ref => (this.webView = ref)}
           /*** ios ***/
           useWebKit
           allowsInlineMediaPlayback
@@ -197,9 +200,6 @@ export default class WebView extends React.Component<
           /*** android ***/
           domStorageEnabled
           javaScriptEnabled
-          ref={ref => (this.webView = ref)}
-          dataDetectorTypes="none"
-          onNavigationStateChange={this.handleNavigationStateChange}
           {...this.props}
         />
 

@@ -112,7 +112,7 @@ class BarcodeScannerScreen extends React.Component<
     }
   }
 
-  timeout = 0
+  timeout: any
   requestSKU = async (sku: string) => {
     try {
       this.setState(
@@ -124,7 +124,7 @@ class BarcodeScannerScreen extends React.Component<
             this.setState({
               isFetchTimeout: true,
             })
-          }, 3000) as any
+          }, 3000)
         },
       )
 
