@@ -2,10 +2,10 @@ import get from 'lodash/get'
 
 import * as React from 'react'
 
-import keepAwake from 'hocs/keep-awake'
-import withStatusBar from 'hocs/status-bar'
-import withNavigatorFocused from 'hocs/with-navigator-focused'
-import withPermission from 'hocs/with-permission'
+import keepAwake from 'hocs/keepAwake'
+import withNavigatorFocused from 'hocs/withNavigatorFocused'
+import withPermission from 'hocs/withPermission'
+import withStatusBar from 'hocs/withStatusBar'
 import { compose } from 'recompose'
 
 import { MaterialIcons } from '@expo/vector-icons'
@@ -204,10 +204,10 @@ export default compose(
   }),
   keepAwake(),
   withPermission<BarCodeScannerProps>({
-    askOnMounted: false,
-    permission: Permissions.CAMERA_ROLL,
+    permission: Permissions.CAMERA,
+    onDeny: props => props.navigation.pop(),
     alert: {
-      title: 'Cho phép sử dụng hình ảnh',
+      title: 'Cho phép sử dụng camera',
       message:
         Platform.OS === 'android'
           ? 'Để sử dụng tính năng quét mã QR, hãy vào Cài đặt -> Ứng dụng -> Store Làm Mộc -> Quyền và chọn kích hoạt cho phép sử dụng camera.'
@@ -215,10 +215,10 @@ export default compose(
     },
   }),
   withPermission<BarCodeScannerProps>({
-    permission: Permissions.CAMERA,
-    onDeny: props => props.navigation.pop(),
+    askOnMounted: false,
+    permission: Permissions.CAMERA_ROLL,
     alert: {
-      title: 'Cho phép sử dụng camera',
+      title: 'Cho phép sử dụng hình ảnh',
       message:
         Platform.OS === 'android'
           ? 'Để sử dụng tính năng quét mã QR, hãy vào Cài đặt -> Ứng dụng -> Store Làm Mộc -> Quyền và chọn kích hoạt cho phép sử dụng camera.'

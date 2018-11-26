@@ -14,10 +14,10 @@ import {
   TextInput,
 } from 'react-native'
 
-import withStatusBar from 'hocs/status-bar'
+import withStatusBar from 'hocs/withStatusBar'
 import withNavigatorFocused, {
   WithNavigatorFocused,
-} from 'hocs/with-navigator-focused'
+} from 'hocs/withNavigatorFocused'
 import { compose } from 'recompose'
 
 import { NavigationComponent } from 'react-navigation'

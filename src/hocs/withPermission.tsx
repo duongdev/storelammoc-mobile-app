@@ -34,7 +34,7 @@ const withPermission = <P extends object>(config: WithPermissionConfig<P>) => (
     }
 
     onGrant = () => {
-      // this.forceUpdate()
+      this.forceUpdate()
       if (typeof config.onGrant === 'function') config.onGrant(props)
     }
     onDeny =
