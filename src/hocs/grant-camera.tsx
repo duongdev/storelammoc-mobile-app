@@ -77,23 +77,6 @@ class CameraPermission extends React.Component<Props & NavigationComponent> {
         })
       }
 
-      // if (this.isAndroid && currentStatus !== 'denied') {
-      //   const granted = await PermissionsAndroid.request(
-      //     PermissionsAndroid.PERMISSIONS.CAMERA,
-      //     {
-      //       title: 'Cho phép Store Làm Mộc sử dụng camera',
-      //       message: 'Store Làm Mộc sử dụng camera để quét mã QR',
-      //     },
-      //   )
-
-      //   if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-      //     this.handleGoBack()
-      //   } else {
-      //     this.setState({
-      //       granted: true,
-      //     })
-      //   }
-      // } else
       if (currentStatus !== 'denied') {
         const { status } = await Permissions.askAsync(Permissions.CAMERA)
 

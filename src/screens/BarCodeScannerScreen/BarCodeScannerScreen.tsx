@@ -2,15 +2,20 @@ import get from 'lodash/get'
 
 import * as React from 'react'
 
-import withGrantCamera from 'hocs/grant-camera'
 import keepAwake from 'hocs/keep-awake'
 import withStatusBar from 'hocs/status-bar'
 import transitionTimeout from 'hocs/transition-timeout'
+import withPermission from 'hocs/with-permission'
 import { compose } from 'recompose'
 
 import { MaterialIcons } from '@expo/vector-icons'
-import { BarCodeReadCallback, BarCodeScanner } from 'expo'
-import { Button } from 'native-base'
+import {
+  BarCodeReadCallback,
+  BarCodeScanner,
+  ImagePicker,
+  Permissions,
+} from 'expo'
+import { Button, Icon, Text } from 'native-base'
 import { Platform, StyleSheet, View } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
@@ -56,17 +61,7 @@ class BarcodeScannerScreen extends React.Component<
     }
   }
 
-  componentWillReceiveProps(nextProps: BarCodeScannerProps) {
-    if (this.props.granted !== nextProps.granted) {
-      this.forceUpdate()
-    }
-  }
-
   componentWillUnmount() {
-    if (this.didFocusSubscription) {
-      this.didFocusSubscription.remove()
-    }
-
     clearTimeout(this.timeout)
   }
   getProductNavData = async (sku: Variant['sku']) => {
@@ -109,9 +104,7 @@ class BarcodeScannerScreen extends React.Component<
   handleBarCodeRead: BarCodeReadCallback = async params => {
     const { loading } = this.state
 
-    if (loading) {
-      return
-    }
+    if (loading) return
 
     const productNavData = await this.getProductNavData(params.data)
 
@@ -143,10 +136,21 @@ class BarcodeScannerScreen extends React.Component<
     })
   }
 
+  handleLaunchImageLibrary = async () => {
+    console.log('handleLaunchImageLibrary')
+    if (this.props.cameraRollGranted)
+      ImagePicker.launchImageLibraryAsync({
+        mediaTypes: 'Images',
+        allowsEditing: true,
+      })
+    else this.props.cameraRollAskPermission()
+  }
+
   render() {
+    console.log(this.props)
     return (
       <View style={styles.root}>
-        {this.props.granted && this.props.isReady ? (
+        {this.props.cameraGranted && this.props.isReady ? (
           <BarCodeScanner
             onBarCodeRead={this.handleBarCodeRead}
             style={{ flex: 1 }}
@@ -179,6 +183,18 @@ class BarcodeScannerScreen extends React.Component<
         >
           <MaterialIcons name="arrow-back" size={25} color={colors.white} />
         </Button>
+
+        <Button
+          iconLeft
+          transparent
+          bordered
+          light
+          onPress={this.handleLaunchImageLibrary}
+          style={{ ...StyleSheet.flatten(styles.launchLibraryButton) }}
+        >
+          <Icon name="image" type="Entypo" />
+          <Text>Mở thư viện</Text>
+        </Button>
       </View>
     )
   }
@@ -189,7 +205,28 @@ export default compose(
     hidden: true,
   }),
   keepAwake(),
-  withGrantCamera,
+  withPermission<BarCodeScannerProps>({
+    askOnMounted: false,
+    permission: Permissions.CAMERA_ROLL,
+    alert: {
+      title: 'Cho phép sử dụng hình ảnh',
+      message:
+        Platform.OS === 'android'
+          ? 'Để sử dụng tính năng quét mã QR, hãy vào Cài đặt -> Ứng dụng -> Store Làm Mộc -> Quyền và chọn kích hoạt cho phép sử dụng camera.'
+          : 'Để sử dụng tính năng quét mã QR, hãy vào Cài đặt -> Quyền riêng tư và chọn kích hoạt cho phép sử dụng camera.',
+    },
+  }),
+  withPermission<BarCodeScannerProps>({
+    permission: Permissions.CAMERA,
+    onDeny: props => props.navigation.pop(),
+    alert: {
+      title: 'Cho phép sử dụng camera',
+      message:
+        Platform.OS === 'android'
+          ? 'Để sử dụng tính năng quét mã QR, hãy vào Cài đặt -> Ứng dụng -> Store Làm Mộc -> Quyền và chọn kích hoạt cho phép sử dụng camera.'
+          : 'Để sử dụng tính năng quét mã QR, hãy vào Cài đặt -> Quyền riêng tư và chọn kích hoạt cho phép sử dụng camera.',
+    },
+  }),
   transitionTimeout,
 )(BarcodeScannerScreen)
 
@@ -203,5 +240,10 @@ const styles = StyleSheet.create({
     top: 8,
     left: 8,
     paddingRight: 20,
+  },
+  launchLibraryButton: {
+    position: 'absolute',
+    bottom: 30,
+    alignSelf: 'center',
   },
 })
