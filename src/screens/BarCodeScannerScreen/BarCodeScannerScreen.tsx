@@ -16,11 +16,11 @@ import { Button } from 'native-base'
 import { AsyncStorage, Platform, StyleSheet, View } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
-import colors from 'constants/colors'
-import env from 'constants/env'
-
 import LoadingOpacity from 'components/LoadingOpacity'
 import NoProductError from 'screens/BarCodeScannerScreen/components/NoProductError'
+
+import colors from 'constants/colors'
+import env from 'constants/env'
 
 import BarCodeScannerOverlay from './components/BarCodeScannerOverlay'
 
@@ -72,11 +72,11 @@ class BarcodeScannerScreen extends React.Component<
   mapProductData = (sku: string, product: any) => {
     const variants = get(product, 'variants', [])
     const data: {
-      _id: string
+      id: string
       slug: string
       variantId?: string
     } = {
-      _id: product._id,
+      id: product.id,
       slug: product.slug,
     }
 
@@ -84,7 +84,7 @@ class BarcodeScannerScreen extends React.Component<
       const variant = find(variants, variant => {
         return variant.sku === sku
       })
-      data.variantId = variant._id
+      data.variantId = variant.id
     }
 
     return data
@@ -163,15 +163,15 @@ class BarcodeScannerScreen extends React.Component<
   postMessageToWeb = get(this.props.navigation, 'state.params.postMessageToWeb')
 
   onBarCodeRead = ({
-    _id,
+    id,
     slug,
     variantId,
   }: {
-    _id: string
+    id: string
     slug: string
     variantId?: string
   }) => {
-    this.postMessageToWeb(`product-view-nav:${_id}:${slug}:${variantId}`)
+    this.postMessageToWeb(`product-view-nav:${id}:${slug}:${variantId}`)
   }
 
   handleBarCodeRead: BarCodeReadCallback = async params => {
@@ -223,13 +223,12 @@ class BarcodeScannerScreen extends React.Component<
           <BarCodeScannerOverlay />
         )}
 
-        {this.state.isFetching &&
-          !this.state.isShowNoProduct && (
-            <LoadingOpacity
-              isRetry={this.state.isFetchTimeout}
-              onRetry={this.onCancelScan}
-            />
-          )}
+        {this.state.isFetching && !this.state.isShowNoProduct && (
+          <LoadingOpacity
+            isRetry={this.state.isFetchTimeout}
+            onRetry={this.onCancelScan}
+          />
+        )}
 
         {this.state.isShowNoProduct && (
           <NoProductError
