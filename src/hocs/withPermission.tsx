@@ -43,12 +43,13 @@ const withPermission = <P extends object>(config: WithPermissionConfig<P>) => (
           }
         : () => {}
 
-    componentDidMount = async () => {
+    componentWillMount = async () => {
       if (config.askOnMounted !== false) this.askForPermission()
       else {
         const { status: currentStatus } = await Permissions.getAsync(
           config.permission,
         )
+        console.log({ currentStatus })
         this.setState({ granted: currentStatus === 'granted' })
       }
     }
@@ -59,9 +60,8 @@ const withPermission = <P extends object>(config: WithPermissionConfig<P>) => (
      */
     askForPermission = async () => {
       // Get current permission status
-      const { status: currentStatus } = await Permissions.getAsync(
-        config.permission,
-      )
+      const currentStatus = (await Permissions.getAsync(config.permission))
+        .status
 
       switch (currentStatus) {
         // The permission has been granted before
@@ -150,7 +150,8 @@ const openSettings = async () => {
         'manifest.ios.bundleIdentifier',
         '',
       )
-      await Linking.openURL(`app-settings://camera/${bundleIdentifier}`)
+
+      await Linking.openURL(`app-settings://${bundleIdentifier}`)
     }
   } catch (err) {
     console.warn(err)

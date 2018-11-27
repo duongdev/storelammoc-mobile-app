@@ -39,7 +39,12 @@
       "adaptiveIcon": {
         "backgroundColor": "#263238"
       },
-      "permissions": ["CAMERA"]
+      "permissions": [
+        "CAMERA",
+        "CAMERA_ROLL",
+        "READ_INTERNAL_STORAGE",
+        "READ_EXTERNAL_STORAGE"
+      ]
     },
     "packagerOpts": {
       "assetExts": ["ttf", "mp4", "png"],

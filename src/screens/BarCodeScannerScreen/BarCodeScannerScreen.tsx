@@ -155,6 +155,7 @@ class BarcodeScannerScreen extends React.Component<
     } & ImagePicker.ImageInfo = (await ImagePicker.launchImageLibraryAsync({
       mediaTypes: 'Images',
       allowsEditing: true,
+      aspect: [1, 1],
     })) as any
 
     if (image.cancelled && !image.uri) return
@@ -250,27 +251,23 @@ export default compose(
     hidden: true,
   }),
   keepAwake(),
-  withNavigatorFocused,
   withPermission<BarCodeScannerProps>({
     permission: Permissions.CAMERA,
     onDeny: props => props.navigation.pop(),
     alert: {
       title: 'Cho phép sử dụng camera',
       message:
-        Platform.OS === 'android'
-          ? 'Để sử dụng tính năng quét mã QR, hãy vào Cài đặt -> Ứng dụng -> Store Làm Mộc -> Quyền và chọn kích hoạt cho phép sử dụng camera.'
-          : 'Để sử dụng tính năng quét mã QR, hãy vào Cài đặt -> Quyền riêng tư và chọn kích hoạt cho phép sử dụng camera.',
+        'Vui lòng cho phép Store Làm Mộc sử dụng camera để quét mã sản phẩm.',
     },
   }),
+  withNavigatorFocused,
   withPermission<BarCodeScannerProps>({
     askOnMounted: false,
     permission: Permissions.CAMERA_ROLL,
     alert: {
       title: 'Cho phép sử dụng hình ảnh',
       message:
-        Platform.OS === 'android'
-          ? 'Để sử dụng tính năng quét mã QR, hãy vào Cài đặt -> Ứng dụng -> Store Làm Mộc -> Quyền và chọn kích hoạt cho phép sử dụng camera.'
-          : 'Để sử dụng tính năng quét mã QR, hãy vào Cài đặt -> Quyền riêng tư và chọn kích hoạt cho phép sử dụng camera.',
+        'Vui lòng cho phép Store Làm Mộc sử dụng hình ảnh từ thư viện để quét mã sản phẩm.',
     },
   }),
 )(BarcodeScannerScreen)
