@@ -49,7 +49,7 @@ const withPermission = <P extends object>(config: WithPermissionConfig<P>) => (
         const { status: currentStatus } = await Permissions.getAsync(
           config.permission,
         )
-        console.log({ currentStatus })
+
         this.setState({ granted: currentStatus === 'granted' })
       }
     }
@@ -60,8 +60,10 @@ const withPermission = <P extends object>(config: WithPermissionConfig<P>) => (
      */
     askForPermission = async () => {
       // Get current permission status
-      const currentStatus = (await Permissions.getAsync(config.permission))
-        .status
+      const currentStatus =
+        __DEV__ && Platform.OS === 'android'
+          ? 'granted'
+          : (await Permissions.getAsync(config.permission)).status
 
       switch (currentStatus) {
         // The permission has been granted before

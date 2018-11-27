@@ -231,7 +231,7 @@ class BarcodeScannerScreen extends React.Component<
   )
 
   /** Renders "Open library" button, press to open library. */
-  renderOpenLibraryButton = (
+  renderOpenLibraryButton = Platform.OS === 'ios' && (
     <Button
       iconLeft
       transparent
