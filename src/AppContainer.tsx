@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { StatusBar } from 'react-native'
 
-import { Asset, Updates } from 'expo'
+import { Asset, Font, Updates } from 'expo'
 
 import StackNavigator from 'navigations/StackNavigator'
 
@@ -20,6 +20,13 @@ class AppContainer extends React.Component<Props> {
     } else if (event.type === Updates.EventType.ERROR) {
       Updates.reloadFromCache()
     }
+  }
+
+  async componentWillMount() {
+    await Font.loadAsync({
+      Roboto: require('native-base/Fonts/Roboto.ttf'),
+      Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+    })
   }
 
   async componentDidMount() {
