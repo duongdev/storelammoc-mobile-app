@@ -17,9 +17,12 @@ const withNavigatorFocused = <P extends object>(
     componentDidMount = () => {
       this.didFocusSubscription = this.props.navigation.addListener(
         'didFocus',
-        () => this.setState({ focused: true }),
+        this.handleFocus,
       )
     }
+
+    handleFocus = () => this.setState({ focused: true })
+
     componentWillUnmount = () => {
       this.didFocusSubscription.remove()
     }

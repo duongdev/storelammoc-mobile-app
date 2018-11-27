@@ -1,3 +1,4 @@
+import first from 'lodash/first'
 import get from 'lodash/get'
 
 import * as React from 'react'
@@ -12,6 +13,7 @@ import { MaterialIcons } from '@expo/vector-icons'
 import {
   BarCodeReadCallback,
   BarCodeScanner,
+  CameraConstants,
   ImagePicker,
   Permissions,
 } from 'expo'
@@ -33,7 +35,7 @@ export interface BarCodeScannerProps extends NavigationComponent {
   granted?: boolean
   isReady?: boolean
 }
-interface BarCodeScannerStates {
+interface BarCodeScannerState {
   lastScanAt: number
   loading: boolean
   isFetchTimeout: boolean
@@ -42,7 +44,7 @@ interface BarCodeScannerStates {
 
 class BarcodeScannerScreen extends React.Component<
   BarCodeScannerProps,
-  BarCodeScannerStates
+  BarCodeScannerState
 > {
   didFocusSubscription: any
   timeout: any
@@ -50,6 +52,7 @@ class BarcodeScannerScreen extends React.Component<
 
   state = {
     lastScanAt: 0,
+    /** Determines whether fetching product by SKU from server. */
     loading: false,
     isFetchTimeout: false,
     isShowNoProduct: false,
@@ -64,6 +67,7 @@ class BarcodeScannerScreen extends React.Component<
   componentWillUnmount() {
     clearTimeout(this.timeout)
   }
+
   getProductNavData = async (sku: Variant['sku']) => {
     this.timeout = setTimeout(() => {
       this.setState({
@@ -137,24 +141,47 @@ class BarcodeScannerScreen extends React.Component<
   }
 
   handleLaunchImageLibrary = async () => {
-    if (this.props.cameraRollGranted)
-      ImagePicker.launchImageLibraryAsync({
-        mediaTypes: 'Images',
-        allowsEditing: true,
-      })
-    else this.props.cameraRollAskPermission()
+    await this.props.cameraRollAskPermission()
+
+    if (!this.props.cameraRollGranted) return
+
+    // Open image picker
+    const image: {
+      cancelled: boolean
+    } & ImagePicker.ImageInfo = (await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'Images',
+      allowsEditing: true,
+    })) as any
+
+    if (image.cancelled && !image.uri) return
+
+    /**
+     * Send the picked image to BarCodeScanner to read bar code
+     * TODO: FIXME: Remove type defs when @types/expo adds scanFromURLAsync
+     */
+    const scanFromURLAsync: (
+      url: string,
+      barCodeTypes?: CameraConstants['BarCodeType'][],
+    ) => Promise<
+      {
+        type: string
+        data: string
+      }[]
+    > = (BarCodeScanner as any).scanFromURLAsync
+
+    // Select the first bar code in the image
+    const qrCode = first(await scanFromURLAsync(image.uri))
+
+    // Fetch product info and navigate to product view page
+    if (qrCode && qrCode.type && qrCode.data)
+      return this.handleBarCodeRead(qrCode)
   }
 
   render() {
     return (
       <View style={styles.root}>
         {this.props.cameraGranted && this.props.navigatorFocused ? (
-          <BarCodeScanner
-            onBarCodeRead={this.handleBarCodeRead}
-            style={{ flex: 1 }}
-          >
-            <BarCodeScannerOverlay />
-          </BarCodeScanner>
+          this.renderBarCodeScanner
         ) : (
           <BarCodeScannerOverlay />
         )}
@@ -166,36 +193,52 @@ class BarcodeScannerScreen extends React.Component<
           />
         )}
 
-        {this.state.isShowNoProduct && (
-          <NoProductError
-            onRetry={this.handleRetry}
-            onGoBack={this.handleGoBack}
-          />
-        )}
+        {this.state.isShowNoProduct && this.renderProductNotFound}
 
-        <Button
-          onPress={this.handleGoBack}
-          style={{ ...StyleSheet.flatten(styles.goBackButton) }}
-          iconLeft
-          transparent
-        >
-          <MaterialIcons name="arrow-back" size={25} color={colors.white} />
-        </Button>
-
-        <Button
-          iconLeft
-          transparent
-          bordered
-          light
-          onPress={this.handleLaunchImageLibrary}
-          style={{ ...StyleSheet.flatten(styles.launchLibraryButton) }}
-        >
-          <Icon name="image" type="Entypo" />
-          <Text>Mở thư viện</Text>
-        </Button>
+        {this.renderGoBackButton}
+        {this.renderOpenLibraryButton}
       </View>
     )
   }
+
+  /** Renders a full-screen bar code scanner. */
+  renderBarCodeScanner = (
+    <BarCodeScanner onBarCodeRead={this.handleBarCodeRead} style={{ flex: 1 }}>
+      <BarCodeScannerOverlay />
+    </BarCodeScanner>
+  )
+
+  /** Renders the overlay message when no product found with scanned bar code. */
+  renderProductNotFound = (
+    <NoProductError onRetry={this.handleRetry} onGoBack={this.handleGoBack} />
+  )
+
+  /** Renders "Back" button with press to go back to the previous screen. */
+  renderGoBackButton = (
+    <Button
+      onPress={this.handleGoBack}
+      style={{ ...StyleSheet.flatten(styles.goBackButton) }}
+      iconLeft
+      transparent
+    >
+      <MaterialIcons name="arrow-back" size={25} color={colors.white} />
+    </Button>
+  )
+
+  /** Renders "Open library" button, press to open library. */
+  renderOpenLibraryButton = (
+    <Button
+      iconLeft
+      transparent
+      bordered
+      light
+      onPress={this.handleLaunchImageLibrary}
+      style={{ ...StyleSheet.flatten(styles.launchLibraryButton) }}
+    >
+      <Icon name="image" type="Entypo" />
+      <Text>Mở thư viện</Text>
+    </Button>
+  )
 }
 
 export default compose(
@@ -203,6 +246,7 @@ export default compose(
     hidden: true,
   }),
   keepAwake(),
+  withNavigatorFocused,
   withPermission<BarCodeScannerProps>({
     permission: Permissions.CAMERA,
     onDeny: props => props.navigation.pop(),
@@ -225,7 +269,6 @@ export default compose(
           : 'Để sử dụng tính năng quét mã QR, hãy vào Cài đặt -> Quyền riêng tư và chọn kích hoạt cho phép sử dụng camera.',
     },
   }),
-  withNavigatorFocused,
 )(BarcodeScannerScreen)
 
 const styles = StyleSheet.create({
