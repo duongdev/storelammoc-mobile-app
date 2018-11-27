@@ -39,7 +39,7 @@ export const getProductBySKU = async (
     const productJSON = await AsyncStorage.getItem(`@sku:${sku}`)
 
     try {
-      return JSON.parse(productJSON!)
+      if (productJSON) return JSON.parse(productJSON!)
     } catch (error) {
       // productJSON is undefined or invalid JSON
       // ignore this error, go to next steps.

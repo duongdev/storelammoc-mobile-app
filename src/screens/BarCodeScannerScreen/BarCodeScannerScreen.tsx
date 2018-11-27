@@ -88,7 +88,11 @@ class BarcodeScannerScreen extends React.Component<
         loading: false,
       })
 
-      if (this.state.isFetchTimeout || !product) {
+      if (
+        this.state.isFetchTimeout ||
+        !product ||
+        (product as any).code === 404
+      ) {
         this.setState({
           isShowNoProduct: true,
         })
