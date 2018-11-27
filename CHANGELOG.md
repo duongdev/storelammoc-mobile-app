@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.0"></a>
+# [1.1.0](https://bitbucket.org/targeek/mobile-store/compare/v1.0.10...v1.1.0) (2018-11-27)
+
+
+### Bug Fixes
+
+* **fonts:** require native-base fonts on app loads ([fb4751c](https://bitbucket.org/targeek/mobile-store/commits/fb4751c))
+* **Scanner:** fix handling 404 product ([e19073e](https://bitbucket.org/targeek/mobile-store/commits/e19073e))
+* **TopToast:** fix TopToast height on iPhone X+ ([40695cd](https://bitbucket.org/targeek/mobile-store/commits/40695cd))
+
+
+### Features
+
+* **hoc:** add `with-permission` hoc ([a5dffe4](https://bitbucket.org/targeek/mobile-store/commits/a5dffe4))
+* **hoc:** add withNavigatorFocus replaces transitionTimeout ([3cd1b64](https://bitbucket.org/targeek/mobile-store/commits/3cd1b64))
+* **hoc:** update hoc file names to camelCase ([d176bd3](https://bitbucket.org/targeek/mobile-store/commits/d176bd3))
+* **Scanner:** let user to select an image with sku qr code ([9bd232e](https://bitbucket.org/targeek/mobile-store/commits/9bd232e))
+* add permission for android on app.json ([f97d4cb](https://bitbucket.org/targeek/mobile-store/commits/f97d4cb))
+* add staging specified app icons ([e7b5d21](https://bitbucket.org/targeek/mobile-store/commits/e7b5d21))
+* disable open QR code from library on android ([6b78c64](https://bitbucket.org/targeek/mobile-store/commits/6b78c64))
+
+
+### Performance Improvements
+
+* **nav:** increase transition timeout for better transition performance ([b1fff80](https://bitbucket.org/targeek/mobile-store/commits/b1fff80))
+
+
+
 <a name="1.0.10"></a>
 ## [1.0.10](https://bitbucket.org/targeek/mobile-store/compare/v1.0.9...v1.0.10) (2018-11-23)
 
