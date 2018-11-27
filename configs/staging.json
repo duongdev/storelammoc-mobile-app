@@ -3,11 +3,18 @@
     "name": "Store Staging",
     "description": "Hệ thống siêu thị chuyên bán máy móc và dụng cụ làm mộc.",
     "slug": "store-lam-moc-staging",
+    "icon": "./assets/images/logo.ios.staging.png",
     "ios": {
-      "bundleIdentifier": "com.lammoc.store.staging"
+      "bundleIdentifier": "com.lammoc.store.staging",
+      "icon": "./assets/images/logo.ios.staging.png"
     },
     "android": {
-      "package": "com.lammoc.store.staging"
+      "package": "com.lammoc.store.staging",
+      "icon": "./assets/images/logo.android.staging.png"
+    },
+    "notification": {
+      "icon": "./assets/images/logo.ios.staging.png",
+      "color": "#ffffff"
     },
     "extra": {
       "STORE_WEB_URL": "https://store.mock.love",
