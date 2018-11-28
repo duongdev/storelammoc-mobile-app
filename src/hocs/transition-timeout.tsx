@@ -1,5 +1,7 @@
 import { lifecycle } from 'recompose'
 
+import global from 'constants/global'
+
 const transitionTimeout = lifecycle({
   componentDidMount() {
     const that = this
@@ -7,7 +9,7 @@ const transitionTimeout = lifecycle({
       that.setState({
         isReady: true,
       })
-    }, 300)
+    }, global.NAV_TRANSITION_DURATION + 100)
   },
 })
 

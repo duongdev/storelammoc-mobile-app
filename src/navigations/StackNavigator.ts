@@ -1,3 +1,5 @@
+import * as ReactNavigation from 'react-navigation'
+
 import {
   createStackNavigator,
   NavigationTransitionProps,
@@ -5,21 +7,35 @@ import {
 
 import { Animated, Easing } from 'react-native'
 
-import { screenWidth } from 'constants/metrics'
 import BarCodeScannerScreen from 'screens/BarCodeScannerScreen'
 import MainScreen from 'screens/MainScreen'
-import SearchBox from 'screens/SearchBox'
+import SearchScreen from 'screens/SearchScreen'
 
 import navigationTransitions from 'helpers/navigation/transitions'
+
+import global from 'constants/global'
+import { screenWidth } from 'constants/metrics'
+
+// FIXME: Fix import when @types/react-navigation updated with new APIs.
+const createAppContainer = (ReactNavigation as any).createAppContainer
+
+const navigationOptions: ReactNavigation.NavigationScreenOptions = {
+  gesturesEnabled: true,
+  gestureResponseDistance: {
+    horizontal: screenWidth,
+  },
+}
 
 const StackNavigator = createStackNavigator(
   {
     Main: MainScreen,
     BarCodeScanner: {
       screen: BarCodeScannerScreen,
+      navigationOptions,
     },
-    SearchBox: {
-      screen: SearchBox,
+    SearchScreen: {
+      screen: SearchScreen,
+      navigationOptions,
     },
   },
   {
@@ -28,7 +44,7 @@ const StackNavigator = createStackNavigator(
     transitionConfig: () => {
       return {
         transitionSpec: {
-          duration: 300,
+          duration: global.NAV_TRANSITION_DURATION,
           easing: Easing.out(Easing.cubic),
           timing: Animated.timing,
           useNativeDriver: true,
@@ -38,13 +54,7 @@ const StackNavigator = createStackNavigator(
         },
       }
     },
-    navigationOptions: {
-      gesturesEnabled: true,
-      gestureResponseDistance: {
-        horizontal: screenWidth,
-      },
-    },
   },
 )
 
-export default StackNavigator
+export default createAppContainer(StackNavigator)

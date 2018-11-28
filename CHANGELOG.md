@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.10"></a>
+## [1.0.10](https://bitbucket.org/targeek/mobile-store/compare/v1.0.9...v1.0.10) (2018-11-23)
+
+
+### Bug Fixes
+
+* **travis:** fix build native detector ([7dc2de4](https://bitbucket.org/targeek/mobile-store/commits/7dc2de4))
+
+
+
+<a name="1.0.9"></a>
+## [1.0.9](https://bitbucket.org/targeek/mobile-store/compare/v1.0.8...v1.0.9) (2018-11-23)
+
+
+### Features
+
+* add `rn-webview` directly on WebView URI, remove from configs ([d8b7122](https://bitbucket.org/targeek/mobile-store/commits/d8b7122))
+* **SplashScreen:** add version info; update better splash image ([1324b2e](https://bitbucket.org/targeek/mobile-store/commits/1324b2e))
+* **WebView:** add `decelerationRate` on iOS for better scroll behavior ([74281ab](https://bitbucket.org/targeek/mobile-store/commits/74281ab))
+
+
+
 <a name="1.0.8"></a>
 
 ## [1.0.8](https://bitbucket.org/targeek/mobile-store/compare/v1.0.7...v1.0.8) (2018-11-22)

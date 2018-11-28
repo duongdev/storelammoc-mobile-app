@@ -73,13 +73,13 @@ class MainScreen extends React.Component<
         `${RECEIVED_MESSAGES.OPEN_SEARCH_BOX}:`,
         '',
       )
-      this.props.navigation.navigate('SearchBox', {
+      this.props.navigation.navigate('SearchScreen', {
         barStyle: 'light-content',
         searchText,
         postMessageToWeb: this.postMessageToWeb,
       })
     }
-    console.log(message)
+
     switch (message) {
       case RECEIVED_MESSAGES.WEB_APP_LOADED:
         this.setState({
