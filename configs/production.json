@@ -6,7 +6,13 @@
     "scheme": "storelammoc",
     "ios": {
       "bundleIdentifier": "com.lammoc.store",
-      "associatedDomains": ["applinks:storelammoc.vn"],
+      "associatedDomains": [
+        "applinks:storelammoc.vn",
+        "applinks:NOT /e/*",
+        "applinks:*",
+        "applinks:/",
+        "applinks:/products/*"
+      ],
       "config": {
         "branch": {
           "apiKey": "key_live_eiUgn4Z18J4wQ08JIMCkTbjgFrnOfNXH"
@@ -19,7 +25,25 @@
         "branch": {
           "apiKey": "key_live_eiUgn4Z18J4wQ08JIMCkTbjgFrnOfNXH"
         }
-      }
+      },
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "storelammoc.vn"
+            },
+            {
+              "scheme": "https",
+              "host": "storelammoc.vn",
+              "pathPrefix": "/products/*"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "extra": {
       "STORE_WEB_URL": "https://storelammoc.vn",
