@@ -8,6 +8,8 @@
       "bundleIdentifier": "com.lammoc.store",
       "associatedDomains": [
         "applinks:storelammoc.vn",
+        "applinks:storelammoc.app.link",
+        "applinks:storelammoc-alternate.app.link",
         "applinks:NOT /e/*",
         "applinks:*",
         "applinks:/",
@@ -31,6 +33,14 @@
           "action": "VIEW",
           "autoVerify": true,
           "data": [
+            {
+              "scheme": "https",
+              "host": "storelammoc.app.link"
+            },
+            {
+              "scheme": "https",
+              "host": "storelammoc-alternate.app.link"
+            },
             {
               "scheme": "https",
               "host": "storelammoc.vn"
