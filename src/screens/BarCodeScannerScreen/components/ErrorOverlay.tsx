@@ -6,17 +6,19 @@ import colors from 'constants/colors'
 import { Button } from 'native-base'
 
 interface Props {
+  message: string
   onRetry: () => void
   onGoBack: () => void
 }
 
-export default class NoProductError extends Component<Props> {
+export default class ErrorOverlay extends Component<Props> {
+  static defaultProps = {
+    message: 'Rất tiếc không tìm thấy kết quả phù hợp.',
+  }
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>
-          {'Rất tiếc không tìm thấy kết quả phù hợp.'}
-        </Text>
+        <Text style={styles.text}>{this.props.message}</Text>
 
         <View style={styles.btnWrapper}>
           <Button

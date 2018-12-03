@@ -20,7 +20,6 @@ class CameraPermission extends React.Component<Props & NavigationComponent> {
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      this.forceUpdate()
       await this.grantCameraPermission()
     }
     this.setState({ appState: nextAppState })
