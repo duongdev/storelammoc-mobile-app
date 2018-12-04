@@ -31,24 +31,25 @@ class AppContainer extends React.Component<Props> {
 
   async componentDidMount() {
     StatusBar.setBarStyle('light-content')
+
+    if (__DEV__) return
+
     this.cacheResourceAsync()
-    if (!__DEV__) {
-      Updates.addListener(this.handleUpdateListener)
 
-      try {
-        const update = await Updates.checkForUpdateAsync()
+    Updates.addListener(this.handleUpdateListener)
 
-        if (update.isAvailable) {
-          this.setState({
-            hasNewUpdate: true,
-          })
+    try {
+      const update = await Updates.checkForUpdateAsync()
 
-          await Updates.fetchUpdateAsync()
-        }
-      } catch (e) {
-        // ignore
-        throw e
+      if (update.isAvailable) {
+        this.setState({
+          hasNewUpdate: true,
+        })
+
+        await Updates.fetchUpdateAsync()
       }
+    } catch (e) {
+      throw e
     }
   }
 
