@@ -1,9 +1,11 @@
 import find from 'lodash/find'
 import get from 'lodash/get'
 
-import env from 'constants/env'
 import { AsyncStorage } from 'react-native'
+
 import { Product, Variant } from 'types/products'
+
+import env from 'constants/env'
 
 export const searchByText = async (
   text: string,

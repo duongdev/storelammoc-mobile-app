@@ -1,8 +1,9 @@
-import debounce from 'lodash/debounce'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
 import numeral from 'numeral'
+
+import debounce from 'lodash-decorators/debounce'
 
 import React, { Component } from 'react'
 import {
@@ -14,10 +15,10 @@ import {
   TextInput,
 } from 'react-native'
 
-import withStatusBar from 'hocs/withStatusBar'
 import withNavigatorFocused, {
   WithNavigatorFocused,
 } from 'hocs/withNavigatorFocused'
+import withStatusBar from 'hocs/withStatusBar'
 import { compose } from 'recompose'
 
 import { NavigationComponent } from 'react-navigation'
@@ -37,10 +38,10 @@ import {
   View,
 } from 'native-base'
 
+import { searchByText } from 'services/product-services'
+
 import colors from 'constants/colors'
 import env from 'constants/env'
-
-import { quickSearch } from 'services/product'
 
 import images from 'assets/images'
 
@@ -121,7 +122,8 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     })
   }
 
-  _search = async (text: string) => {
+  @debounce(500)
+  async search(text: string) {
     if (isEmpty(text)) {
       return
     }
@@ -129,7 +131,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     this.setState({ loading: true })
 
     try {
-      const { products, text: prevText } = await quickSearch(text)
+      const { products, text: prevText } = await searchByText(text)
 
       if (prevText !== this.state.searchText) return
 
@@ -142,7 +144,6 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
     this.setState({ loading: false })
   }
-  search = debounce(this._search, 500)
 
   handleChangeText = async (searchText: string) => {
     this.setState({
