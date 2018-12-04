@@ -14,7 +14,10 @@ import {
   TextInput,
 } from 'react-native'
 
-import withStatusBar from 'hocs/status-bar'
+import withStatusBar from 'hocs/withStatusBar'
+import withNavigatorFocused, {
+  WithNavigatorFocused,
+} from 'hocs/withNavigatorFocused'
 import { compose } from 'recompose'
 
 import { NavigationComponent } from 'react-navigation'
@@ -40,11 +43,8 @@ import env from 'constants/env'
 import { quickSearch } from 'services/product'
 
 import images from 'assets/images'
-import transitionTimeout from 'hocs/transition-timeout'
 
-interface SearchBoxProps extends NavigationComponent {
-  isReady?: boolean
-}
+type SearchBoxProps = NavigationComponent & WithNavigatorFocused
 
 interface IProduct {
   [key: string]: unknown
@@ -102,7 +102,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
   }
 
   componentDidUpdate(prevProps: SearchBoxProps) {
-    if (this.props.isReady && !prevProps.isReady) {
+    if (this.props.navigatorFocused && !prevProps.navigatorFocused) {
       this.searchBox && this.searchBox.focus()
     }
   }
@@ -313,5 +313,5 @@ export default compose(
     backgroundColor: colors.white,
     barStyle: 'dark-content',
   }),
-  transitionTimeout,
+  withNavigatorFocused,
 )(SearchBox)

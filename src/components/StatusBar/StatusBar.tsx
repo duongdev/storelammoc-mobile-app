@@ -1,10 +1,8 @@
 import * as React from 'react'
 
-import { Constants } from 'expo'
 import {
   StatusBar as RNStatusBar,
   StatusBarProps as RNStatusBarProps,
-  StyleSheet,
   View,
 } from 'react-native'
 

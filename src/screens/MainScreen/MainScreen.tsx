@@ -2,8 +2,8 @@ import * as React from 'react'
 
 import { compose } from 'recompose'
 
-import keepAwake from 'hocs/keep-awake'
-import withStatusBar from 'hocs/status-bar'
+import keepAwake from 'hocs/keepAwake'
+import withStatusBar from 'hocs/withStatusBar'
 
 import {
   BackHandler,

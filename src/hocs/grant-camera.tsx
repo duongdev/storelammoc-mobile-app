@@ -3,13 +3,7 @@ import { get } from 'lodash'
 import * as React from 'react'
 
 import { Constants, IntentLauncherAndroid, Linking, Permissions } from 'expo'
-import {
-  Alert,
-  AppState,
-  AppStateStatus,
-  PermissionsAndroid,
-  Platform,
-} from 'react-native'
+import { Alert, AppState, AppStateStatus, Platform } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
 interface Props {}
@@ -26,7 +20,6 @@ class CameraPermission extends React.Component<Props & NavigationComponent> {
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      this.forceUpdate()
       await this.grantCameraPermission()
     }
     this.setState({ appState: nextAppState })
@@ -83,23 +76,6 @@ class CameraPermission extends React.Component<Props & NavigationComponent> {
         })
       }
 
-      // if (this.isAndroid && currentStatus !== 'denied') {
-      //   const granted = await PermissionsAndroid.request(
-      //     PermissionsAndroid.PERMISSIONS.CAMERA,
-      //     {
-      //       title: 'Cho phép Store Làm Mộc sử dụng camera',
-      //       message: 'Store Làm Mộc sử dụng camera để quét mã QR',
-      //     },
-      //   )
-
-      //   if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-      //     this.handleGoBack()
-      //   } else {
-      //     this.setState({
-      //       granted: true,
-      //     })
-      //   }
-      // } else
       if (currentStatus !== 'denied') {
         const { status } = await Permissions.askAsync(Permissions.CAMERA)
 
