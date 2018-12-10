@@ -24,6 +24,7 @@ before_install:
   - source ./build-scripts/env.sh
 
 install:
+  - rm yarn.lock
   - yarn install
 
 script:
