@@ -29,17 +29,21 @@ import { getProductBySKU, getProductNavData } from 'services/product-services'
 import { Variant } from 'types/products'
 
 import BarCodeScannerOverlay from './components/BarCodeScannerOverlay'
-import NoProductError from './components/NoProductError'
+import ErrorOverlay from './components/ErrorOverlay'
+
+const noProductFoundMessage = 'Rất tiếc không tìm thấy kết quả phù hợp.'
+const inValidCodeMessage = 'Vui lòng chọn hình ảnh có chứa mã QR.'
 
 export interface BarCodeScannerProps extends NavigationComponent {
   granted?: boolean
   isReady?: boolean
 }
 interface BarCodeScannerState {
+  errorMessage: string
   lastScanAt: number
   loading: boolean
   isFetchTimeout: boolean
-  isShowNoProduct: boolean
+  isShowError: boolean
 }
 
 class BarcodeScannerScreen extends React.Component<
@@ -51,11 +55,12 @@ class BarcodeScannerScreen extends React.Component<
   isAndroid = Platform.OS === 'android'
 
   state = {
+    errorMessage: '',
     lastScanAt: 0,
     /** Determines whether fetching product by SKU from server. */
     loading: false,
     isFetchTimeout: false,
-    isShowNoProduct: false,
+    isShowError: false,
   }
 
   componentDidMount() {
@@ -94,7 +99,8 @@ class BarcodeScannerScreen extends React.Component<
         (product as any).code === 404
       ) {
         this.setState({
-          isShowNoProduct: true,
+          isShowError: true,
+          errorMessage: noProductFoundMessage,
         })
         return false
       }
@@ -118,13 +124,19 @@ class BarcodeScannerScreen extends React.Component<
 
     if (productNavData) {
       const { id, slug, variantId } = productNavData
+      const data = {
+        id,
+        slug,
+        variantId,
+      }
 
-      this.postMessageToWeb(`product-view-nav:${id}:${slug}:${variantId}`)
+      this.postMessageToWeb('product-view-nav', data)
       return this.handleGoTop()
     }
 
     this.setState({
-      isShowNoProduct: !productNavData,
+      isShowError: !productNavData,
+      errorMessage: productNavData ? '' : noProductFoundMessage,
     })
   }
 
@@ -140,14 +152,22 @@ class BarcodeScannerScreen extends React.Component<
     this.setState({
       loading: false,
       isFetchTimeout: false,
-      isShowNoProduct: false,
+      isShowError: false,
+      errorMessage: '',
     })
   }
 
   handleLaunchImageLibrary = async () => {
     await this.props.cameraRollAskPermission()
 
-    if (!this.props.cameraRollGranted) return
+    if (!this.props.cameraRollGranted) {
+      return
+    }
+
+    this.setState({
+      errorMessage: '',
+      isShowError: false,
+    })
 
     // Open image picker
     const image: {
@@ -158,7 +178,9 @@ class BarcodeScannerScreen extends React.Component<
       aspect: [1, 1],
     })) as any
 
-    if (image.cancelled && !image.uri) return
+    if (image.cancelled && !image.uri) {
+      return
+    }
 
     /**
      * Send the picked image to BarCodeScanner to read bar code
@@ -178,8 +200,15 @@ class BarcodeScannerScreen extends React.Component<
     const qrCode = first(await scanFromURLAsync(image.uri))
 
     // Fetch product info and navigate to product view page
-    if (qrCode && qrCode.type && qrCode.data)
+    if (qrCode && qrCode.type && qrCode.data) {
       return this.handleBarCodeRead(qrCode)
+    } else {
+      this.setState({
+        loading: false,
+        isShowError: true,
+        errorMessage: inValidCodeMessage,
+      })
+    }
   }
 
   render() {
@@ -191,14 +220,14 @@ class BarcodeScannerScreen extends React.Component<
           <BarCodeScannerOverlay />
         )}
 
-        {this.state.loading && !this.state.isShowNoProduct && (
+        {this.state.loading && !this.state.isShowError && (
           <LoadingOpacity
             showRetry={this.state.isFetchTimeout}
             onRetry={this.handleRetry}
           />
         )}
 
-        {this.state.isShowNoProduct && this.renderProductNotFound}
+        {this.state.isShowError && this.renderError()}
 
         {this.renderGoBackButton}
         {this.renderOpenLibraryButton}
@@ -214,10 +243,15 @@ class BarcodeScannerScreen extends React.Component<
   )
 
   /** Renders the overlay message when no product found with scanned bar code. */
-  renderProductNotFound = (
-    <NoProductError onRetry={this.handleRetry} onGoBack={this.handleGoBack} />
-  )
-
+  renderError = () => {
+    return (
+      <ErrorOverlay
+        onRetry={this.handleRetry}
+        onGoBack={this.handleGoBack}
+        message={this.state.errorMessage}
+      />
+    )
+  }
   /** Renders "Back" button with press to go back to the previous screen. */
   renderGoBackButton = (
     <Button
@@ -231,7 +265,7 @@ class BarcodeScannerScreen extends React.Component<
   )
 
   /** Renders "Open library" button, press to open library. */
-  renderOpenLibraryButton = Platform.OS === 'ios' && (
+  renderOpenLibraryButton = (
     <Button
       iconLeft
       transparent
@@ -247,6 +281,7 @@ class BarcodeScannerScreen extends React.Component<
 }
 
 export default compose(
+  withNavigatorFocused,
   withStatusBar({
     hidden: true,
   }),
@@ -260,7 +295,6 @@ export default compose(
         'Vui lòng cho phép Store Làm Mộc sử dụng camera để quét mã sản phẩm.',
     },
   }),
-  withNavigatorFocused,
   withPermission<BarCodeScannerProps>({
     askOnMounted: false,
     permission: Permissions.CAMERA_ROLL,

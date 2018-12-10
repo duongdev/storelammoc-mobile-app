@@ -1,3 +1,5 @@
+import get from 'lodash/get'
+
 import * as React from 'react'
 
 import { compose } from 'recompose'
@@ -14,13 +16,16 @@ import {
 } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
+import InAppNotification from 'components/InAppNotification'
 import { OfflineNotice } from 'components/TopToast'
 import WebView from 'components/WebView'
 
+import { registerClientToken } from 'services/notification-services'
+
 import colors from 'constants/colors'
-import env from 'constants/env'
+import global from 'constants/global'
 import { screenHeight } from 'constants/metrics'
-import { RECEIVED_MESSAGES, SEND_MESSAGES } from 'constants/web-messages'
+import { RECEIVED_ACTIONS, SEND_ACTIONS } from 'constants/web-messages'
 
 export interface MainScreenProps {}
 
@@ -58,8 +63,11 @@ class MainScreen extends React.Component<
     this.backHandler.remove()
   }
 
-  postMessageToWeb = (message: string) => {
-    if (!(this.mainWebView && this.mainWebView.webView)) return
+  postMessageToWeb = (action: string, data: any = '') => {
+    if (!(this.mainWebView && this.mainWebView.webView)) {
+      return
+    }
+    const message = `${action}$__${JSON.stringify(data)}`
     return this.mainWebView.webView.postMessage(message)
   }
 
@@ -67,51 +75,63 @@ class MainScreen extends React.Component<
     event: NativeSyntheticEvent<WebViewMessageEventData>,
   ) => {
     const message = event.nativeEvent.data
+    const [action, data = ''] = message.split('$__')
 
-    if (message.match(new RegExp(`${RECEIVED_MESSAGES.OPEN_SEARCH_BOX}.*?$`))) {
-      const searchText = message.replace(
-        `${RECEIVED_MESSAGES.OPEN_SEARCH_BOX}:`,
-        '',
-      )
-      this.props.navigation.navigate('SearchScreen', {
-        barStyle: 'light-content',
-        searchText,
-        postMessageToWeb: this.postMessageToWeb,
-      })
-    }
-
-    switch (message) {
-      case RECEIVED_MESSAGES.WEB_APP_LOADED:
+    switch (action) {
+      case RECEIVED_ACTIONS.WEB_APP_LOADED:
         this.setState({
           isReady: true,
         })
-        this.postMessageToWeb(SEND_MESSAGES.PING_BACK)
+        this.postMessageToWeb(SEND_ACTIONS.PING_BACK)
         return
 
-      case RECEIVED_MESSAGES.OPEN_QR_SCANNER:
+      case RECEIVED_ACTIONS.OPEN_QR_SCANNER:
         this.handleOpenBarcodeScanner()
         return
 
-      case RECEIVED_MESSAGES.ENTER_HOME_SCREEN:
+      case RECEIVED_ACTIONS.ENTER_HOME_SCREEN:
         this.setState({
           gestureLeft: 0,
           gestureTop: screenHeight,
         })
         return
 
-      case RECEIVED_MESSAGES.LEAVE_HOME_SCREEN:
+      case RECEIVED_ACTIONS.LEAVE_HOME_SCREEN:
         this.setState({
           gestureLeft: 20,
           gestureTop: screenHeight / 3,
         })
         return
 
-      case RECEIVED_MESSAGES.ENTER_PRODUCT_SCREEN: {
+      case RECEIVED_ACTIONS.ENTER_PRODUCT_SCREEN:
         this.setState({
           gestureLeft: 20,
           gestureTop: 0,
         })
+        return
+
+      case RECEIVED_ACTIONS.OPEN_SEARCH_BOX:
+        this.props.navigation.navigate('SearchScreen', {
+          barStyle: 'light-content',
+          searchText: data,
+          postMessageToWeb: this.postMessageToWeb,
+        })
+        return
+
+      case RECEIVED_ACTIONS.REDUX_STATE_UPDATE: {
+        try {
+          const pushToken = await registerClientToken(
+            get(JSON.parse(data), 'auth.currentUser', 'unauth'),
+          )
+
+          this.postMessageToWeb(SEND_ACTIONS.REGISTER_PUSH_TOKEN, pushToken)
+        } catch (error) {
+          console.warn(error)
+          return
+          // TODO: Handle this error. We are ignoring at this moment.
+        }
       }
+
       default:
         return
     }
@@ -128,7 +148,7 @@ class MainScreen extends React.Component<
       isReady: true,
     })
 
-    this.postMessageToWeb(SEND_MESSAGES.PING_BACK)
+    this.postMessageToWeb(SEND_ACTIONS.PING_BACK)
   }
 
   render() {
@@ -138,13 +158,14 @@ class MainScreen extends React.Component<
           onLoadEnd={this.handleWebViewLoadEnd}
           gestureLeft={this.state.gestureLeft}
           gestureTop={this.state.gestureTop}
-          source={{ uri: `${env.STORE_WEB_URL}?rn-webview=true` }}
+          source={{ uri: `${global.STORE_WEB_URL}?rn-webview=true` }}
           style={styles.mainWebView}
           ref={webView => (this.mainWebView = webView)}
           onMessage={this.handleWebViewMessage}
         />
 
         <OfflineNotice />
+        <InAppNotification postMessageToWeb={this.postMessageToWeb} />
       </View>
     )
   }

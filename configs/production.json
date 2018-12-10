@@ -3,15 +3,62 @@
     "name": "Store Làm Mộc",
     "description": "Hệ thống siêu thị chuyên bán máy móc và dụng cụ làm mộc.",
     "slug": "store-lam-moc",
+    "scheme": "storelammoc",
     "ios": {
-      "bundleIdentifier": "com.lammoc.store"
+      "bundleIdentifier": "com.lammoc.store",
+      "associatedDomains": [
+        "applinks:storelammoc.vn",
+        "applinks:storelammoc.app.link",
+        "applinks:storelammoc-alternate.app.link",
+        "applinks:NOT /e/*",
+        "applinks:*",
+        "applinks:/",
+        "applinks:/products/*"
+      ],
+      "config": {
+        "branch": {
+          "apiKey": "key_live_eiUgn4Z18J4wQ08JIMCkTbjgFrnOfNXH"
+        }
+      }
     },
     "android": {
-      "package": "com.lammoc.store"
+      "package": "com.lammoc.store",
+      "config": {
+        "branch": {
+          "apiKey": "key_live_eiUgn4Z18J4wQ08JIMCkTbjgFrnOfNXH"
+        }
+      },
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "storelammoc.app.link"
+            },
+            {
+              "scheme": "https",
+              "host": "storelammoc-alternate.app.link"
+            },
+            {
+              "scheme": "https",
+              "host": "storelammoc.vn"
+            },
+            {
+              "scheme": "https",
+              "host": "storelammoc.vn",
+              "pathPrefix": "/products/*"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "extra": {
       "STORE_WEB_URL": "https://storelammoc.vn",
-      "API_URL": "https://api.storelammoc.vn"
+      "API_URL": "https://api.storelammoc.vn",
+      "PUSH_ENDPOINT": "https://api.storelammoc.vn/v2/push-notifications/tokens"
     },
     "hooks": {
       "postPublish": [

@@ -1,9 +1,11 @@
 import find from 'lodash/find'
 import get from 'lodash/get'
 
-import env from 'constants/env'
 import { AsyncStorage } from 'react-native'
+
 import { Product, Variant } from 'types/products'
+
+import global from 'constants/global'
 
 export const searchByText = async (
   text: string,
@@ -12,7 +14,7 @@ export const searchByText = async (
   try {
     const response = await fetch(
       `${
-        env.API_URL
+        global.API_URL
       }/v2/products/search?q=${text}&perPage=${10}&__mask=${__mask}`,
     )
     const { products } = await response.json()
@@ -46,7 +48,9 @@ export const getProductBySKU = async (
     }
 
     // If no cached product found, try to fetch it from the server.
-    const response = await fetch(`${env.API_URL}/v2/products/${sku}?sku=true`)
+    const response = await fetch(
+      `${global.API_URL}/v2/products/${sku}?sku=true`,
+    )
 
     // Bad statuses. See https://httpstatuses.com
     if (response.status < 200 && response.status >= 400) return null
