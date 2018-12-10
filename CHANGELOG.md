@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.1"></a>
+## [1.2.1](https://bitbucket.org/targeek/mobile-store/compare/v1.2.0...v1.2.1) (2018-12-10)
+
+
+### Bug Fixes
+
+* **postMessageToWeb:** fix missing `JSON.parse` on OPEN_SEARCH_BOX ([2b6c801](https://bitbucket.org/targeek/mobile-store/commits/2b6c801))
+* **travis:** temporary remove yarn.lock on build ([06d7c23](https://bitbucket.org/targeek/mobile-store/commits/06d7c23))
+
+
+
 <a name="1.2.0"></a>
 # [1.2.0](https://bitbucket.org/targeek/mobile-store/compare/v1.1.0...v1.2.0) (2018-12-10)
 
