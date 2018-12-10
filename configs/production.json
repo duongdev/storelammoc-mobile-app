@@ -57,7 +57,8 @@
     },
     "extra": {
       "STORE_WEB_URL": "https://storelammoc.vn",
-      "API_URL": "https://api.storelammoc.vn"
+      "API_URL": "https://api.storelammoc.vn",
+      "PUSH_ENDPOINT": "https://api.storelammoc.vn/v2/push-notifications/tokens"
     },
     "hooks": {
       "postPublish": [

@@ -41,7 +41,7 @@ import {
 import { searchByText } from 'services/product-services'
 
 import colors from 'constants/colors'
-import env from 'constants/env'
+import global from 'constants/global'
 
 import images from 'assets/images'
 
@@ -99,7 +99,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     const barStyle = get(navigation, 'state.params.barStyle') || 'light-content'
     StatusBar.setBarStyle(barStyle)
 
-    this.postMessageToWeb(`product-search:${this.state.searchText}`)
+    this.postMessageToWeb('product-search', this.state.searchText)
   }
 
   componentDidUpdate(prevProps: SearchBoxProps) {
@@ -155,14 +155,18 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
   handleProductPress = (product: IProduct) => {
     this.handleGoToTop()
-    return this.postMessageToWeb(`product-view-nav:${product.slug}`)
+    const data = {
+      slug: product.slug,
+    }
+
+    return this.postMessageToWeb('product-view-nav', data)
   }
 
   keyExtractor = (item: IProduct, index: number) => item.id
 
   renderItem = ({ item, index }: { item: IProduct; index: number }) => {
     const source = get(item, 'images[0]')
-      ? { uri: `${env.API_URL}/files/${get(item, 'images[0]')}?size=thumb` }
+      ? { uri: `${global.API_URL}/files/${get(item, 'images[0]')}?size=thumb` }
       : images.logo
     const price = Number(get(item, 'variants[0].price', 0))
     const variants = item.variants || []

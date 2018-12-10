@@ -7,8 +7,7 @@
     "icon": "./assets/images/logo.ios.staging.png",
     "ios": {
       "bundleIdentifier": "com.lammoc.store.staging",
-      "icon": "./assets/images/logo.ios.staging.png"
-      "bundleIdentifier": "com.lammoc.store.staging",
+      "icon": "./assets/images/logo.ios.staging.png",
       "associatedDomains": [
         "applinks:storelammoc.vn",
         "applinks:NOT /e/*",
@@ -23,7 +22,8 @@
       }
     },
     "android": {
-      "icon": "./assets/images/logo.android.staging.png"
+      "package": "com.lammoc.store.staging",
+      "icon": "./assets/images/logo.android.staging.png",
       "config": {
         "branch": {
           "apiKey": "key_test_ccOgoX5Z3HWEO32KNNq66deartjPjSWW"
@@ -47,7 +47,6 @@
           "category": ["BROWSABLE", "DEFAULT"]
         }
       ]
-      "package": "com.lammoc.store.staging",
     },
     "notification": {
       "icon": "./assets/images/logo.ios.staging.png",
@@ -55,7 +54,8 @@
     },
     "extra": {
       "STORE_WEB_URL": "https://store.mock.love",
-      "API_URL": "https://api.mock.love"
+      "API_URL": "https://api.mock.love",
+      "PUSH_ENDPOINT": "https://api.mock.love/v2/push-notifications/tokens"
     }
   }
 }

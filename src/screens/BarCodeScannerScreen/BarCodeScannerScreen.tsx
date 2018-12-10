@@ -124,8 +124,13 @@ class BarcodeScannerScreen extends React.Component<
 
     if (productNavData) {
       const { id, slug, variantId } = productNavData
+      const data = {
+        id,
+        slug,
+        variantId,
+      }
 
-      this.postMessageToWeb(`product-view-nav:${id}:${slug}:${variantId}`)
+      this.postMessageToWeb('product-view-nav', data)
       return this.handleGoTop()
     }
 

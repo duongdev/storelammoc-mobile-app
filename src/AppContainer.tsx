@@ -2,8 +2,15 @@ import * as React from 'react'
 import { StatusBar } from 'react-native'
 
 import { Asset, Font, Updates } from 'expo'
+import {
+  DefaultTheme,
+  Provider as PaperProvider,
+  Theme,
+} from 'react-native-paper'
 
 import StackNavigator from 'navigations/StackNavigator'
+
+import { askNotificationPermission } from 'services/notification-services'
 
 import images from 'assets/images'
 
@@ -31,6 +38,8 @@ class AppContainer extends React.Component<Props> {
 
   async componentDidMount() {
     StatusBar.setBarStyle('light-content')
+
+    await askNotificationPermission()
 
     if (__DEV__) return
 
@@ -61,8 +70,16 @@ class AppContainer extends React.Component<Props> {
   }
 
   render() {
-    return <StackNavigator />
+    return (
+      <PaperProvider theme={theme}>
+        <StackNavigator />
+      </PaperProvider>
+    )
   }
+}
+
+const theme: Theme = {
+  ...DefaultTheme,
 }
 
 export default AppContainer

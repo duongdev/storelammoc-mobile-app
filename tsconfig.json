@@ -20,7 +20,8 @@
     "target": "es2017",
     "paths": {
       "assets/*": ["../assets/*"]
-    }
+    },
+    "strictPropertyInitialization": false
   },
   "exclude": [
     "build",
