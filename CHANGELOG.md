@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.0"></a>
+# [1.2.0](https://bitbucket.org/targeek/mobile-store/compare/v1.1.0...v1.2.0) (2018-12-10)
+
+
+### Features
+
+* **branch:** add production.json configs for branch.io ([6feb535](https://bitbucket.org/targeek/mobile-store/commits/6feb535))
+* **config:** increase OTA timeout ([dfffb96](https://bitbucket.org/targeek/mobile-store/commits/dfffb96))
+* **configs:** add applinks for staging and production ([57fa70c](https://bitbucket.org/targeek/mobile-store/commits/57fa70c))
+* **configs:** add applinks for staging and production ([837d484](https://bitbucket.org/targeek/mobile-store/commits/837d484))
+* **notification:** add push notification for order & marketing ([8b4fae2](https://bitbucket.org/targeek/mobile-store/commits/8b4fae2)), closes [#21](https://bitbucket.org/targeek/mobile-store/issue/21)
+* **withPermission:** update read library permissionon android ([5666b5b](https://bitbucket.org/targeek/mobile-store/commits/5666b5b))
+* **withPermission:** update read library permissionon android ([bf4d5ba](https://bitbucket.org/targeek/mobile-store/commits/bf4d5ba))
+
+
+### BREAKING CHANGES
+
+* **notification:** `postMessageToWeb` API now comes with 2 variables. The first one is action type, the second one is the data. Example: `postMessageToWeb(ACTIONS.TEST, { foo: bar })`.
+
+    STORE-43
+
+* refactor(constants): merge `constants/env` into `constants/global`
+
+* refactor: rewrite `handleExternalLink`, rename it to `handleOpenURL`
+
+* feat(external-link): add url dependencies
+
+    STORE-43
+
+* feat(notification): handle `TEXT` notification type
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://bitbucket.org/targeek/mobile-store/compare/v1.0.10...v1.1.0) (2018-11-27)
 
