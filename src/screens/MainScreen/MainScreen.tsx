@@ -75,7 +75,13 @@ class MainScreen extends React.Component<
     event: NativeSyntheticEvent<WebViewMessageEventData>,
   ) => {
     const message = event.nativeEvent.data
-    const [action, data = ''] = message.split('$__')
+    const [action, $data] = message.split('$__')
+    let data = null
+    try {
+      data = JSON.parse($data)
+    } catch (err) {
+      // ignore
+    }
 
     switch (action) {
       case RECEIVED_ACTIONS.WEB_APP_LOADED:
@@ -121,7 +127,7 @@ class MainScreen extends React.Component<
       case RECEIVED_ACTIONS.REDUX_STATE_UPDATE: {
         try {
           const pushToken = await registerClientToken(
-            get(JSON.parse(data), 'auth.currentUser', 'unauth'),
+            get(data, 'auth.currentUser', 'unauth'),
           )
 
           this.postMessageToWeb(SEND_ACTIONS.REGISTER_PUSH_TOKEN, pushToken)
