@@ -2,7 +2,7 @@
   "name": "store-app-rn",
   "author": "Dương Đỗ <duong@targeek.io>",
   "main": "./index.js",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "private": true,
   "engines": {
     "node": ">=8.0.0"

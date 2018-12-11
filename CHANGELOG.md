@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.2"></a>
+## [1.2.2](https://bitbucket.org/targeek/mobile-store/compare/v1.2.1...v1.2.2) (2018-12-11)
+
+
+### Bug Fixes
+
+* add [@babel](https://bitbucket.org/babel)/runtime to fix bundle decorator error ([a76c26b](https://bitbucket.org/targeek/mobile-store/commits/a76c26b))
+
+
+### Features
+
+* **ci:** add BUILD_VERSION env variable ([8923f27](https://bitbucket.org/targeek/mobile-store/commits/8923f27))
+
+
+
 <a name="1.2.1"></a>
 ## [1.2.1](https://bitbucket.org/targeek/mobile-store/compare/v1.2.0...v1.2.1) (2018-12-10)
 
