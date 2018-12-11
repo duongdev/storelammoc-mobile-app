@@ -19,3 +19,5 @@ app.apk
 api-android-playstore\.json
 
 version\.txt
+
+*.jks
