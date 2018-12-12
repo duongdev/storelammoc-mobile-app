@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.4"></a>
+## [1.2.4](https://bitbucket.org/targeek/mobile-store/compare/v1.2.3...v1.2.4) (2018-12-12)
+
+
+### Features
+
+* **config:** add VIBRATE permission on Android ([9888328](https://bitbucket.org/targeek/mobile-store/commits/9888328))
+* **notification:** handles push notification even when app is closed ([74d1576](https://bitbucket.org/targeek/mobile-store/commits/74d1576))
+
+
+
 <a name="1.2.3"></a>
 ## [1.2.3](https://bitbucket.org/targeek/mobile-store/compare/v1.2.2...v1.2.3) (2018-12-12)
 
