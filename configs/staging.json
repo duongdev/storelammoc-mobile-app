@@ -3,7 +3,6 @@
     "name": "Store Staging",
     "description": "Hệ thống siêu thị chuyên bán máy móc và dụng cụ làm mộc.",
     "slug": "store-lam-moc-staging",
-    "scheme": "storelammocstaging",
     "icon": "./assets/images/logo.ios.staging.png",
     "ios": {
       "bundleIdentifier": "com.lammoc.store.staging",
@@ -11,30 +10,7 @@
     },
     "android": {
       "package": "com.lammoc.store.staging",
-      "icon": "./assets/images/logo.android.staging.png",
-      "config": {
-        "branch": {
-          "apiKey": "key_test_ccOgoX5Z3HWEO32KNNq66deartjPjSWW"
-        }
-      },
-      "intentFilters": [
-        {
-          "action": "VIEW",
-          "autoVerify": true,
-          "data": [
-            {
-              "scheme": "https",
-              "host": "store.mock.love"
-            },
-            {
-              "scheme": "https",
-              "host": "store.mock.love",
-              "pathPrefix": "/products/*"
-            }
-          ],
-          "category": ["BROWSABLE", "DEFAULT"]
-        }
-      ]
+      "icon": "./assets/images/logo.android.staging.png"
     },
     "notification": {
       "icon": "./assets/images/logo.ios.staging.png",
