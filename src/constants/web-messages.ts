@@ -20,4 +20,6 @@ export const SEND_ACTIONS = {
   PING_BACK: 'Hello from webview',
   /** Register push token on webapp */
   REGISTER_PUSH_TOKEN: 'REGISTER_PUSH_TOKEN',
+  /** Request WebView to navigate to a URL */
+  NAVIGATE: 'navigate',
 }

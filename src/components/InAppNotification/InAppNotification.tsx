@@ -2,12 +2,15 @@ import { get } from 'lodash'
 
 import * as React from 'react'
 
-import NOTIFICATION_TYPES from 'constants/notification-types'
 import { Notifications } from 'expo'
 import { EventSubscription } from 'fbemitter'
-import { StyleSheet, Vibration, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { Snackbar, SnackbarProps } from 'react-native-paper'
+
 import { handleOpenURL } from 'utils/external-link'
+
+import NOTIFICATION_TYPES from 'constants/notification-types'
+import { SEND_ACTIONS } from 'constants/web-messages'
 
 export interface InAppNotificationProps {
   postMessageToWeb: any
@@ -44,7 +47,6 @@ class InAppNotification extends React.Component<InAppNotificationProps, State> {
 
   handleNotification = (notification: Notifications.Notification) => {
     const notificationOrigin = get(notification, 'origin', '')
-    Vibration.vibrate(500, true)
 
     const notificationProps = this.getNotificationProps(notification)
 
@@ -104,7 +106,7 @@ class InAppNotification extends React.Component<InAppNotificationProps, State> {
             label: 'Xem',
             onPress: () => {
               this.props.postMessageToWeb(
-                'navigate',
+                SEND_ACTIONS.NAVIGATE,
                 `/account/orders/${get(data, 'order')}`,
               )
             },
@@ -121,7 +123,10 @@ class InAppNotification extends React.Component<InAppNotificationProps, State> {
             onPress: () => {
               const storeUrl = handleOpenURL(get(data, 'url'))
 
-              return this.props.postMessageToWeb('navigate', storeUrl)
+              return this.props.postMessageToWeb(
+                SEND_ACTIONS.NAVIGATE,
+                storeUrl,
+              )
             },
           },
         }

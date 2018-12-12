@@ -28,17 +28,27 @@ import { screenHeight } from 'constants/metrics'
 import { RECEIVED_ACTIONS, SEND_ACTIONS } from 'constants/web-messages'
 
 export interface MainScreenProps {}
+interface State {
+  /** Whether the WebView is loaded */
+  isReady: boolean
+  gestureLeft: number
+  gestureTop: number
+
+  /** Pending WebView message when the WebView isn't ready or is not focused. */
+  pendingWVMessage: [string, any] | null
+}
 
 class MainScreen extends React.Component<
   MainScreenProps & NavigationComponent,
-  any
+  State
 > {
   mainWebView: WebView | null = null
   backHandler: any
-  state = {
+  state: State = {
     isReady: false,
     gestureLeft: 0,
     gestureTop: 0,
+    pendingWVMessage: null,
   }
 
   componentDidMount = () => {
@@ -59,16 +69,32 @@ class MainScreen extends React.Component<
     })
   }
 
+  componentDidUpdate = (prevProps: MainScreenProps, prevState: State) => {
+    // * Handles on WebView is ready.
+    if (!prevState.isReady && this.state.isReady) {
+      // * Handles pendingMessage is waiting to be sent.
+      if (this.state.pendingWVMessage) {
+        this.postPendingMessageToWeb()
+      }
+    }
+  }
+
   componentWillUnmount = () => {
     this.backHandler.remove()
   }
 
   postMessageToWeb = (action: string, data: any = '') => {
-    if (!(this.mainWebView && this.mainWebView.webView)) {
-      return
+    const isWebViewReady =
+      this.mainWebView && this.mainWebView.webView && this.state.isReady
+
+    if (action === SEND_ACTIONS.NAVIGATE && !isWebViewReady) {
+      return this.setState({
+        pendingWVMessage: [action, data],
+      })
     }
+
     const message = `${action}$__${JSON.stringify(data)}`
-    return this.mainWebView.webView.postMessage(message)
+    return this.mainWebView!.webView.postMessage(message)
   }
 
   handleWebViewMessage = async (
@@ -149,19 +175,17 @@ class MainScreen extends React.Component<
     })
   }
 
-  handleWebViewLoadEnd = () => {
-    this.setState({
-      isReady: true,
-    })
+  postPendingMessageToWeb = () => {
+    if (!this.state.pendingWVMessage) return
 
-    this.postMessageToWeb(SEND_ACTIONS.PING_BACK)
+    this.postMessageToWeb(...this.state.pendingWVMessage)
+    this.setState({ pendingWVMessage: null })
   }
 
   render() {
     return (
       <View style={styles.container}>
         <WebView
-          onLoadEnd={this.handleWebViewLoadEnd}
           gestureLeft={this.state.gestureLeft}
           gestureTop={this.state.gestureTop}
           source={{ uri: `${global.STORE_WEB_URL}?rn-webview=true` }}
