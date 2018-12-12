@@ -7,19 +7,7 @@
     "icon": "./assets/images/logo.ios.staging.png",
     "ios": {
       "bundleIdentifier": "com.lammoc.store.staging",
-      "icon": "./assets/images/logo.ios.staging.png",
-      "associatedDomains": [
-        "applinks:storelammoc.vn",
-        "applinks:NOT /e/*",
-        "applinks:*",
-        "applinks:/",
-        "applinks:/products/*"
-      ],
-      "config": {
-        "branch": {
-          "apiKey": "key_test_ccOgoX5Z3HWEO32KNNq66deartjPjSWW"
-        }
-      }
+      "icon": "./assets/images/logo.ios.staging.png"
     },
     "android": {
       "package": "com.lammoc.store.staging",
