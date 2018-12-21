@@ -10,6 +10,7 @@ import withStatusBar from 'hocs/withStatusBar'
 import {
   BackHandler,
   NativeSyntheticEvent,
+  StatusBar,
   StyleSheet,
   View,
   WebViewMessageEventData,
@@ -51,11 +52,12 @@ class MainScreen extends React.Component<
     pendingWVMessage: null,
   }
 
+  setStatusBarInterval = null
   componentDidMount = () => {
-    this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      const { navigation } = this.props
-      const isMainScreenFocused = navigation.isFocused()
+    const { navigation } = this.props
 
+    this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      const isMainScreenFocused = navigation.isFocused()
       if (isMainScreenFocused) {
         if (this.mainWebView && this.mainWebView.webView) {
           this.mainWebView.webView.goBack()
@@ -66,6 +68,17 @@ class MainScreen extends React.Component<
 
       navigation.pop()
       return true
+    })
+
+    // TODO: FIXME: Tắt nó đi khi sửa được lỗi xem video fullscreen.
+    navigation.addListener('didFocus', () => {
+      this.setStatusBarInterval = setInterval(() => {
+        StatusBar.setHidden(false)
+      }, 3000) as any
+    })
+    navigation.addListener('didBlur', () => {
+      if (this.setStatusBarInterval)
+        clearInterval(this.setStatusBarInterval as any)
     })
   }
 
