@@ -4,13 +4,47 @@
     "description": "Hệ thống siêu thị chuyên bán máy móc và dụng cụ làm mộc.",
     "slug": "store-lam-moc-staging",
     "icon": "./assets/images/logo.ios.staging.png",
+    "scheme": "storelammocstaging",
     "ios": {
       "bundleIdentifier": "com.lammoc.store.staging",
-      "icon": "./assets/images/logo.ios.staging.png"
+      "icon": "./assets/images/logo.ios.staging.png",
+      "associatedDomains": [
+        "applinks:store.mock.love",
+        "applinks:*.store.mock.love",
+        "applinks:storelammoc.test-app.link"
+      ],
+      "config": {
+        "branch": {
+          "apiKey": "key_test_ccOgoX5Z3HWEO32KNNq66deartjPjSWW"
+        }
+      }
     },
     "android": {
       "package": "com.lammoc.store.staging",
-      "icon": "./assets/images/logo.android.staging.png"
+      "icon": "./assets/images/logo.android.staging.png",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": {
+            "scheme": "https",
+            "host": "store.mock.love"
+          },
+          "category": ["BROWSABLE", "DEFAULT"]
+        },
+        {
+          "action": "VIEW",
+          "data": {
+            "scheme": "https",
+            "host": "*.store.mock.love"
+          },
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ],
+      "config": {
+        "branch": {
+          "apiKey": "key_test_ccOgoX5Z3HWEO32KNNq66deartjPjSWW"
+        }
+      }
     },
     "notification": {
       "icon": "./assets/images/logo.ios.staging.png",
