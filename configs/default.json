@@ -19,7 +19,7 @@
       "color": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 5000
     },
     "assetBundlePatterns": ["**/*"],
     "androidStatusBar": {
@@ -39,7 +39,12 @@
       "adaptiveIcon": {
         "backgroundColor": "#263238"
       },
-      "permissions": ["CAMERA"]
+      "permissions": [
+        "VIBRATE",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "packagerOpts": {
       "assetExts": ["ttf", "mp4", "png"],

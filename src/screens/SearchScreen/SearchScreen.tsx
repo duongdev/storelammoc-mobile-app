@@ -1,8 +1,9 @@
-import debounce from 'lodash/debounce'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
 import numeral from 'numeral'
+
+import debounce from 'lodash-decorators/debounce'
 
 import React, { Component } from 'react'
 import {
@@ -14,7 +15,10 @@ import {
   TextInput,
 } from 'react-native'
 
-import withStatusBar from 'hocs/status-bar'
+import withNavigatorFocused, {
+  WithNavigatorFocused,
+} from 'hocs/withNavigatorFocused'
+import withStatusBar from 'hocs/withStatusBar'
 import { compose } from 'recompose'
 
 import { NavigationComponent } from 'react-navigation'
@@ -34,17 +38,14 @@ import {
   View,
 } from 'native-base'
 
-import colors from 'constants/colors'
-import env from 'constants/env'
+import { searchByText } from 'services/product-services'
 
-import { quickSearch } from 'services/product'
+import colors from 'constants/colors'
+import global from 'constants/global'
 
 import images from 'assets/images'
-import transitionTimeout from 'hocs/transition-timeout'
 
-interface SearchBoxProps extends NavigationComponent {
-  isReady?: boolean
-}
+type SearchBoxProps = NavigationComponent & WithNavigatorFocused
 
 interface IProduct {
   [key: string]: unknown
@@ -98,11 +99,11 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     const barStyle = get(navigation, 'state.params.barStyle') || 'light-content'
     StatusBar.setBarStyle(barStyle)
 
-    this.postMessageToWeb(`product-search:${this.state.searchText}`)
+    this.postMessageToWeb('product-search', this.state.searchText)
   }
 
   componentDidUpdate(prevProps: SearchBoxProps) {
-    if (this.props.isReady && !prevProps.isReady) {
+    if (this.props.navigatorFocused && !prevProps.navigatorFocused) {
       this.searchBox && this.searchBox.focus()
     }
   }
@@ -121,7 +122,8 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     })
   }
 
-  _search = async (text: string) => {
+  @debounce(500)
+  async search(text: string) {
     if (isEmpty(text)) {
       return
     }
@@ -129,7 +131,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     this.setState({ loading: true })
 
     try {
-      const { products, text: prevText } = await quickSearch(text)
+      const { products, text: prevText } = await searchByText(text)
 
       if (prevText !== this.state.searchText) return
 
@@ -142,7 +144,6 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
     this.setState({ loading: false })
   }
-  search = debounce(this._search, 500)
 
   handleChangeText = async (searchText: string) => {
     this.setState({
@@ -154,14 +155,18 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
   handleProductPress = (product: IProduct) => {
     this.handleGoToTop()
-    return this.postMessageToWeb(`product-view-nav:${product.slug}`)
+    const data = {
+      slug: product.slug,
+    }
+
+    return this.postMessageToWeb('product-view-nav', data)
   }
 
   keyExtractor = (item: IProduct, index: number) => item.id
 
   renderItem = ({ item, index }: { item: IProduct; index: number }) => {
     const source = get(item, 'images[0]')
-      ? { uri: `${env.API_URL}/files/${get(item, 'images[0]')}?size=thumb` }
+      ? { uri: `${global.API_URL}/files/${get(item, 'images[0]')}?size=thumb` }
       : images.logo
     const price = Number(get(item, 'variants[0].price', 0))
     const variants = item.variants || []
@@ -313,5 +318,5 @@ export default compose(
     backgroundColor: colors.white,
     barStyle: 'dark-content',
   }),
-  transitionTimeout,
+  withNavigatorFocused,
 )(SearchBox)

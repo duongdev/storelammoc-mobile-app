@@ -2,6 +2,114 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.4"></a>
+## [1.2.4](https://bitbucket.org/targeek/mobile-store/compare/v1.2.3...v1.2.4) (2018-12-12)
+
+
+### Features
+
+* **config:** add VIBRATE permission on Android ([9888328](https://bitbucket.org/targeek/mobile-store/commits/9888328))
+* **notification:** handles push notification even when app is closed ([74d1576](https://bitbucket.org/targeek/mobile-store/commits/74d1576))
+
+
+
+<a name="1.2.3"></a>
+## [1.2.3](https://bitbucket.org/targeek/mobile-store/compare/v1.2.2...v1.2.3) (2018-12-12)
+
+
+### Bug Fixes
+
+* **config:** remove branch.io settings on staging ([1813e35](https://bitbucket.org/targeek/mobile-store/commits/1813e35))
+
+
+
+<a name="1.2.2"></a>
+## [1.2.2](https://bitbucket.org/targeek/mobile-store/compare/v1.2.1...v1.2.2) (2018-12-11)
+
+
+### Bug Fixes
+
+* add [@babel](https://bitbucket.org/babel)/runtime to fix bundle decorator error ([a76c26b](https://bitbucket.org/targeek/mobile-store/commits/a76c26b))
+
+
+### Features
+
+* **ci:** add BUILD_VERSION env variable ([8923f27](https://bitbucket.org/targeek/mobile-store/commits/8923f27))
+
+
+
+<a name="1.2.1"></a>
+## [1.2.1](https://bitbucket.org/targeek/mobile-store/compare/v1.2.0...v1.2.1) (2018-12-10)
+
+
+### Bug Fixes
+
+* **postMessageToWeb:** fix missing `JSON.parse` on OPEN_SEARCH_BOX ([2b6c801](https://bitbucket.org/targeek/mobile-store/commits/2b6c801))
+* **travis:** temporary remove yarn.lock on build ([06d7c23](https://bitbucket.org/targeek/mobile-store/commits/06d7c23))
+
+
+
+<a name="1.2.0"></a>
+# [1.2.0](https://bitbucket.org/targeek/mobile-store/compare/v1.1.0...v1.2.0) (2018-12-10)
+
+
+### Features
+
+* **branch:** add production.json configs for branch.io ([6feb535](https://bitbucket.org/targeek/mobile-store/commits/6feb535))
+* **config:** increase OTA timeout ([dfffb96](https://bitbucket.org/targeek/mobile-store/commits/dfffb96))
+* **configs:** add applinks for staging and production ([57fa70c](https://bitbucket.org/targeek/mobile-store/commits/57fa70c))
+* **configs:** add applinks for staging and production ([837d484](https://bitbucket.org/targeek/mobile-store/commits/837d484))
+* **notification:** add push notification for order & marketing ([8b4fae2](https://bitbucket.org/targeek/mobile-store/commits/8b4fae2)), closes [#21](https://bitbucket.org/targeek/mobile-store/issue/21)
+* **withPermission:** update read library permissionon android ([5666b5b](https://bitbucket.org/targeek/mobile-store/commits/5666b5b))
+* **withPermission:** update read library permissionon android ([bf4d5ba](https://bitbucket.org/targeek/mobile-store/commits/bf4d5ba))
+
+
+### BREAKING CHANGES
+
+* **notification:** `postMessageToWeb` API now comes with 2 variables. The first one is action type, the second one is the data. Example: `postMessageToWeb(ACTIONS.TEST, { foo: bar })`.
+
+    STORE-43
+
+* refactor(constants): merge `constants/env` into `constants/global`
+
+* refactor: rewrite `handleExternalLink`, rename it to `handleOpenURL`
+
+* feat(external-link): add url dependencies
+
+    STORE-43
+
+* feat(notification): handle `TEXT` notification type
+
+
+
+<a name="1.1.0"></a>
+# [1.1.0](https://bitbucket.org/targeek/mobile-store/compare/v1.0.10...v1.1.0) (2018-11-27)
+
+
+### Bug Fixes
+
+* **fonts:** require native-base fonts on app loads ([fb4751c](https://bitbucket.org/targeek/mobile-store/commits/fb4751c))
+* **Scanner:** fix handling 404 product ([e19073e](https://bitbucket.org/targeek/mobile-store/commits/e19073e))
+* **TopToast:** fix TopToast height on iPhone X+ ([40695cd](https://bitbucket.org/targeek/mobile-store/commits/40695cd))
+
+
+### Features
+
+* **hoc:** add `with-permission` hoc ([a5dffe4](https://bitbucket.org/targeek/mobile-store/commits/a5dffe4))
+* **hoc:** add withNavigatorFocus replaces transitionTimeout ([3cd1b64](https://bitbucket.org/targeek/mobile-store/commits/3cd1b64))
+* **hoc:** update hoc file names to camelCase ([d176bd3](https://bitbucket.org/targeek/mobile-store/commits/d176bd3))
+* **Scanner:** let user to select an image with sku qr code ([9bd232e](https://bitbucket.org/targeek/mobile-store/commits/9bd232e))
+* add permission for android on app.json ([f97d4cb](https://bitbucket.org/targeek/mobile-store/commits/f97d4cb))
+* add staging specified app icons ([e7b5d21](https://bitbucket.org/targeek/mobile-store/commits/e7b5d21))
+* disable open QR code from library on android ([6b78c64](https://bitbucket.org/targeek/mobile-store/commits/6b78c64))
+
+
+### Performance Improvements
+
+* **nav:** increase transition timeout for better transition performance ([b1fff80](https://bitbucket.org/targeek/mobile-store/commits/b1fff80))
+
+
+
 <a name="1.0.10"></a>
 ## [1.0.10](https://bitbucket.org/targeek/mobile-store/compare/v1.0.9...v1.0.10) (2018-11-23)
 

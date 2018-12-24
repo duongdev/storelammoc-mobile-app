@@ -1,9 +1,16 @@
 import * as React from 'react'
 import { StatusBar } from 'react-native'
 
-import { Asset, Updates } from 'expo'
+import { Asset, Font, Updates } from 'expo'
+import {
+  DefaultTheme,
+  Provider as PaperProvider,
+  Theme,
+} from 'react-native-paper'
 
 import StackNavigator from 'navigations/StackNavigator'
+
+import { askNotificationPermission } from 'services/notification-services'
 
 import images from 'assets/images'
 
@@ -22,26 +29,36 @@ class AppContainer extends React.Component<Props> {
     }
   }
 
+  async componentWillMount() {
+    await Font.loadAsync({
+      Roboto: require('native-base/Fonts/Roboto.ttf'),
+      Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+    })
+  }
+
   async componentDidMount() {
     StatusBar.setBarStyle('light-content')
+
+    await askNotificationPermission()
+
+    if (__DEV__) return
+
     this.cacheResourceAsync()
-    if (!__DEV__) {
-      Updates.addListener(this.handleUpdateListener)
 
-      try {
-        const update = await Updates.checkForUpdateAsync()
+    Updates.addListener(this.handleUpdateListener)
 
-        if (update.isAvailable) {
-          this.setState({
-            hasNewUpdate: true,
-          })
+    try {
+      const update = await Updates.checkForUpdateAsync()
 
-          await Updates.fetchUpdateAsync()
-        }
-      } catch (e) {
-        // ignore
-        throw e
+      if (update.isAvailable) {
+        this.setState({
+          hasNewUpdate: true,
+        })
+
+        await Updates.fetchUpdateAsync()
       }
+    } catch (e) {
+      throw e
     }
   }
 
@@ -53,8 +70,16 @@ class AppContainer extends React.Component<Props> {
   }
 
   render() {
-    return <StackNavigator />
+    return (
+      <PaperProvider theme={theme}>
+        <StackNavigator />
+      </PaperProvider>
+    )
   }
+}
+
+const theme: Theme = {
+  ...DefaultTheme,
 }
 
 export default AppContainer

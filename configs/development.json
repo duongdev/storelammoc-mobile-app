@@ -10,7 +10,9 @@
       "package": "com.lammoc.store.dev"
     },
     "extra": {
-      "STORE_WEB_URL": "http://localhost:3000"
+      "STORE_WEB_URL": "http://localhost:3000",
+      "API_URL": "http://localhost:4000",
+      "PUSH_ENDPOINT": "http://localhost:4000/v2/push-notifications/tokens"
     }
   }
 }

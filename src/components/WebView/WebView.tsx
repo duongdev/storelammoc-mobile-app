@@ -1,3 +1,5 @@
+import get from 'lodash/get'
+
 import * as React from 'react'
 
 import { Container } from 'native-base'
@@ -5,7 +7,6 @@ import {
   ActivityIndicator,
   Button,
   Image,
-  Linking,
   NavState,
   Platform,
   StyleSheet,
@@ -18,10 +19,10 @@ import {
 
 import SplashScreen from 'components/SplashScreen'
 import SwipeBackGesture from 'components/SwipeBackGesture'
-import env from 'constants/env'
 
 import images from 'assets/images'
 import colors from 'constants/colors'
+import { handleOpenURL } from 'utils/external-link'
 import { patchPostMessageJsCode } from './utils'
 
 const TIME_OUT = 15000 // set timeout to 15s
@@ -46,7 +47,7 @@ export default class WebView extends React.Component<
 > {
   static defaultProps: Partial<WebViewProps> = {}
 
-  webView: RNWebView | null = null
+  public webView: RNWebView
 
   state = {
     error: {},
@@ -84,38 +85,14 @@ export default class WebView extends React.Component<
   }
 
   handleNavigationStateChange = (event: NavState) => {
-    const isContinue = this.handleExternalLink(event.url)
-    if (!isContinue && this.webView) {
-      this.webView.stopLoading()
+    const url = get(event, 'url')
+    if (!url) {
+      return
     }
-  }
 
-  handleExternalLink = (url?: string) => {
-    try {
-      if (!url) {
-        return
-      }
-      const isHttpLink = /^http.*/.test(url)
-
-      const storeLink = env.STORE_WEB_URL
-      const accountKitLink = 'accountkit'
-      const accountKitFAQ = 'accountkit.com/faq'
-
-      const isStoreLink = url.search(storeLink) !== -1
-      const isAccountKitLink = url.search(accountKitLink) !== -1
-      const isAccountKitFAQ = url.search(accountKitFAQ) !== -1
-
-      if (
-        isAccountKitFAQ ||
-        (!isStoreLink && !isAccountKitLink && isHttpLink)
-      ) {
-        Linking.openURL(url)
-        return false
-      }
-
-      return true
-    } catch (err) {
-      return false
+    const shouldContinue = Boolean(handleOpenURL(url))
+    if (!shouldContinue && this.webView) {
+      this.webView.stopLoading()
     }
   }
 
@@ -190,8 +167,8 @@ export default class WebView extends React.Component<
             Platform.OS === 'ios' ? patchPostMessageJsCode : ''
           }
           onNavigationStateChange={this.handleNavigationStateChange}
-          dataDetectorTypes="none"
-          ref={ref => (this.webView = ref)}
+          // dataDetectorTypes="none"
+          ref={ref => (this.webView = ref!)}
           /*** ios ***/
           useWebKit
           allowsInlineMediaPlayback

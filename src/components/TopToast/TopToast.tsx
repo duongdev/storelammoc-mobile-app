@@ -3,6 +3,8 @@ import React, { PureComponent } from 'react'
 import { Animated, StyleSheet, Text, View } from 'react-native'
 
 import { Ionicons } from '@expo/vector-icons'
+import { Constants } from 'expo'
+
 import colors from 'constants/colors'
 
 interface Props {
@@ -14,7 +16,7 @@ interface Props {
   toastTextColor: string
 }
 
-const DEFAULT_HEIGHT = 30
+const DEFAULT_HEIGHT = Constants.statusBarHeight + 10
 const DEFAULT_TOP = -DEFAULT_HEIGHT
 
 class TopToast extends PureComponent<Props> {
@@ -88,16 +90,11 @@ class TopToast extends PureComponent<Props> {
             },
           ]}
         >
-          {hasIcon &&
-            icon && (
-              <View style={styles.iconContainer}>
-                <Ionicons
-                  name={icon.name}
-                  size={icon.size}
-                  color={icon.color}
-                />
-              </View>
-            )}
+          {hasIcon && icon && (
+            <View style={styles.iconContainer}>
+              <Ionicons name={icon.name} size={icon.size} color={icon.color} />
+            </View>
+          )}
           <Text
             style={[styles.toastText, { color: this.props.toastTextColor }]}
           >

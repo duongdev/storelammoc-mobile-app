@@ -3,51 +3,23 @@
     "name": "Store Staging",
     "description": "Hệ thống siêu thị chuyên bán máy móc và dụng cụ làm mộc.",
     "slug": "store-lam-moc-staging",
-    "scheme": "storelammocstaging",
+    "icon": "./assets/images/logo.ios.staging.png",
     "ios": {
       "bundleIdentifier": "com.lammoc.store.staging",
-      "associatedDomains": [
-        "applinks:storelammoc.vn",
-        "applinks:NOT /e/*",
-        "applinks:*",
-        "applinks:/",
-        "applinks:/products/*"
-      ],
-      "config": {
-        "branch": {
-          "apiKey": "key_test_ccOgoX5Z3HWEO32KNNq66deartjPjSWW"
-        }
-      }
+      "icon": "./assets/images/logo.ios.staging.png"
     },
     "android": {
       "package": "com.lammoc.store.staging",
-      "config": {
-        "branch": {
-          "apiKey": "key_test_ccOgoX5Z3HWEO32KNNq66deartjPjSWW"
-        }
-      },
-      "intentFilters": [
-        {
-          "action": "VIEW",
-          "autoVerify": true,
-          "data": [
-            {
-              "scheme": "https",
-              "host": "store.mock.love"
-            },
-            {
-              "scheme": "https",
-              "host": "store.mock.love",
-              "pathPrefix": "/products/*"
-            }
-          ],
-          "category": ["BROWSABLE", "DEFAULT"]
-        }
-      ]
+      "icon": "./assets/images/logo.android.staging.png"
+    },
+    "notification": {
+      "icon": "./assets/images/logo.ios.staging.png",
+      "color": "#ffffff"
     },
     "extra": {
       "STORE_WEB_URL": "https://store.mock.love",
-      "API_URL": "https://api.mock.love"
+      "API_URL": "https://api.mock.love",
+      "PUSH_ENDPOINT": "https://api.mock.love/v2/push-notifications/tokens"
     }
   }
 }

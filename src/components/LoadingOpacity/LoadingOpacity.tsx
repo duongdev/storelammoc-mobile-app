@@ -9,7 +9,7 @@ interface Props {
   backgroundColor?: string
   size?: number
   color?: string
-  isRetry?: boolean
+  showRetry?: boolean
   onRetry?: () => void
 }
 
@@ -28,7 +28,7 @@ export default class LoadingOpacity extends Component<Props> {
           // size={this.props.size || 12} // FIXME: cannot set loading indicator size
           color={this.props.color || colors.white}
         />
-        {this.props.isRetry && (
+        {this.props.showRetry && (
           <Button
             bordered
             light

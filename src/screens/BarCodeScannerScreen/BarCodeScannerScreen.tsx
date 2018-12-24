@@ -1,52 +1,66 @@
-import find from 'lodash/find'
+import first from 'lodash/first'
 import get from 'lodash/get'
-import isEmpty from 'lodash/isEmpty'
 
 import * as React from 'react'
 
-import withGrantCamera from 'hocs/grant-camera'
-import keepAwake from 'hocs/keep-awake'
-import withStatusBar from 'hocs/status-bar'
-import transitionTimeout from 'hocs/transition-timeout'
+import keepAwake from 'hocs/keepAwake'
+import withNavigatorFocused from 'hocs/withNavigatorFocused'
+import withPermission from 'hocs/withPermission'
+import withStatusBar from 'hocs/withStatusBar'
 import { compose } from 'recompose'
 
 import { MaterialIcons } from '@expo/vector-icons'
-import { BarCodeReadCallback, BarCodeScanner } from 'expo'
-import { Button } from 'native-base'
-import { AsyncStorage, Platform, StyleSheet, View } from 'react-native'
+import {
+  BarCodeReadCallback,
+  BarCodeScanner,
+  CameraConstants,
+  ImagePicker,
+  Permissions,
+} from 'expo'
+import { Button, Icon, Text } from 'native-base'
+import { Platform, StyleSheet, View } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
 import LoadingOpacity from 'components/LoadingOpacity'
-import NoProductError from 'screens/BarCodeScannerScreen/components/NoProductError'
 
 import colors from 'constants/colors'
-import env from 'constants/env'
+
+import { getProductBySKU, getProductNavData } from 'services/product-services'
+import { Variant } from 'types/products'
 
 import BarCodeScannerOverlay from './components/BarCodeScannerOverlay'
+import ErrorOverlay from './components/ErrorOverlay'
+
+const noProductFoundMessage = 'Rất tiếc không tìm thấy kết quả phù hợp.'
+const inValidCodeMessage = 'Vui lòng chọn hình ảnh có chứa mã QR.'
 
 export interface BarCodeScannerProps extends NavigationComponent {
   granted?: boolean
   isReady?: boolean
 }
-interface BarCodeScannerStates {
+interface BarCodeScannerState {
+  errorMessage: string
   lastScanAt: number
-  isFetching: boolean
+  loading: boolean
   isFetchTimeout: boolean
-  isShowNoProduct: boolean
+  isShowError: boolean
 }
 
 class BarcodeScannerScreen extends React.Component<
   BarCodeScannerProps,
-  BarCodeScannerStates
+  BarCodeScannerState
 > {
   didFocusSubscription: any
+  timeout: any
   isAndroid = Platform.OS === 'android'
 
   state = {
+    errorMessage: '',
     lastScanAt: 0,
-    isFetching: false,
+    /** Determines whether fetching product by SKU from server. */
+    loading: false,
     isFetchTimeout: false,
-    isShowNoProduct: false,
+    isShowError: false,
   }
 
   componentDidMount() {
@@ -55,106 +69,45 @@ class BarcodeScannerScreen extends React.Component<
     }
   }
 
-  componentWillReceiveProps(nextProps: BarCodeScannerProps) {
-    if (this.props.granted !== nextProps.granted) {
-      this.forceUpdate()
-    }
-  }
-
   componentWillUnmount() {
-    if (this.didFocusSubscription) {
-      this.didFocusSubscription.remove()
-    }
-
     clearTimeout(this.timeout)
   }
 
-  mapProductData = (sku: string, product: any) => {
-    const variants = get(product, 'variants', [])
-    const data: {
-      id: string
-      slug: string
-      variantId?: string
-    } = {
-      id: product.id,
-      slug: product.slug,
-    }
-
-    if (!isEmpty(variants)) {
-      const variant = find(variants, variant => {
-        return variant.sku === sku
+  getProductNavData = async (sku: Variant['sku']) => {
+    this.timeout = setTimeout(() => {
+      this.setState({
+        isFetchTimeout: true,
       })
-      data.variantId = variant.id
-    }
+    }, 3000)
 
-    return data
-  }
+    this.setState({
+      loading: true,
+    })
 
-  storageProduct = async (sku: string, mapedProduct: any) => {
     try {
-      await AsyncStorage.setItem(`@sku:${sku}`, JSON.stringify(mapedProduct))
-    } catch (err) {
-      console.warn(err)
-    }
-  }
-
-  getProductFromStorage = async (sku: string) => {
-    try {
-      const productString = await AsyncStorage.getItem(`@sku:${sku}`)
-      if (!productString) {
-        return null
-      }
-
-      const product = JSON.parse(productString)
-      return product
-    } catch (err) {
-      console.warn(err)
-    }
-  }
-
-  timeout: any
-  requestSKU = async (sku: string) => {
-    try {
-      this.setState(
-        {
-          isFetching: true,
-        },
-        () => {
-          this.timeout = setTimeout(() => {
-            this.setState({
-              isFetchTimeout: true,
-            })
-          }, 3000)
-        },
-      )
-
-      let product = await this.getProductFromStorage(sku)
-      if (product) {
-        return product
-      }
-
-      const url = `${env.API_URL}/v2/products/${sku}?sku=true`
-      const res = await fetch(url)
-      if (this.state.isFetchTimeout) {
-        return false
-      }
+      const product = await getProductBySKU(sku)
 
       clearTimeout(this.timeout)
 
-      if (res.status === 404) {
+      this.setState({
+        loading: false,
+      })
+
+      if (
+        this.state.isFetchTimeout ||
+        !product ||
+        (product as any).code === 404
+      ) {
+        this.setState({
+          isShowError: true,
+          errorMessage: noProductFoundMessage,
+        })
         return false
       }
 
-      this.setState({
-        isFetching: false,
-      })
+      const productNavData = getProductNavData(product, sku)
 
-      product = await res.json()
-      const mapedProduct = this.mapProductData(sku, product)
-
-      this.storageProduct(sku, mapedProduct)
-
-      return mapedProduct
+      return productNavData
     } catch (err) {
       console.warn(err)
       return false
@@ -162,34 +115,28 @@ class BarcodeScannerScreen extends React.Component<
   }
   postMessageToWeb = get(this.props.navigation, 'state.params.postMessageToWeb')
 
-  onBarCodeRead = ({
-    id,
-    slug,
-    variantId,
-  }: {
-    id: string
-    slug: string
-    variantId?: string
-  }) => {
-    this.postMessageToWeb(`product-view-nav:${id}:${slug}:${variantId}`)
-  }
-
   handleBarCodeRead: BarCodeReadCallback = async params => {
-    const { isFetching } = this.state
+    const { loading } = this.state
 
-    if (isFetching) {
-      return
-    }
+    if (loading) return
 
-    const product = await this.requestSKU(params.data)
+    const productNavData = await this.getProductNavData(params.data)
 
-    if (product) {
-      this.onBarCodeRead(product)
+    if (productNavData) {
+      const { id, slug, variantId } = productNavData
+      const data = {
+        id,
+        slug,
+        variantId,
+      }
+
+      this.postMessageToWeb('product-view-nav', data)
       return this.handleGoTop()
     }
 
     this.setState({
-      isShowNoProduct: !product,
+      isShowError: !productNavData,
+      errorMessage: productNavData ? '' : noProductFoundMessage,
     })
   }
 
@@ -201,62 +148,162 @@ class BarcodeScannerScreen extends React.Component<
     this.props.navigation.popToTop()
   }
 
-  onCancelScan = () => {
+  handleRetry = () => {
     this.setState({
-      isFetching: false,
+      loading: false,
       isFetchTimeout: false,
-      isShowNoProduct: false,
+      isShowError: false,
+      errorMessage: '',
     })
+  }
+
+  handleLaunchImageLibrary = async () => {
+    await this.props.cameraRollAskPermission()
+
+    if (!this.props.cameraRollGranted) {
+      return
+    }
+
+    this.setState({
+      errorMessage: '',
+      isShowError: false,
+    })
+
+    // Open image picker
+    const image: {
+      cancelled: boolean
+    } & ImagePicker.ImageInfo = (await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'Images',
+      allowsEditing: true,
+      aspect: [1, 1],
+    })) as any
+
+    if (image.cancelled && !image.uri) {
+      return
+    }
+
+    /**
+     * Send the picked image to BarCodeScanner to read bar code
+     * TODO: FIXME: Remove type defs when @types/expo adds scanFromURLAsync
+     */
+    const scanFromURLAsync: (
+      url: string,
+      barCodeTypes?: CameraConstants['BarCodeType'][],
+    ) => Promise<
+      {
+        type: string
+        data: string
+      }[]
+    > = (BarCodeScanner as any).scanFromURLAsync
+
+    // Select the first bar code in the image
+    const qrCode = first(await scanFromURLAsync(image.uri))
+
+    // Fetch product info and navigate to product view page
+    if (qrCode && qrCode.type && qrCode.data) {
+      return this.handleBarCodeRead(qrCode)
+    } else {
+      this.setState({
+        loading: false,
+        isShowError: true,
+        errorMessage: inValidCodeMessage,
+      })
+    }
   }
 
   render() {
     return (
       <View style={styles.root}>
-        {this.props.granted && this.props.isReady ? (
-          <BarCodeScanner
-            onBarCodeRead={this.handleBarCodeRead}
-            style={{ flex: 1 }}
-          >
-            <BarCodeScannerOverlay />
-          </BarCodeScanner>
+        {this.props.cameraGranted && this.props.navigatorFocused ? (
+          this.renderBarCodeScanner
         ) : (
           <BarCodeScannerOverlay />
         )}
 
-        {this.state.isFetching && !this.state.isShowNoProduct && (
+        {this.state.loading && !this.state.isShowError && (
           <LoadingOpacity
-            isRetry={this.state.isFetchTimeout}
-            onRetry={this.onCancelScan}
+            showRetry={this.state.isFetchTimeout}
+            onRetry={this.handleRetry}
           />
         )}
 
-        {this.state.isShowNoProduct && (
-          <NoProductError
-            onRetry={this.onCancelScan}
-            onGoBack={this.handleGoBack}
-          />
-        )}
+        {this.state.isShowError && this.renderError()}
 
-        <Button
-          onPress={this.handleGoBack}
-          style={{ ...StyleSheet.flatten(styles.goBackButton) }}
-          iconLeft
-          transparent
-        >
-          <MaterialIcons name="arrow-back" size={25} color={colors.white} />
-        </Button>
+        {this.renderGoBackButton}
+        {this.renderOpenLibraryButton}
       </View>
     )
   }
+
+  /** Renders a full-screen bar code scanner. */
+  renderBarCodeScanner = (
+    <BarCodeScanner onBarCodeRead={this.handleBarCodeRead} style={{ flex: 1 }}>
+      <BarCodeScannerOverlay />
+    </BarCodeScanner>
+  )
+
+  /** Renders the overlay message when no product found with scanned bar code. */
+  renderError = () => {
+    return (
+      <ErrorOverlay
+        onRetry={this.handleRetry}
+        onGoBack={this.handleGoBack}
+        message={this.state.errorMessage}
+      />
+    )
+  }
+  /** Renders "Back" button with press to go back to the previous screen. */
+  renderGoBackButton = (
+    <Button
+      onPress={this.handleGoBack}
+      style={{ ...StyleSheet.flatten(styles.goBackButton) }}
+      iconLeft
+      transparent
+    >
+      <MaterialIcons name="arrow-back" size={25} color={colors.white} />
+    </Button>
+  )
+
+  /** Renders "Open library" button, press to open library. */
+  renderOpenLibraryButton = (
+    <Button
+      iconLeft
+      transparent
+      bordered
+      light
+      onPress={this.handleLaunchImageLibrary}
+      style={{ ...StyleSheet.flatten(styles.launchLibraryButton) }}
+    >
+      <Icon name="image" type="Entypo" />
+      <Text>Mở thư viện</Text>
+    </Button>
+  )
 }
 
 export default compose(
+  withNavigatorFocused,
   withStatusBar({
     hidden: true,
   }),
   keepAwake(),
-  withGrantCamera,
-  transitionTimeout,
+  withPermission<BarCodeScannerProps>({
+    permission: Permissions.CAMERA,
+    onDeny: props => props.navigation.pop(),
+    alert: {
+      title: 'Cho phép sử dụng camera',
+      message:
+        'Vui lòng cho phép Store Làm Mộc sử dụng camera để quét mã sản phẩm.',
+    },
+  }),
+  withPermission<BarCodeScannerProps>({
+    askOnMounted: false,
+    permission: Permissions.CAMERA_ROLL,
+    alert: {
+      title: 'Cho phép sử dụng hình ảnh',
+      message:
+        'Vui lòng cho phép Store Làm Mộc sử dụng hình ảnh từ thư viện để quét mã sản phẩm.',
+    },
+  }),
 )(BarcodeScannerScreen)
 
 const styles = StyleSheet.create({
@@ -269,5 +316,10 @@ const styles = StyleSheet.create({
     top: 8,
     left: 8,
     paddingRight: 20,
+  },
+  launchLibraryButton: {
+    position: 'absolute',
+    bottom: 30,
+    alignSelf: 'center',
   },
 })

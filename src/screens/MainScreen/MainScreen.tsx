@@ -1,9 +1,11 @@
+import get from 'lodash/get'
+
 import * as React from 'react'
 
 import { compose } from 'recompose'
 
-import keepAwake from 'hocs/keep-awake'
-import withStatusBar from 'hocs/status-bar'
+import keepAwake from 'hocs/keepAwake'
+import withStatusBar from 'hocs/withStatusBar'
 
 import {
   BackHandler,
@@ -14,26 +16,39 @@ import {
 } from 'react-native'
 import { NavigationComponent } from 'react-navigation'
 
+import InAppNotification from 'components/InAppNotification'
 import { OfflineNotice } from 'components/TopToast'
 import WebView from 'components/WebView'
 
+import { registerClientToken } from 'services/notification-services'
+
 import colors from 'constants/colors'
-import env from 'constants/env'
+import global from 'constants/global'
 import { screenHeight } from 'constants/metrics'
-import { RECEIVED_MESSAGES, SEND_MESSAGES } from 'constants/web-messages'
+import { RECEIVED_ACTIONS, SEND_ACTIONS } from 'constants/web-messages'
 
 export interface MainScreenProps {}
+interface State {
+  /** Whether the WebView is loaded */
+  isReady: boolean
+  gestureLeft: number
+  gestureTop: number
+
+  /** Pending WebView message when the WebView isn't ready or is not focused. */
+  pendingWVMessage: [string, any] | null
+}
 
 class MainScreen extends React.Component<
   MainScreenProps & NavigationComponent,
-  any
+  State
 > {
   mainWebView: WebView | null = null
   backHandler: any
-  state = {
+  state: State = {
     isReady: false,
     gestureLeft: 0,
     gestureTop: 0,
+    pendingWVMessage: null,
   }
 
   componentDidMount = () => {
@@ -54,64 +69,101 @@ class MainScreen extends React.Component<
     })
   }
 
+  componentDidUpdate = (prevProps: MainScreenProps, prevState: State) => {
+    // * Handles on WebView is ready.
+    if (!prevState.isReady && this.state.isReady) {
+      // * Handles pendingMessage is waiting to be sent.
+      if (this.state.pendingWVMessage) {
+        this.postPendingMessageToWeb()
+      }
+    }
+  }
+
   componentWillUnmount = () => {
     this.backHandler.remove()
   }
 
-  postMessageToWeb = (message: string) => {
-    if (!(this.mainWebView && this.mainWebView.webView)) return
-    return this.mainWebView.webView.postMessage(message)
+  postMessageToWeb = (action: string, data: any = '') => {
+    const isWebViewReady =
+      this.mainWebView && this.mainWebView.webView && this.state.isReady
+
+    if (action === SEND_ACTIONS.NAVIGATE && !isWebViewReady) {
+      return this.setState({
+        pendingWVMessage: [action, data],
+      })
+    }
+
+    const message = `${action}$__${JSON.stringify(data)}`
+    return this.mainWebView!.webView.postMessage(message)
   }
 
   handleWebViewMessage = async (
     event: NativeSyntheticEvent<WebViewMessageEventData>,
   ) => {
     const message = event.nativeEvent.data
-
-    if (message.match(new RegExp(`${RECEIVED_MESSAGES.OPEN_SEARCH_BOX}.*?$`))) {
-      const searchText = message.replace(
-        `${RECEIVED_MESSAGES.OPEN_SEARCH_BOX}:`,
-        '',
-      )
-      this.props.navigation.navigate('SearchScreen', {
-        barStyle: 'light-content',
-        searchText,
-        postMessageToWeb: this.postMessageToWeb,
-      })
+    const [action, $data] = message.split('$__')
+    let data = null
+    try {
+      data = JSON.parse($data)
+    } catch (err) {
+      // ignore
     }
 
-    switch (message) {
-      case RECEIVED_MESSAGES.WEB_APP_LOADED:
+    switch (action) {
+      case RECEIVED_ACTIONS.WEB_APP_LOADED:
         this.setState({
           isReady: true,
         })
-        this.postMessageToWeb(SEND_MESSAGES.PING_BACK)
+        this.postMessageToWeb(SEND_ACTIONS.PING_BACK)
         return
 
-      case RECEIVED_MESSAGES.OPEN_QR_SCANNER:
+      case RECEIVED_ACTIONS.OPEN_QR_SCANNER:
         this.handleOpenBarcodeScanner()
         return
 
-      case RECEIVED_MESSAGES.ENTER_HOME_SCREEN:
+      case RECEIVED_ACTIONS.ENTER_HOME_SCREEN:
         this.setState({
           gestureLeft: 0,
           gestureTop: screenHeight,
         })
         return
 
-      case RECEIVED_MESSAGES.LEAVE_HOME_SCREEN:
+      case RECEIVED_ACTIONS.LEAVE_HOME_SCREEN:
         this.setState({
           gestureLeft: 20,
           gestureTop: screenHeight / 3,
         })
         return
 
-      case RECEIVED_MESSAGES.ENTER_PRODUCT_SCREEN: {
+      case RECEIVED_ACTIONS.ENTER_PRODUCT_SCREEN:
         this.setState({
           gestureLeft: 20,
           gestureTop: 0,
         })
+        return
+
+      case RECEIVED_ACTIONS.OPEN_SEARCH_BOX:
+        this.props.navigation.navigate('SearchScreen', {
+          barStyle: 'light-content',
+          searchText: data,
+          postMessageToWeb: this.postMessageToWeb,
+        })
+        return
+
+      case RECEIVED_ACTIONS.REDUX_STATE_UPDATE: {
+        try {
+          const pushToken = await registerClientToken(
+            get(data, 'auth.currentUser', 'unauth'),
+          )
+
+          this.postMessageToWeb(SEND_ACTIONS.REGISTER_PUSH_TOKEN, pushToken)
+        } catch (error) {
+          console.warn(error)
+          return
+          // TODO: Handle this error. We are ignoring at this moment.
+        }
       }
+
       default:
         return
     }
@@ -123,28 +175,27 @@ class MainScreen extends React.Component<
     })
   }
 
-  handleWebViewLoadEnd = () => {
-    this.setState({
-      isReady: true,
-    })
+  postPendingMessageToWeb = () => {
+    if (!this.state.pendingWVMessage) return
 
-    this.postMessageToWeb(SEND_MESSAGES.PING_BACK)
+    this.postMessageToWeb(...this.state.pendingWVMessage)
+    this.setState({ pendingWVMessage: null })
   }
 
   render() {
     return (
       <View style={styles.container}>
         <WebView
-          onLoadEnd={this.handleWebViewLoadEnd}
           gestureLeft={this.state.gestureLeft}
           gestureTop={this.state.gestureTop}
-          source={{ uri: `${env.STORE_WEB_URL}?rn-webview=true` }}
+          source={{ uri: `${global.STORE_WEB_URL}?rn-webview=true` }}
           style={styles.mainWebView}
           ref={webView => (this.mainWebView = webView)}
           onMessage={this.handleWebViewMessage}
         />
 
         <OfflineNotice />
+        <InAppNotification postMessageToWeb={this.postMessageToWeb} />
       </View>
     )
   }
