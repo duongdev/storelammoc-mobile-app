@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.0"></a>
+# [1.3.0](https://bitbucket.org/targeek/mobile-store/compare/v1.2.4...v1.3.0) (2018-12-28)
+
+
+### Bug Fixes
+
+* **MainScreen:** add setStatusBar hidden interval ([c390a2d](https://bitbucket.org/targeek/mobile-store/commits/c390a2d))
+
+
+### Features
+
+* **Branch.io:** add branch.io and applinks ([4238046](https://bitbucket.org/targeek/mobile-store/commits/4238046))
+* **Branch.io:** add branch.io and applinks ([1b3104b](https://bitbucket.org/targeek/mobile-store/commits/1b3104b))
+
+
+
 <a name="1.2.4"></a>
 ## [1.2.4](https://bitbucket.org/targeek/mobile-store/compare/v1.2.3...v1.2.4) (2018-12-12)
 
