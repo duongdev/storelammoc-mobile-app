@@ -3,11 +3,44 @@
     "name": "Store Làm Mộc",
     "description": "Hệ thống siêu thị chuyên bán máy móc và dụng cụ làm mộc.",
     "slug": "store-lam-moc",
+    "scheme": "storelammoc",
     "ios": {
-      "bundleIdentifier": "com.lammoc.store"
+      "bundleIdentifier": "com.lammoc.store",
+      "associatedDomains": [
+        "applinks:storelammoc.vn",
+        "applinks:*.storelammoc.vn"
+      ],
+      "config": {
+        "branch": {
+          "apiKey": "key_live_eiUgn4Z18J4wQ08JIMCkTbjgFrnOfNXH"
+        }
+      }
     },
     "android": {
-      "package": "com.lammoc.store"
+      "package": "com.lammoc.store",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": {
+            "scheme": "https",
+            "host": "storelammoc.vn"
+          },
+          "category": ["BROWSABLE", "DEFAULT"]
+        },
+        {
+          "action": "VIEW",
+          "data": {
+            "scheme": "https",
+            "host": "*.storelammoc.vn"
+          },
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ],
+      "config": {
+        "branch": {
+          "apiKey": "key_live_eiUgn4Z18J4wQ08JIMCkTbjgFrnOfNXH"
+        }
+      }
     },
     "extra": {
       "STORE_WEB_URL": "https://storelammoc.vn",

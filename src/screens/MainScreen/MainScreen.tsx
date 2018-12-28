@@ -8,6 +8,7 @@ import keepAwake from 'hocs/keepAwake'
 import withStatusBar from 'hocs/withStatusBar'
 
 import {
+  Alert,
   BackHandler,
   NativeSyntheticEvent,
   StatusBar,
@@ -27,6 +28,8 @@ import colors from 'constants/colors'
 import global from 'constants/global'
 import { screenHeight } from 'constants/metrics'
 import { RECEIVED_ACTIONS, SEND_ACTIONS } from 'constants/web-messages'
+import { Linking } from 'expo'
+import { handleOpenURL } from 'utils/external-link'
 
 export interface MainScreenProps {}
 interface State {
@@ -52,6 +55,14 @@ class MainScreen extends React.Component<
     pendingWVMessage: null,
   }
 
+  handleLinking = (event: { url: string }) => {
+    const url = handleOpenURL(event.url)
+
+    if (url) {
+      this.postMessageToWeb(SEND_ACTIONS.NAVIGATE, url)
+    }
+  }
+
   setStatusBarInterval = null
   componentDidMount = () => {
     const { navigation } = this.props
@@ -69,6 +80,8 @@ class MainScreen extends React.Component<
       navigation.pop()
       return true
     })
+
+    Linking.addEventListener('url', this.handleLinking)
 
     // TODO: FIXME: Tắt nó đi khi sửa được lỗi xem video fullscreen.
     navigation.addListener('didFocus', () => {
