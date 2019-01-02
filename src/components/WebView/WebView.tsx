@@ -151,6 +151,8 @@ export default class WebView extends React.Component<
   }
 
   render() {
+    const { onLoadEnd, ...props } = this.props
+
     return (
       <SwipeBackGesture
         left={this.props.gestureLeft}
@@ -177,7 +179,7 @@ export default class WebView extends React.Component<
           /*** android ***/
           domStorageEnabled
           javaScriptEnabled
-          {...this.props}
+          {...props}
         />
 
         {!this.state.isReady && <SplashScreen />}
