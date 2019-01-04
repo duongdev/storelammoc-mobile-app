@@ -205,6 +205,9 @@ class MainScreen extends React.Component<
           style={styles.mainWebView}
           ref={webView => (this.mainWebView = webView)}
           onMessage={this.handleWebViewMessage}
+          onLoadEnd={() => {
+            this.postMessageToWeb(SEND_ACTIONS.PING_BACK)
+          }}
         />
 
         <OfflineNotice />
