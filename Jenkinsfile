@@ -42,7 +42,7 @@ node {
       def TAG_NAME = "${GIT_REV}-${params.BUILD_ENV == 'Staging' ? 'staging' : 'production'}-${params.BUILD_NATIVE ? 'native' : 'ota'}"
 
       sh"""
-        git tag ${TAG_NAME}
+        git tag ${TAG_NAME} | true
         git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/duongdev/storelammoc-mobile-app.git ${TAG_NAME}
         git push -f https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/duongdev/storelammoc-mobile-app.git
       """
