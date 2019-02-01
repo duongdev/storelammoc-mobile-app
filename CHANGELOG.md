@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.0.0"></a>
+# [3.0.0](https://bitbucket.org/targeek/mobile-store/compare/v1.2.4...v3.0.0) (2019-02-01)
+
+
+### Bug Fixes
+
+* **MainScreen:** add setStatusBar hidden interval ([c390a2d](https://bitbucket.org/targeek/mobile-store/commits/c390a2d))
+* **WebView:** native app cannot be detected by WebView ([1acb5e4](https://bitbucket.org/targeek/mobile-store/commits/1acb5e4))
+
+
+
 <a name="1.2.4"></a>
 ## [1.2.4](https://bitbucket.org/targeek/mobile-store/compare/v1.2.3...v1.2.4) (2018-12-12)
 
